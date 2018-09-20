@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.ImaqMapper">
+
+	<resultMap type="com.yz.model.imaq.ImaqInfo" id="ImaqInfo">
+		<result column="pic_collect_id" property="picCollectId" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="school_roll" property="schoolRoll" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="unvs_id" property="unvsId" jdbcType="VARCHAR" />
+		<result column="pfsn_id" property="pfsnId" jdbcType="VARCHAR" />
+		<result column="unvs_type" property="unvsType" jdbcType="VARCHAR" />
+		<result column="unvs_code" property="unvsCode" jdbcType="VARCHAR" />
+		<result column="id_type" property="idType" jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+		<result column="picture_url" property="pictureUrl" jdbcType="VARCHAR" />
+		<result column="check_status" property="checkStatus" jdbcType="VARCHAR" />
+		<result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="picture_filename" property="pictureFilename" jdbcType="VARCHAR" />
+		<result column="check_result" property="checkResult" jdbcType="VARCHAR" />
+	</resultMap>
+	<update id="updatePictureUrl">
+		UPDATE bms.bd_student_picture_collect SET picture_url = #{newPictureUrl},picture_filename = #{pictureFilename}
+		WHERE pic_collect_id = #{picCollectId}
+	</update>
+	<update id="infoError">
+		UPDATE bms.bd_student_picture_collect SET info_status = '1',confirm_error_message = #{errorMessage}
+		WHERE pic_collect_id = #{picCollectId}
+	</update>
+    <update id="updatePictureStauts">
+		UPDATE bms.bd_student_picture_collect SET check_status = '0',check_result = NULL,check_user_id = NULL,check_time = NULL
+		WHERE pic_collect_id = #{picCollectId}
+	</update>
+    <select id="getSPCInfoByLearnId" resultMap="ImaqInfo">
+		SELECT
+		c.pic_collect_id,
+		c.learn_id,
+		a.std_id,
+		b.std_name,
+		a.school_roll,
+		b.sex,
+		bup.pfsn_name,
+		bu.unvs_name,
+		bup.pfsn_level,
+		bu.unvs_id,
+		bup.pfsn_id,
+		bu.unvs_type,
+		bu.unvs_code,
+		b.id_type,
+		b.id_card,
+		c.picture_url,
+		c.check_status,
+		d.order_status,
+		c.picture_filename,
+		c.check_result
+		FROM
+		bms.bd_learn_info a
+		LEFT JOIN bms.bd_student_info b ON a.std_id = b.std_id
+		LEFT JOIN bms.bd_student_picture_collect c ON b.std_id = c.std_id
+		LEFT JOIN bms.bd_student_pay_order d ON c.order_no = d.order_no
+		left join bd_university bu on a.`unvs_id` = bu.`unvs_id`
+		left join bd_unvs_profession bup on a.`pfsn_id` = bup.`pfsn_id`
+		WHERE a.learn_id = #{learnId} limit 1
+	</select>
+	<select id="getPayOrderByOrderNo" resultType="java.lang.Integer">
+		SELECT count(1) FROM bms.bd_student_pay_order WHERE order_no = #{orderNo} AND order_status = '1' LIMIT 1
+	</select>
+	<select id="getSPCPictureNoByPicCollectId" resultType="java.lang.String">
+		SELECT
+		picture_no
+		FROM
+		bms.bd_student_picture_collect WHERE pic_collect_id = #{picCollectId}
+	</select>
+	<select id="getorderNoByPicCollectId" resultType="java.lang.String">
+		SELECT order_no FROM bms.bd_student_picture_collect WHERE pic_collect_id = #{picCollectId}
+	</select>
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.BdsLearnAnnexMapper">
+
+
+
+    <!--查询学员附件信息-->
+    <select id="findAnnexByLearnId" parameterType="java.lang.String" resultType="com.yz.model.annex.BdsLearnAnnexTypeInfo">
+      SELECT
+      a.recruit_type recruitType,
+      a.annex_type_name annexTypeName,
+      a.annex_type_value annexType,
+      date_format(a.create_time,'%Y-%m-%d %H:%i:%S') createTime,
+      a.create_user createUser,
+      a.create_user_id createUserId,
+      a.is_require isRequire,
+      a.is_upload isUpload,
+      a.is_visible isVisible,
+      date_format(a.update_time,'%Y-%m-%d %H:%i:%S') updateTime,
+      a.update_user updateUser,
+      a.update_user_id updateUserId,
+      c.annex_url annexUrl,
+      c.annex_status annexStatus
+      FROM
+      bms.bd_learn_annex_type a
+      LEFT JOIN bms.bd_learn_info b ON a.recruit_type = b.recruit_type
+      LEFT JOIN bms.bd_learn_annex c ON b.learn_id = c.learn_id AND a.annex_type_value = c.annex_type
+      WHERE a.is_visible = '1' AND b.learn_id = #{learnId}
+      ORDER BY a.annex_type_value;
+    </select>
+
+    <insert id="insert" parameterType="com.yz.model.annex.BdsLearnAnnexInfo">
+      DELETE FROM bms.bd_learn_annex WHERE learn_id = #{learnId} AND annex_type = #{annexType};
+      INSERT INTO bms.bd_learn_annex(annex_id,annex_type,learn_id,annex_name,annex_url,annex_status,is_require,upload_user,upload_user_id,upload_time)
+      VALUES (seq(),
+		#{annexType, jdbcType=VARCHAR},
+		#{learnId,jdbcType=VARCHAR},
+		#{annexName,jdbcType=VARCHAR},
+		#{annexUrl,jdbcType=VARCHAR},
+		#{annexStatus,jdbcType=VARCHAR},
+		#{isRequire,jdbcType=VARCHAR},
+		#{uploadUser,jdbcType=VARCHAR},
+		#{uploadUserId,jdbcType=VARCHAR},
+		NOW());
+    </insert>
+
+    <!--删除学员附件-->
+    <delete id="deleteAnnexByLearnIdAndAnnexType" parameterType="java.lang.String">
+        DELETE FROM bms.bd_learn_annex WHERE learn_id = #{learnId} AND annex_type = #{annexType};
+    </delete>
+</mapper>

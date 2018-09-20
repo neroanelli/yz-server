@@ -1,0 +1,532 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="shortcut icon" th:href="@{/css/image/favicon.ico}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/js/webuploader2/webuploader.css}"/>
+    <title>远智学堂-我的附件</title>
+    <style>
+        .label {
+            min-width: 126px;
+            text-align: right
+        }
+
+        .annex-box {
+            float: left;
+            text-align: center;
+            margin-right: 30px;
+            margin-bottom: 30px;
+        }
+
+        .annex-content {
+            text-align: center;
+            border: 1px solid #E8E8E8;
+            padding: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .annex-title {
+            font-size: 14px;
+            color: #666;
+            width: 210px;
+            margin: 0 auto;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow:ellipsis;
+            cursor: pointer;
+        }
+
+        .annex-pic {
+            background-color: #F6F6F6;
+            width: 210px;
+            height: 154px;
+            border-radius: 2px;
+            border: 1px dashed #E8E8E8;
+        }
+        .annex-pic .upload-btn-box{
+            width: 210px;
+    		height: 154px;
+        }
+        .annex-pic.show {
+            background-color: #fff;
+            position: relative;
+            border: none;
+            border-radius: 2px;
+        }
+
+        .annex-pic.show > img {
+            border-radius: 2px;
+            border: 1px solid #ddd;
+        }
+
+        .annex-pic.show .annex-img:hover .annex-mask {
+            display: block;
+        }
+
+        .annex-pic.show .annex-mask {
+            position: absolute;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            height: 133px;
+            display: none;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, .4);
+            border-radius: 2px;
+        }
+
+        .annex-pic.show .annex-mask img {
+            width: 20px;
+            margin-top: 50px;
+            border-radius: 2px;
+        }
+
+        .annex-pic.show .annex-mask p {
+            margin-top: 6px;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .annex-pic.is-upload:hover {
+            background-color: #FEF5F8;
+            border: 1px dashed #F8A9BF;
+        }
+
+        .annex-pic.is-upload:hover p {
+            color: #FE717F;
+        }
+
+        .annex-pic p {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .annex-add, .annex-none {
+            width: 50px;
+            margin-top: 40px;
+        }
+
+        .annex-show {
+            width: 100%;
+            height: 133px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+        }
+
+        .is-upload {
+            cursor: pointer;
+        }
+
+        .annex-progress-box {
+            display: none;
+            text-align: center;
+            background-color: #F6F6F6;
+            width: 210px;
+            height: 154px;
+        }
+
+        .annex-progress-txt {
+            padding-top: 50px;
+            color: #F55161;
+            font-size: 25px;
+            font-weight: 600;
+        }
+
+        .annex-progress-precent {
+            width: 170px;
+            height: 2px;
+            border-radius: 4px;
+            background-color: #DEDFE0;
+            position: relative;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .annex-progress-precent span {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 2px;
+            border-radius: 4px;
+            background-color: #F55161;
+            transition: width .5s;
+        }
+
+        .annex-edit {
+            position: absolute;
+            right: 10px;
+            bottom: 0;
+        }
+
+        .annex-edit span {
+            margin-left: 12px;
+            cursor: pointer;
+            opacity: .6;
+        }
+
+        .annex-edit span:hover {
+            opacity: 1;
+        }
+
+        .annex-edit span img {
+            width: 18px;
+        }
+
+        #photoPreview {
+            position: fixed;
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            top: 0px;
+            z-index: 2;
+            left: 0;
+            background-color: rgba(0, 0, 0, .3);
+        }
+
+        #photoPreview .photoPreview-box {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #photoPreview .photoPreview-box > img {
+            max-width: 640px;
+            max-height: 640px;
+            /*min-width: 500px;*/
+            border-radius: 5px;
+            border: 2px solid #fff;
+        }
+
+        #photoPreview .photoPreview-box .close {
+            position: absolute;
+            top: -60px;
+            right: 2px;
+            opacity: 1;
+        }
+
+        #photoPreview .photoPreview-box .close:hover {
+            opacity: 1;
+        }
+
+        #photoPreview .photoPreview-box .close img {
+            width: 30px;
+        }
+    </style>
+    <script type="text/javascript" th:src="@{/js/jquery/1.9.1/jquery.min.js}"></script>
+</head>
+<body>
+<div class="wrraper">
+    <div class="banner">
+        <div class="tit">远智学堂</div>
+    </div>
+    <div class="breadcrumb">
+        <div class="inner">
+            <a class="f-r fc069" th:href="@{/logout.do}">退出登录&gt;</a>
+            <a class="fc9" href="javascript:void(0);" title="远智学堂">远智学堂</a> <i class="arr-r"></i>
+            <a class="fc6" href="javascript:void(0);" title="我的附件">我的附件</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="sidebar" th:include="common::sidebar">
+        </div>
+        <div id="thesisList" class="main">
+            <div id="main" class="cl">
+                <div id="upload" style="display:none;"></div>
+            </div>
+            <div id="photoPreview">
+                <div class="photoPreview-box">
+                    <img th:src="@{/css/image/annex/ico_close_pc.png}">
+                    <div class="close" onclick="closePhotoPreview()">
+                        <img th:src="@{/css/image/annex/ico_close_pc.png}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer" th:include="common::footer">
+    </div>
+</div>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" th:src="@{/js/layer/2.4/layer.js}"></script>
+<!--/_footer 作为公共模版分离出去-->
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" th:src="${_file_browser + 'cache/dict.json'}"></script>
+<script type="text/javascript" th:src="${_file_browser + 'cache/param.json'}"></script>
+<script type="text/javascript" th:src="@{/js/custom/yzCommon.js}"></script>
+<script type="text/javascript" th:src="@{/js/store/store.legacy.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/webuploader2/webuploader.js}"></script>
+<script type="text/javascript" th:src="@{/js/html2canvas/html2canvas.min.js}"></script>
+
+<script th:inline="javascript" type="text/javascript">
+    var learnId = store.get("learnId");
+    var uploader;
+    var $progressBox, $annexBox, fileAnnexType, fileAnnexName, fileIsRequire, fileAnnexUrl;
+    //加载附件数据
+    $(function () {
+        var url = [[@{/annex/find.do?learnId=}]]+learnId;
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: {},
+            success: function (data) {
+                if (data.code === '00') {
+                    // 渲染数据
+                    var $main = $('#main');
+                    var dom = "";
+
+                    var datas = data.body || [];
+
+                    if (!!datas || datas.length > 0) {
+                        datas.forEach(function (e, i) {
+                            var isRequire = e.isRequire == '1' ? '（必传）' : ''
+                            var annexUrl = e.annexUrl || '';
+                            var annexType = e.annexType;
+                            var annexName = e.annexTypeName
+                            // 没有附件/未上传
+                            if (!annexUrl) {
+                                // 有上传权限
+                                if (e.isUpload == '1') {
+                                    dom += '<div class="annex-box">' +
+                                        '<div class="annex-content ">' +
+                                        '<div class="annex-pic is-upload uploadBtn"onclick="upload(this,' + annexType + ',' + e.isRequire + ',' + annexUrl + ')"><div class="upload-btn-box">' +
+                                        '<img class="annex-add" src="../css/image/annex/ico_add_pc.png" >' +
+                                        '<p>点击上传</p></div>' +
+                                        '</div>' +
+                                        '<div class="annex-progress-box">' +
+                                        '<p class="annex-progress-txt">0%</p>' +
+                                        '<p class="annex-progress-precent"><span></span></p>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<p class="annex-title" title="'+ annexName + isRequire +'">' + annexName + isRequire + '</p>' +
+                                        '</div>'
+                                } else {
+                                    dom += '<div class="annex-box">' +
+                                        '<div class="annex-content">' +
+                                        '<div class="annex-pic">' +
+                                        '<img class="annex-none" src="../css/image/annex/ico_pic_pc.png" >' +
+                                        '<p>学校未上传</p>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<p class="annex-title" title="'+ annexName + isRequire +'">' + annexName + isRequire + '</p>' +
+                                        '</div>'
+                                }
+                            } else {
+                                // 有上传权限
+                                if (e.isUpload == '1') {
+                                    dom += '<div class="annex-box">' +
+                                        '<div class="annex-content">' +
+                                        '<div class="annex-pic show">' +
+                                        '<div class="annex-img"><img class="annex-show" src="' + _FILE_URL + e.annexUrl + '" >' +
+                                        '<div class="annex-mask" onclick="openPhotoPreview(\'' + annexUrl + '\')"><img src="../css/image/annex/ico_preview_pc.png" alt=""><p>预览</p></div>' +
+                                        '</div></div>' +
+                                        '<div class="annex-edit">'
+                                    // 附件状态
+                                    if (e.annexStatus == '3' && e.isRequire == '1') {
+                                        dom += '<span onclick="downloadTip()" title="附件已审核通过，不能更改">'
+                                    } else {
+                                        dom += '<span onclick="delAnnex(\'' + annexType + '\',\'' + annexUrl + '\')" title="删除图片">'
+                                    }
+
+                                    dom += '<img src="../css/image/annex/ico_delete_pc.png" alt=""></span></div>' +
+                                        '</div>' +
+                                        '<p class="annex-title" title="'+ annexName + isRequire +'">' + annexName + isRequire + '</p>' +
+                                        '</div>'
+                                } else {
+                                    // 无上传权限，预览或下载
+                                    dom += '<div class="annex-box">' +
+                                        '<div class="annex-content">' +
+                                        '<div class="annex-pic show">' +
+                                        '<div class="annex-img"><img class="annex-show" src="' + _FILE_URL + e.annexUrl + '" >' +
+                                        '<div class="annex-mask" onclick="openPhotoPreview(\'' + annexUrl + '\')"><img src="../css/image/annex/ico_preview_pc.png" alt=""><p>预览</p></div>' +
+                                        '</div></div>' +
+                                        '<div class="annex-edit"></div>' +
+                                        '</div>' +
+                                        '<p class="annex-title" title="'+ annexName + isRequire +'">' + annexName + isRequire + '</p>' +
+                                        '</div>'
+                                }
+                            }
+                        })
+                    } else {
+                        dom += '<p class="none-list c-error fz-16 text-c">没有相关附件</p>'
+                    }
+
+                    $main.append(dom);
+
+                    uploader.addButton({
+                        id: '.uploadBtn',
+                        html:''
+                    })
+                }
+            }
+        });
+
+
+        var url = '/annex/webuploader.do?learnId=' + learnId;
+
+        var fileSizeLimit = 5*1024*1024;
+        uploader = WebUploader.create({
+            server: url,
+            pick: '#upload',
+            auto: true,
+            resize: false,
+            accept: {// 只允许选择图片文件格式
+                title: 'Images',
+                extensions: 'jpg,bmp,png'
+            },
+            fileSizeLimit :fileSizeLimit
+        });
+
+        // 当有文件被添加进队列的时候
+        uploader.on('fileQueued', function (file) {
+            // if (((file.size) / 1024 / 1024) >= 5) {
+            //     uploader.removeFile(file);
+            //
+            //     return
+            // }
+            $annexBox.hide(0);
+            $progressBox.show(0)
+        });
+
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on('uploadProgress', function (file, percentage) {
+            var fileIndex = file.id.substring(8);
+
+            var $li = $('#file-li-' + fileIndex),
+                $percent = $li.find('.progress .progress-bar');
+            var percent = Math.floor(percentage * 100);
+
+            $progressBox.find('.annex-progress-txt').text(percent + '%');
+            $progressBox.find('.annex-progress-precent span').css('width', percentage * 100 + '%');
+        });
+
+        uploader.on('uploadSuccess', function (file, ri) {
+            fileAnnexUrl = ri._raw;
+            var url = [[@{/annex/submitUploader.do}]];
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: {
+                    learnId: learnId,
+                    annexType: fileAnnexType,
+                    annexName: fileAnnexName,
+                    isRequire: fileIsRequire,
+                    annexUrl: fileAnnexUrl
+                },
+                success: function (data) {
+                    if (data.code === '00') {
+                        layer.msg('上传成功!', {icon: 1,time: 1000}, function () {
+                            location.reload();
+                        })
+                    }
+                }
+            });
+        });
+
+        uploader.on("error", function (type) {
+            if (type == "Q_TYPE_DENIED") {
+                layer.msg("请上传JPG、PNG、BMP格式文件", {icon: 0, time: 1000});
+            }else if(type == "Q_EXCEED_SIZE_LIMIT"){
+                layer.msg('图片大小不超过5m,换个小点的图片吧!', {icon: 0, time: 1000});
+            }
+        });
+    })
+
+    //删除附件
+    function delAnnex(annexType, annexUrl) {
+        layer.confirm('确定删除？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            var delurl = [[@{/annex/delete.do}]];
+            $.ajax({
+                type: 'post',
+                url: delurl,
+                data: {learnId: learnId, annexType: annexType, annexUrl: annexUrl},
+                success: function (data) {
+                    if (data.code === '00') {
+                        //图片那里改为点击上传或拖动上传
+                        layer.msg('删除成功！', {icon: 1, time: 1000}, function () {
+                            location.reload();
+                        });
+                    } else {
+                        layer.msg('删除失败，服务器开了个小差！', {icon: 2, time: 1000},function () {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        },);
+    }
+
+
+    function upload(e, annexType, isRequire) {
+        fileAnnexType = annexType;
+        fileAnnexName = _findDict('annexType', annexType)
+        fileIsRequire = isRequire;
+
+        $progressBox = $(e).siblings('.annex-progress-box');
+        $annexBox = $(e);
+    }
+
+    function openPhotoPreview(src) {
+        var srcStr = _FILE_URL + src;
+        $("#photoPreview .photoPreview-box>img").attr('src', srcStr);
+        $("#photoPreview").fadeIn(200);
+    }
+
+    function closePhotoPreview() {
+        $("#photoPreview").fadeOut(200);
+    }
+
+    function downloadTip() {
+        layer.msg('附件已审核通过，不能更改！', {icon: 0, time: 1000});
+    }
+
+    function downloadImg(e) {
+        // layer.msg('暂时无法下载图片！', {icon: 0, time: 1000});
+        // return
+
+        var $img=$(e).closest('.annex-content').find(".annex-img").get(0);
+        //直接选择要截图的dom，就能截图，但是因为canvas的原因，生成的图片模糊
+        html2canvas($img).then(function(canvas) {
+            document.body.appendChild(canvas);
+        })
+        //创建一个新的canvas
+        var canvas2 = document.createElement("canvas");
+        var _canvas = $img;
+        var w = parseInt(window.getComputedStyle(_canvas).width);
+        var h = parseInt(window.getComputedStyle(_canvas).height);
+        //将canvas画布放大若干倍，然后盛放在较小的容器内，就显得不模糊了
+        canvas2.width = w * 2;
+        canvas2.height = h * 2;
+        canvas2.style.width = w + "px";
+        canvas2.style.height = h + "px";
+        //可以按照自己的需求，对context的参数修改,translate指的是偏移量
+        //  var context = canvas.getContext("2d");
+        //  context.translate(0,0);
+        var context = canvas2.getContext("2d");
+        context.scale(2,2);
+        html2canvas($img,{canvas:canvas2}).then(function(canvas) {
+            document.body.appendChild(canvas);
+            //canvas转换成url，然后利用a标签的download属性，直接下载，绕过上传服务器再下载
+            $(e).find('a').attr('href',canvas.toDataURL())
+        });
+    }
+</script>
+
+
+</body>
+</html>
