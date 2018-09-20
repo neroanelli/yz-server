@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.ZhiMiSupplementMapper">
+	<select id="selectZhiCountForDateBetween" resultType="java.util.HashMap" parameterType="java.lang.String">
+		SELECT * FROM goods.`ats_account_serial` WHERE acc_type=2 AND ACTION = 2 AND amount &gt; 1000 AND update_time &gt;= #{startTime,jdbcType=VARCHAR} AND exc_desc LIKE '参与%'
+		AND mapping_id NOT IN(
+		SELECT order_no FROM goods.`bs_order` WHERE order_time  &gt; #{startTime,jdbcType=VARCHAR}
+		) AND update_time &lt;= #{endTime,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectexchangeDeductionZM" resultType="java.util.HashMap" >
+	SELECT * FROM goods.`bs_sales_order` WHERE update_time='2018-09-06 00:00:00';
+	</select>
+</mapper>
