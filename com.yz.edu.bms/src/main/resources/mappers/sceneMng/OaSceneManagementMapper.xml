@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.sceneMng.OaSceneManagementMapper">
+    
+    
+	<resultMap type="com.yz.model.sceneMng.OaSceneManagement" id="sceneManagement">
+	  <id column="confirmation_id" property="confirmationId" jdbcType="VARCHAR"></id>
+	  <result column="confirm_city" property="confirmCity" jdbcType="VARCHAR"/>
+	  <result column="ta_name" property="taName" jdbcType="VARCHAR"/>
+	  <result column="address" property="address" jdbcType="VARCHAR"/>
+	  <result column="confirm_name" property="confirmName" jdbcType="VARCHAR"/>
+	  <result column="confirm_address_level" property="confirmAddressLevel" jdbcType="VARCHAR"/>
+	  <result column="charge_person" property="chargePerson" jdbcType="VARCHAR"/>
+	  <result column="required_materials" property="requiredMaterials" jdbcType="VARCHAR"/>
+	  <result column="charge_person_tel" property="chargePersonTel" jdbcType="VARCHAR"/>
+	  <result column="number" property="number" jdbcType="VARCHAR"/>
+	  <result column="remark" property="remark" jdbcType="VARCHAR"/>
+	  <result column="start_time" property="startTime" jdbcType="VARCHAR"/>
+	  <result column="end_time" property="endTime" jdbcType="VARCHAR"/>
+	  <result column="is_allow" property="isAllow" jdbcType="VARCHAR"/>
+	  <result column="available_numbers" property="availableNumbers" jdbcType="VARCHAR"/>
+	  <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+	  <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+	  <result column="update_user_id" property="updateUserId" jdbcType="VARCHAR"/>
+	  <result column="create_user_id" property="createUserId" jdbcType="VARCHAR"/>
+	  <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+	  <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="getSceneManagementById" resultType="java.util.HashMap">
+		select confirmation_id as confirmationId,confirm_city as confirmCity,ta_name as taName,ta_id as taId,confirm_name as confirmName,address as address,
+		confirm_address_level as confirmAddressLevel,required_materials as requiredMaterials,charge_person as chargePerson,charge_person_tel as chargePersonTel
+		,start_time as startTime,end_time as endTime,number as number,available_numbers as availableNumbers,remark as remark
+		from oa_confirmation_management 
+		where confirmation_id = #{confirmationId}
+	</select>
+	
+
+	<select id="getSceneManagement" resultMap="sceneManagement" parameterType="com.yz.model.sceneMng.OaSceneManagement">
+	   select 
+	      ocm.`confirmation_id`,
+		  ocm.`confirm_city`,
+		  ocm.`ta_name`,
+		  ocm.`confirm_name`,
+		  ocm.`address`,
+		  ocm.`confirm_address_level`,
+		  ocm.`required_materials`,
+		  ocm.`charge_person`,
+		  ocm.`charge_person_tel`,
+		  ocm.`start_time`,
+		  ocm.`end_time`,
+		  ocm.`number`,
+		  ocm.`available_numbers`,
+		  ocm.`is_allow`,
+		  ocm.`remark`
+		from
+		oa_confirmation_management ocm
+		where 1 = 1
+		 <if test="confirmCity !=null and '' != confirmCity">
+		     AND  ocm.`confirm_city` = #{confirmCity,jdbcType=VARCHAR}
+		 </if>
+		 <if test="taId !=null and '' != taId and taId != 'null'">
+		  	  AND  ocm.`ta_id` = #{taId}
+		 </if>
+		 <if test="confirmName !=null and '' != confirmName">
+		  	  AND  ocm.`confirm_name` like  CONCAT('%', CONCAT(#{confirmName}, '%'))
+		 </if>
+		 <if test="startTime != null and startTime != ''">
+            AND  ocm.`start_time` >= #{startTime,jdbcType=VARCHAR}
+       	 </if>
+         <if test="endTime != null and endTime != ''">
+            AND  ocm.`end_time` &lt;= #{endTime,jdbcType=VARCHAR}
+         </if>
+          <if test="isAllow != null and isAllow != ''">
+            AND  ocm.`is_allow` = #{isAllow,jdbcType=VARCHAR}
+         </if>
+         <if test="confirmAddressLevel != null and confirmAddressLevel != ''">
+            AND  ocm.`confirm_address_level` = #{confirmAddressLevel,jdbcType=VARCHAR}
+         </if>
+          <if test="isFull != null and isFull != ''">
+			        <if test="isFull == 1">
+			            AND ocm.`available_numbers` = 0
+			        </if>
+			       <if test="isFull == 2">
+			            AND ocm.`available_numbers` > 0
+			        </if>
+         </if>
+         order by ocm.`create_time` DESC
+	</select>
+
+	<update id="updateSceneManagement" parameterType="com.yz.model.sceneMng.OaSceneManagement">
+	  update oa_confirmation_management
+		<set>
+		     <if test="confirmCity !=null and '' != confirmCity">
+			  	 `confirm_city` = #{confirmCity,jdbcType=VARCHAR},
+			 </if>
+			<if test="taName !=null and '' != taName">
+			     `ta_name` = #{taName,jdbcType=VARCHAR},
+			 </if>
+			 <if test="taId !=null and '' != taId">
+			     `ta_id` = #{taId,jdbcType=VARCHAR},
+			 </if>
+			 <if test="confirmName !=null and '' != confirmName">
+			     `confirm_name` = #{confirmName,jdbcType=VARCHAR},
+			 </if>
+			  <if test="address !=null and '' != address">
+			     `address` = #{address,jdbcType=VARCHAR},
+			 </if>
+			  <if test="confirmAddressLevel !=null and '' != confirmAddressLevel">
+			     `confirm_address_level` = #{confirmAddressLevel,jdbcType=VARCHAR},
+			 </if>
+			  <if test="requiredMaterials !=null and '' != requiredMaterials">
+			     `required_materials` = #{requiredMaterials,jdbcType=VARCHAR},
+			 </if>
+			  <if test="chargePerson !=null">
+			     `charge_person` = #{chargePerson,jdbcType=VARCHAR},
+			 </if>
+			  <if test="chargePersonTel !=null">
+			     `charge_person_tel` = #{chargePersonTel,jdbcType=VARCHAR},
+			 </if>
+			   <if test="startTime !=null and '' != startTime and startTime!='null null'">
+			     `start_time` = #{startTime,jdbcType=VARCHAR},
+			 </if> 
+			 <if test="endTime !=null and '' != endTime  and endTime!='null null'">
+			     `end_time` = #{endTime,jdbcType=VARCHAR},
+			 </if>
+			  <if test="number !=null and '' != number">
+			     `number` = #{number,jdbcType=VARCHAR},
+			 </if>
+			  <if test="availableNumbers !=null and '' != availableNumbers">
+			     `available_numbers` = #{availableNumbers,jdbcType=VARCHAR},
+			 </if>
+			  <if test="remark !=null">
+			     `remark` = #{remark,jdbcType=VARCHAR},
+			 </if>
+			 <if test="updateUser != null and updateUser != ''">
+	             `update_user` = #{updateUser,jdbcType=VARCHAR},
+	       	 </if>
+	         <if test="updateUserId != null and updateUserId != ''">
+	            `update_user_id` = #{updateUserId,jdbcType=VARCHAR},
+	         </if>
+				`update_time` = now()
+		</set>
+	     where confirmation_id = #{confirmationId,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete">
+	   delete from oa_confirmation_management  where confirmation_id = #{confirmationId}
+	 </delete> 
+
+	<select id="getExamDicName" resultType="java.util.HashMap">
+	    select ta_id,ta_name from bd_test_area
+	</select>
+	
+	<insert id="insert" parameterType="com.yz.model.sceneMng.OaSceneManagement">
+        INSERT INTO `oa_confirmation_management` (
+        `confirmation_id`,
+        `confirm_city`,
+        `ta_name`,
+        `ta_id`,
+        `confirm_name`,
+        `address`,
+        `confirm_address_level`,
+        `required_materials`,
+        `charge_person`,
+        `charge_person_tel`,
+        `start_time`,
+        `end_time`,
+        `number`,
+        `available_numbers`,
+        `remark`,
+        `create_user_id`,
+        `create_time`,
+        `create_user`
+        )
+        VALUES
+        (
+        seq(),
+        #{confirmCity},
+        #{taName},
+        #{taId},
+        #{confirmName},
+        #{address},
+        #{confirmAddressLevel},
+        #{requiredMaterials},
+        #{chargePerson},
+        #{chargePersonTel},
+        #{startTime},
+        #{endTime},
+        #{number},
+        #{availableNumbers},
+        #{remark},
+        #{createUserId},
+        now(),
+        #{createUser}
+        )
+        ON DUPLICATE KEY UPDATE create_time=now();
+    </insert>
+	
+	<delete id="deleteByIdArr">
+        DELETE FROM oa_confirmation_management WHERE confirmation_id IN (
+        <foreach collection="confirmationIds" item="id" index="index" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+	
+	
+	 <update id="updateStatus">
+        update bms.oa_confirmation_management set is_allow = #{status}
+        where
+        confirmation_id in (
+        <foreach collection="confirmationIds" item="id" index="index" separator=",">
+            #{id}
+        </foreach>
+        )
+        <if test="status != null and ''!= status">
+            <if test="status == 1">
+                and `is_allow` = 2
+            </if>
+            <if test="status == 2">
+                and `is_allow` = 1
+            </if>
+        </if>
+    </update>
+	
+	 
+	<update id="updateIsAllow">
+        update bms.oa_confirmation_management set is_allow = #{status}
+        where
+        confirmation_id = #{confirmationId}
+    </update>
+	 
+	 <select id="findStuConfirmById" resultType="int">
+	     select count(*) from  bd_student_scene_confirm where confirmation_id = #{confirmationId,jdbcType=VARCHAR} LIMIT 1
+	 </select>
+	 
+	 
+	 
+	 <select id="getNonExistsExamAddress" resultType="java.util.Map">
+		DROP TEMPORARY TABLE IF EXISTS tmp_confirmation_management;
+		CREATE TEMPORARY TABLE tmp_confirmation_management (
+		ta_name VARCHAR(12)
+		);
+		INSERT INTO tmp_confirmation_management (
+		ta_name
+		)
+		VALUES
+		<foreach collection="sceneManagementList" item="info" separator=",">
+			(
+			#{info.taName, jdbcType=VARCHAR}
+			)
+		</foreach>;
+		SELECT
+		d.ta_name
+		FROM
+		bd_test_area a
+		RIGHT JOIN tmp_confirmation_management d ON d.ta_name = a.ta_name
+		where a.ta_id IS NULL
+	</select>
+
+	 <insert id="insertConfirma">
+		DROP TEMPORARY TABLE IF EXISTS tmp_confirmation_management;
+		CREATE TEMPORARY TABLE tmp_confirmation_management (
+		confirm_city VARCHAR (20),
+		confirm_name VARCHAR(50),
+		ta_name VARCHAR (12),
+		address VARCHAR (100),
+		confirm_address_level VARCHAR(10),
+		required_materials varchar(800),
+		charge_person varchar(30),
+		charge_person_tel varchar(30),
+		start_time datetime,
+		end_time datetime,
+		number varchar(13),
+		available_numbers varchar(13)
+		);
+		INSERT INTO tmp_confirmation_management
+		VALUES
+		<foreach collection="sceneManagementList" item="info" separator=",">
+			(
+			#{info.confirmCity, jdbcType=VARCHAR},
+			#{info.confirmName, jdbcType=VARCHAR},
+			#{info.taName, jdbcType=VARCHAR},
+			#{info.address, jdbcType=VARCHAR},
+			#{info.confirmAddressLevel, jdbcType=VARCHAR},
+			#{info.requiredMaterials, jdbcType=VARCHAR},
+			#{info.chargePerson, jdbcType=VARCHAR},
+			#{info.chargePersonTel, jdbcType=VARCHAR},
+			#{info.startTime, jdbcType=VARCHAR},
+			#{info.endTime, jdbcType=VARCHAR},
+			#{info.number, jdbcType=VARCHAR},
+			#{info.availableNumbers, jdbcType=VARCHAR}
+			)
+		</foreach>;
+	    INSERT INTO oa_confirmation_management (confirmation_id,confirm_city,ta_name,confirm_name,ta_id,address,confirm_address_level,required_materials,charge_person,charge_person_tel,start_time,end_time,number,available_numbers,create_user_id,create_user,create_time)
+		select seq(),c.confirm_city,c.ta_name,c.confirm_name,a.ta_id,c.address,c.confirm_address_level,c.required_materials,c.charge_person,c.charge_person_tel,c.start_time,c.end_time,c.number,c.available_numbers,#{user.userId, jdbcType=VARCHAR},#{user.realName, jdbcType=VARCHAR},NOW() from bd_test_area a
+		join tmp_confirmation_management c
+		ON c.ta_name = a.ta_name
+		ON DUPLICATE KEY UPDATE create_time=now();
+	</insert>
+</mapper>

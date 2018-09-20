@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.common.CustomizeAttrMapper" >
+  <resultMap type="com.yz.model.common.CustomizeAttrInfo" id="attrInfo">
+  	<result column="id" property="id"/>
+  	<result column="def_ds" property="defDs" jdbcType="VARCHAR"/>
+  	<result column="def_name" property="defName" jdbcType="VARCHAR"/>
+  	<result column="def_label" property="defLabel" jdbcType="VARCHAR"/>
+  	<result column="def_default" property="defDefault" jdbcType="VARCHAR"/>
+  	<result column="def_ds_type" property="defDsType" jdbcType="VARCHAR"/>
+  	<result column="ref_handler" property="refHandler" jdbcType="VARCHAR"/>
+  	<result column="attr_value" property="attrValue" jdbcType="VARCHAR"/>
+  	<result column="def_type" property="defType" jdbcType="VARCHAR"/>
+  	<result column="def_catalog" property="defCatalog" jdbcType="VARCHAR"/>
+  </resultMap>
+  <select id="getCustomizeAttrList" resultMap="attrInfo">
+  	SELECT 
+  	  aca.id,
+  	  acad.def_ds,
+	  acad.def_name,
+	  acad.def_label,
+	  acad.def_default,
+	  acad.def_ds_type,
+	  aca.ref_handler,
+	  aca.attr_value,
+	  acad.def_type,
+	  acad.def_catalog
+	FROM
+	  common.ats_customize_attr_def acad 
+	  LEFT JOIN common.`ats_customize_attr` aca 
+	    ON aca.ref_type = acad.def_catalog 
+	    AND aca.attr_name = acad.def_name 
+	    AND aca.ref_handler = #{refHandler,jdbcType=VARCHAR} 
+	WHERE acad.def_catalog = #{defCatalog,jdbcType=VARCHAR}
+  </select>  
+</mapper>

@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5shiv.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.admin.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/js/Hui-iconfont/1.0.8/iconfont.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/skin/default/skin.css}" id="skin" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.select2/select2.min.css}" />
+    <!--[if IE 6]>
+    <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <!--/meta 作为公共模版分离出去-->
+    <title th:text="现场确认点新增"></title>
+</head>
+<body>
+<!--  <div id="tab_demo" class="HuiTab">
+  </br>
+  <div class="tabBar clearfix">
+    <span>基本信息</span><span>变更记录</span>
+  </div>
+  <div class="tabCon"> -->
+
+<article class="page-container">
+    <form action="" method="post" class="form form-horizontal" id="form-sceneManagement-edit" th:object="${sceneManagement}">
+        <input style="display: none" name="confirmationId" th:value="*{confirmationId}">
+        <input style="display: none" name="tjType" id="tjType" th:value="*{tjType}">
+        <input style="display: none" name="taName" id ="taName" th:value="*{taName}">
+        <input style="display: none" name="appointmentNum" id ="appointmentNum">
+      <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>考试县区：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+          <select class="select" size="1" id="taId" name = "taId"> </select>
+        </div>
+      </div>
+        
+        <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>确认城市：</label>
+         <div class="formControls col-xs-8 col-sm-9">
+          	  <input type="text" class="input-text radius" th:value="*{confirmCity}" placeholder="" id="confirmCity" name="confirmCity">
+            </div>
+      </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>确认点名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+          	  <input type="text" class="input-text radius" th:value="*{confirmName}" placeholder="" id="confirmName" name="confirmName">
+            </div>
+        </div>
+    	<div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>详细地址：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+          		  <textarea  cols="" rows="" class="textarea" placeholder="请输入详细地址,最多100个字" onKeyUp="$.Huitextarealength(this,100)" th:value="*{address}" id="address" name="address"></textarea>
+		          <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+            </div>
+      </div>
+	  <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>确认学员层次：</label>
+            <div class="formControls col-xs-8 col-sm-9" id = 'confirmAddressLevels'>
+              		<div class = 'check-box'>
+              			<input type="checkbox" id="confirmAddressLevel-0" name="confirmAddressLevels" value="5" ext_1="null" ext_2="undefined">
+              			<label for="confirmAddressLevel-0">高起专</label>
+              		</div>
+              		<div class = 'check-box'>
+              			<input type="checkbox" id="confirmAddressLevel-1" name="confirmAddressLevels" value="1" ext_1="null" ext_2="undefined">
+              			<label for="confirmAddressLevel-1">专升本</label>
+              		</div>
+            </div>
+        </div>
+        
+        <div class="row cl">
+           <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所需材料：</label>
+	           
+				<div class="formControls col-xs-8 col-sm-9">
+					<script id="requiredMaterials" name="requiredMaterials" type="text/plain" style="width:100%;height:300px;"></script>
+				</div>
+		</div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">负责人：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text radius" th:value="*{chargePerson}" placeholder="" id="chargePerson" name="chargePerson">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">负责人电话：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text radius" th:value="*{chargePersonTel}" placeholder="" id="chargePersonTel" name="chargePersonTel">
+            </div>
+        </div>
+        
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>确认日期及时间：</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <div id="TCConfig">
+                     <div class="item">
+                        <input type="text" onfocus="WdatePicker({ dateFmt:'yyyy-MM-dd'})" id="date0" th:value="*{#strings.substring(startTime, 0, 10)}" name="configs[0].date" class="input-text Wdate" style="width: 150px;"  placeholder="日期" />
+                        &nbsp; <input type="text" placeholder="开始时间" th:value="*{#strings.substring(startTime, 11,16)}" onfocus="WdatePicker({ dateFmt:'HH:mm',minDate:'#F{$dp.$D(\'date0\',{d:-1})}'})" id="startTime0" name="configs[0].startTime" class="input-text Wdate" style="width: 100px;" /> -
+                        <input type="text" placeholder="结束时间" th:value="*{#strings.substring(endTime, 11,16)}" onfocus="WdatePicker({ dateFmt:'HH:mm', minDate:'#F{$dp.$D(\'startTime0\');}'})" id="endTime0" name="configs[0].endTime" class="input-text Wdate" style="width: 100px;" />
+                        <input type="number" class="input-text" maxlength="4" id="number0" name="configs[0].number" style="width: 80px;" placeholder="人数容量" min="1">
+                    </div>
+                </div>
+                <input id="addItems" class="btn btn-secondary-outline radius" onclick="addPlace()" type="button" value="+" style="position:absolute;right:40px;bottom:0">
+                <input id="delItems" class="btn btn-warning-outline radius" onclick="delPlace()" type="button" value="-" style="position:absolute;right:0;bottom:0">
+            </div>
+        </div>  
+       <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">备注：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+          		  <textarea  cols="" rows="" class="textarea" placeholder="请输入备注内容，最多50个字" onKeyUp="$.Huitextarealength(this,50)" th:value="*{remark}" id="remark" name="remark"></textarea>
+		          <p class="textarea-numberbar"><em class="textarea-length">0</em>/50</p>
+            </div>
+      </div>
+        <div class="text-c mt-10 mb-20">
+            <input class="btn btn-success radius" type="submit" value="提交" style="width: 90px">
+            <input class="btn btn-danger radius" type="button" onclick="layer_close()" value="取消" style="width: 90px;margin-left: 20px;">
+        </div>
+    </form>
+
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" th:src="@{/js/jquery/1.9.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/layer/2.4/layer.js}"></script>
+<script type="text/javascript" th:src="@{/js/h-ui/H-ui.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/h-ui/H-ui.admin.js}"></script>
+<!--/_footer 作为公共模版分离出去-->
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" th:src="@{/js/My97DatePicker/4.8/WdatePicker.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/jquery.validate.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.form/3.46.0/jquery.form.js}"></script>
+<script type="text/javascript" th:src="@{/js/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/validate-methods.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/messages_zh.js}"></script>
+<script type="text/javascript" th:src="@{/js/custom/yzCommon.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.select2/select2.full.js}"></script>
+<script type="text/javascript" th:src="${_file_browser + 'cache/dict.json'}"></script>
+<script type="text/javascript" th:src="${_file_browser + 'cache/pcd.json'}"></script>
+<script type="text/javascript" th:src="@{/js/ueditor/1.4.3/ueditor.config.js}"></script>
+<script type="text/javascript" th:src="@{/js/ueditor/1.4.3/ueditor.all.min.js}"> </script>
+<script type="text/javascript" th:inline="javascript">
+var sceneManagement = [[${sceneManagement}]];
+</script>
+<script type="text/javascript" th:src="@{/js/webjs/sceneMng/sceneManagement_edit.js}"></script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

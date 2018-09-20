@@ -1,0 +1,77 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="Bookmark" href="/favicon.ico">
+<link rel="Shortcut Icon" href="/favicon.ico" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--/meta 作为公共模版分离出去-->
+<title>毕业证/发票编号</title>
+</head>
+<body>
+	<article class="page-container">
+	<form action="" method="post" class="form form-horizontal"  id="form-diploma-code">
+		<input type="hidden" name="followId" />
+		<input type="hidden" name="taskId"/>
+		<input type="hidden" name="learnId"  />
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">姓名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			  	<span id="stdName"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">年级：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   <span id=grade></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">学号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   <span id="schoolRoll"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">院校专业及层次：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span id="unvsInfo"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">毕业证编号：</label>
+		    <div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" placeholder="输入毕业证编号"  onKeyUp="$.Huitextarealength(this,50)" id="diplomaCode" name="diplomaCode" >
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">发票编号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text"  placeholder="输入发票编号" onKeyUp="$.Huitextarealength(this,50)" id="invoiceNo" name="invoiceNo" >
+			</div>
+		</div>
+		<br>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="submit" class="btn btn-success radius inputW9" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i>确定</button>
+			</div>
+		</div>
+	</form>
+	</article>
+
+	<script type="text/javascript" th:src="@{/js/webjs/stdservice/diploma/student_diploma_code.js}"></script>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

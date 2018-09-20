@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.statistics.SceneConfirmStatMapper">
+	
+	<resultMap type="com.yz.model.statistics.SceneConfirmStatInfo" id="sceneConfirmStatMap">
+       <result column="campus_name" property="campusName" jdbcType="VARCHAR"/>
+       <result column="unvs_name" property="unvsName" jdbcType="VARCHAR"/>
+	   <result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR"/>
+	   <result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR"/>
+	   <result column="recruit" property="recruit" jdbcType="VARCHAR"/>
+	   <result column="dp_name" property="recruitDpName" jdbcType="VARCHAR"/>
+	   <result column="std_stage" property="stdStage" jdbcType="VARCHAR"/>
+	   <result column="ta_name" property="taName" jdbcType="VARCHAR"/>
+	   <result column="scholarship" property="scholarship" jdbcType="VARCHAR"/>
+	   <result column="count" property="count" jdbcType="VARCHAR"/>
+       <result column="exam_info_confirm_rate" property="examInfoConfirmRate" jdbcType="VARCHAR"/>
+       <result column="place_confirm_rate" property="placeConfirmRate" jdbcType="VARCHAR"/>
+       <result column="web_register_rate" property="webRegisterRate" jdbcType="VARCHAR"/>
+       <result column="exam_pay_rate" property="examPayRate" jdbcType="VARCHAR"/>
+       <result column="sign_rate" property="signRate" jdbcType="VARCHAR"/>
+       <result column="scene_confirm_rate" property="sceneConfirmRate" jdbcType="VARCHAR"/>
+       <result column="has_exam_no" property="hasExamNo" jdbcType="VARCHAR"/>
+       <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="sceneConfirmStatList" resultMap="sceneConfirmStatMap" parameterType="com.yz.model.statistics.SceneConfirmStatQuery">
+        SELECT
+        oc.campus_name,
+        bu.unvs_name,
+        bup.pfsn_name,
+        CASE bup.`pfsn_level`
+        WHEN '1' THEN
+        '1>专科升本科类'
+        ELSE
+        '5>高中起点高职高专'
+        END AS pfsn_level,
+        oe.emp_name recruit,
+        od.dp_name,
+        bli.std_stage,
+        bli.scholarship,
+        bta.ta_name,
+        sc.city_name,
+        count(1) `count`,
+        SUM(scc.exam_info_confirm_status) exam_info_confirm_rate,
+        SUM(case place_confirm_status when 1 then 1 else 0 end) place_confirm_rate,
+        SUM(scc.web_register_status) web_register_rate,
+        SUM(scc.exam_pay_status) exam_pay_rate,
+        SUM(scc.sign_status) sign_rate,
+        SUM(scc.scene_confirm_status) scene_confirm_rate,
+        SUM(case when tpi.exam_no is not null then 1 else 0 end) has_exam_no,
+        SUM(scc.exam_info_confirm_status) / count(1) exam_info_confirm_rate_ratio,
+        SUM(case place_confirm_status when 1 then 1 else 0 end) / count(1) place_confirm_rate_ratio,
+        SUM(scc.web_register_status) / count(1) web_register_rate_ratio,
+        SUM(scc.exam_pay_status) / count(1) exam_pay_rate_ratio,
+        SUM(scc.sign_status) / count(1) sign_rate_ratio,
+        SUM(scc.scene_confirm_status) / count(1) scene_confirm_rate_ratio,
+        SUM(case when tpi.exam_no is not null then 1 else 0 end) / count(1) has_exam_no_ratio
+        FROM
+        bd_student_scene_confirm scc
+        LEFT JOIN bd_learn_info bli ON scc.learn_id = bli.learn_id
+        LEFT JOIN bd_university bu ON bu.unvs_id = bli.unvs_id
+        LEFT JOIN bd_unvs_profession bup ON bup.pfsn_id = bli.pfsn_id
+        LEFT JOIN bd_learn_rules blr ON bli.learn_id = blr.learn_id
+        LEFT JOIN oa_employee oe ON blr.recruit = oe.emp_id
+        LEFT JOIN oa_department od ON blr.recruit_dp_id = od.dp_id
+        LEFT JOIN oa_campus oc ON blr.recruit_campus_id = oc.campus_id
+        LEFT JOIN bd_test_area bta ON bli.ta_id = bta.ta_id
+        LEFT JOIN bms.sys_city sc ON bta.city_code = sc.city_code
+        LEFT JOIN bd_test_prove_info tpi on scc.learn_id = tpi.learn_id
+	     <where>
+	     	<if test="query.empStatus == 2">
+	            AND oe.emp_status ='2'
+	        </if>
+	        <if test="query.empStatus == 1">
+	            AND (oe.emp_status ='1' or oe.emp_status ='3')
+	        </if>
+            <if test="query.unvsId != null and query.unvsId != ''">
+                and bu.unvs_id = #{query.unvsId, jdbcType=VARCHAR}
+            </if>
+            <if test="query.pfsnLevel != null and query.pfsnLevel != ''">
+                and bup.pfsn_level = #{query.pfsnLevel, jdbcType=VARCHAR}
+            </if>
+            <if test="query.pfsnId != null and query.pfsnId != ''">
+                and bup.pfsn_id = #{query.pfsnId, jdbcType=VARCHAR}
+            </if>
+            <if test="query.grade != null and query.grade != ''">
+                and bli.grade = #{query.grade, jdbcType=VARCHAR}
+            </if>
+            <if test="query.scholarship != null and query.scholarship != ''">
+                and bli.scholarship = #{query.scholarship,jdbcType=VARCHAR}
+            </if>
+            <if test="query.recruit != null and query.recruit != ''">
+                and oe.emp_name = #{query.recruit, jdbcType=VARCHAR}
+            </if>
+            <if test="query.campusId != null and query.campusId != ''">
+                and blr.`recruit_campus_id` = #{query.campusId, jdbcType=VARCHAR}
+            </if>
+            <if test="query.dpId != null and query.dpId != ''">
+                and blr.`recruit_dp_id` = #{query.dpId, jdbcType=VARCHAR}
+            </if>
+            <if test="query.taCityCode != null and query.taCityCode != ''">
+                 and bli.ta_id in (select ta_id from bd_test_area where city_code = #{query.taCityCode})
+            </if>
+            <if test="query.stdStageArray != null and query.stdStageArray.length!=0">
+                and bli.std_stage in
+                <foreach collection="query.stdStageArray" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+             <if test="user.userLevel != 1">
+                 <choose>
+                     <when test="user.userLevel == 3">
+                         and (blr.recruit = #{user.empId, jdbcType=VARCHAR} or blr.recruit_dp_id in (
+                         <foreach collection="user.myDpList" item="info" separator=",">
+                             #{info.dpId, jdbcType=VARCHAR}
+                         </foreach>
+                         ))
+                     </when>
+                     <when test="user.userLevel == 4">
+                         and (blr.recruit = #{user.empId, jdbcType=VARCHAR} or blr.recruit in (
+                         <foreach collection="user.myEmplyeeList" item="info" separator=",">
+                             #{info.empId, jdbcType=VARCHAR}
+                         </foreach>
+                         ))
+                     </when>
+                     <when test="user.jtList!= null and !user.jtList.contains('ZSLS')">
+                         and bta.city_code in
+                         <foreach collection="user.jtList" item="info" open="(" close=")" separator=",">
+                             #{info, jdbcType=VARCHAR}
+                         </foreach>
+                     </when>
+                     <otherwise>
+                         and blr.recruit = #{user.empId, jdbcType=VARCHAR}
+                     </otherwise>
+                 </choose>
+             </if>
+        </where>
+		GROUP BY
+        <trim suffixOverrides=",">
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'oc.campus_id')">
+                oc.campus_id,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'bu.unvs_id')">
+                bu.unvs_id,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'bli.pfsn_id')">
+                bli.pfsn_id,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'bup.pfsn_level')">
+                bup.pfsn_level,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'blr.recruit')">
+                blr.recruit,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'od.dp_id')">
+                od.dp_id,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'bli.std_stage')">
+                bli.std_stage,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'bta.ta_name')">
+                bta.ta_name,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'bta.city_code')">
+                bta.city_code,
+            </if>
+            <if test="@com.yz.core.util.StudentStatUtil@isFieldString(query.statGroup,'bli.scholarship')">
+                bli.scholarship,
+            </if>
+         </trim>
+        <if test="query.orderBy == 1">
+           order by `count` desc
+        </if>
+        <if test="query.orderBy == 2">
+            order by exam_info_confirm_rate_ratio desc
+        </if>
+        <if test="query.orderBy == 3">
+            order by place_confirm_rate_ratio desc
+        </if>
+        <if test="query.orderBy == 4">
+            order by web_register_rate_ratio desc
+        </if>
+        <if test="query.orderBy == 5">
+            order by exam_pay_rate_ratio desc
+        </if>
+        <if test="query.orderBy == 6">
+            order by sign_rate_ratio desc
+        </if>
+        <if test="query.orderBy == 7">
+            order by scene_confirm_rate_ratio desc
+        </if>
+        <if test="query.orderBy == 8">
+            order by has_exam_no_ratio desc
+        </if>
+	</select>
+
+    <select id="countSceneConfirmStat" resultMap="sceneConfirmStatMap" parameterType="com.yz.model.statistics.SceneConfirmStatQuery">
+        SELECT
+        count(1) count,
+        SUM(scc.exam_info_confirm_status) exam_info_confirm_rate,
+        SUM(case place_confirm_status when 1 then 1 else 0 end) place_confirm_rate,
+        SUM(scc.web_register_status) web_register_rate,
+        SUM(scc.exam_pay_status) exam_pay_rate,
+        SUM(scc.sign_status) sign_rate,
+        SUM(scc.scene_confirm_status) scene_confirm_rate,
+        SUM(case when tpi.exam_no is not null then 1 else 0 end) has_exam_no
+        FROM
+        bd_student_scene_confirm scc
+        LEFT JOIN bd_learn_info bli ON scc.learn_id = bli.learn_id
+        LEFT JOIN bd_university bu ON bu.unvs_id = bli.unvs_id
+        LEFT JOIN bd_unvs_profession bup ON bup.pfsn_id = bli.pfsn_id
+        LEFT JOIN bd_learn_rules blr ON bli.learn_id = blr.learn_id
+        LEFT JOIN oa_employee oe ON blr.recruit = oe.emp_id
+        LEFT JOIN oa_department od ON blr.recruit_dp_id = od.dp_id
+        LEFT JOIN oa_campus oc ON blr.recruit_campus_id = oc.campus_id
+        LEFT JOIN bd_test_area bta ON bli.ta_id = bta.ta_id
+        LEFT JOIN bd_test_prove_info tpi on scc.learn_id = tpi.learn_id
+        <where>
+	        <if test="query.empStatus == 2">
+	            AND oe.emp_status ='2'
+	        </if>
+	        <if test="query.empStatus == 1">
+	            AND (oe.emp_status ='1' or oe.emp_status ='3')
+	        </if>
+            <if test="query.unvsId != null and query.unvsId != ''">
+                and bu.unvs_id = #{query.unvsId, jdbcType=VARCHAR}
+            </if>
+            <if test="query.pfsnLevel != null and query.pfsnLevel != ''">
+                and bup.pfsn_level = #{query.pfsnLevel, jdbcType=VARCHAR}
+            </if>
+            <if test="query.pfsnId != null and query.pfsnId != ''">
+                and bup.pfsn_id = #{query.pfsnId, jdbcType=VARCHAR}
+            </if>
+            <if test="query.grade != null and query.grade != ''">
+                and bli.grade = #{query.grade, jdbcType=VARCHAR}
+            </if>
+            <if test="query.scholarship != null and query.scholarship != ''">
+                and bli.scholarship = #{query.scholarship,jdbcType=VARCHAR}
+            </if>
+            <if test="query.recruit != null and query.recruit != ''">
+                and oe.emp_name = #{query.recruit, jdbcType=VARCHAR}
+            </if>
+            <if test="query.campusId != null and query.campusId != ''">
+                and blr.`recruit_campus_id` = #{query.campusId, jdbcType=VARCHAR}
+            </if>
+            <if test="query.dpId != null and query.dpId != ''">
+                and blr.`recruit_dp_id` = #{query.dpId, jdbcType=VARCHAR}
+            </if>
+            <if test="query.taCityCode != null and query.taCityCode != ''">
+                and bli.ta_id in (select ta_id from bd_test_area where city_code = #{query.taCityCode})
+            </if>
+            <if test="query.stdStageArray != null and query.stdStageArray.length!=0">
+                and bli.std_stage in
+                <foreach collection="query.stdStageArray" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="user.userLevel != 1">
+                <choose>
+                    <when test="user.userLevel == 3">
+                        and (blr.recruit = #{user.empId, jdbcType=VARCHAR} or blr.recruit_dp_id in (
+                        <foreach collection="user.myDpList" item="info" separator=",">
+                            #{info.dpId, jdbcType=VARCHAR}
+                        </foreach>
+                        ))
+                    </when>
+                    <when test="user.userLevel == 4">
+                        and (blr.recruit = #{user.empId, jdbcType=VARCHAR} or blr.recruit in (
+                        <foreach collection="user.myEmplyeeList" item="info" separator=",">
+                            #{info.empId, jdbcType=VARCHAR}
+                        </foreach>
+                        ))
+                    </when>
+                    <when test="user.jtList!= null and !user.jtList.contains('ZSLS')">
+                        and bta.city_code in
+                        <foreach collection="user.jtList" item="info" open="(" close=")" separator=",">
+                            #{info, jdbcType=VARCHAR}
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        and blr.recruit = #{user.empId, jdbcType=VARCHAR}
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+</mapper>

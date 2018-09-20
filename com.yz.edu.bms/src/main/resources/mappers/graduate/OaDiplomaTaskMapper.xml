@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.graduate.OaDiplomaTaskMapper">
+	
+	<resultMap type="com.yz.model.graduate.OaDiplomaTask" id="diplomaTaskInfo">
+	  <id column="diploma_id" property="diplomaId" jdbcType="VARCHAR"></id>
+	  <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+	  <result column="warm_tips" property="warmTips" jdbcType="VARCHAR"/>
+	  <result column="warm_reminder" property="warmReminder" jdbcType="VARCHAR"/>
+	  <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+	  <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+	  <result column="update_user_id" property="updateUserId" jdbcType="VARCHAR"/>
+	  <result column="create_user_id" property="createUserId" jdbcType="VARCHAR"/>
+	  <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+	  <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="getOneOaDiplomaTask" resultType="java.util.HashMap">
+		select diploma_id as diplomaId,task_name as taskName,warm_tips as warmTips,warm_reminder as warmReminder from oa_diploma_task where diploma_id = #{diplomaId}
+	</select>
+	
+	<!-- 毕业发放任务查询 -->
+	<select id="getOaDiplomaTask" resultMap="diplomaTaskInfo" parameterType="com.yz.model.graduate.OaDiplomaTask">
+	   select 
+	      odt.`diploma_id`,
+		  odt.`task_name`,
+		  odt.`warm_tips`,
+		  odt.`warm_reminder`,
+		  odt.`update_time`,
+		  odt.`update_user`,
+		  odt.`update_user_id`,
+		  odt.`create_user_id`,
+		  odt.`create_time`,
+		  odt.`create_user`
+		from
+		oa_diploma_task odt
+		where 1 = 1
+		 <if test="warmTips !=null and '' != warmTips">
+		     and  odt.`warm_tips` like  CONCAT('%', CONCAT(#{warmTips}, '%'))
+		 </if>
+		 <if test="warmReminder !=null and '' != warmReminder">
+		     and  odt.`warm_reminder` like  CONCAT('%', CONCAT(#{warmReminder}, '%'))
+		 </if>
+		  <if test="diplomaId !=null and '' != diplomaId">
+		  	 and odt.`diploma_id` = #{diplomaId}
+		 </if>
+		 <if test="startTime != null and startTime != ''">
+            AND  odt.`create_time` >= #{startTime,jdbcType=VARCHAR}
+       	 </if>
+         <if test="endTime != null and endTime != ''">
+            AND  odt.`create_time` &lt;= #{endTime,jdbcType=VARCHAR}
+         </if>
+         order by odt.`create_time` DESC
+	</select>
+	
+	<update id="updateOaDiplomaTask" parameterType="com.yz.model.graduate.OaDiplomaTask">
+	  update oa_diploma_task
+		<set>
+		     <if test="taskName !=null and '' != taskName">
+			  	 `task_name` = #{taskName,jdbcType=VARCHAR},
+			 </if>
+			<if test="warmTips !=null and '' != warmTips">
+			     `warm_tips` = #{warmTips,jdbcType=VARCHAR},
+			 </if>
+			 <if test="warmReminder !=null and '' != warmReminder">
+			     `warm_reminder` = #{warmReminder,jdbcType=VARCHAR},
+			 </if>
+			 <if test="updateUser != null and updateUser != ''">
+	             `update_user` = #{updateUser,jdbcType=VARCHAR},
+	       	 </if>
+	         <if test="updateUserId != null and updateUserId != ''">
+	            `update_user_id` = #{updateUserId,jdbcType=VARCHAR},
+	         </if>
+				`update_time` = now()
+		</set>
+	     where diploma_id = #{diplomaId,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteOaDiplomaTask">
+	   delete from oa_diploma_task  where diploma_id = #{diplomaId}
+	</delete>
+
+	<insert id="insert" parameterType="com.yz.model.graduate.OaDiplomaTask">
+        INSERT INTO `oa_diploma_task` (
+        `diploma_id`,
+        `task_name`,
+        `warm_tips`,
+        `warm_reminder`,
+        `create_user_id`,
+        `create_time`,
+        `create_user`
+        )
+        VALUES
+        (
+        #{diplomaId},
+        #{taskName},
+        #{warmTips},
+        #{warmReminder},
+        #{createUserId},
+        #{createTime},
+        #{createUser}
+        );
+    </insert>
+	
+	<select id="getTaskName" resultType="java.util.HashMap">
+	    select diploma_id,task_name from oa_diploma_task
+	</select>
+	
+	<select id="getOaDiplomaTaskConfigure" resultType="java.lang.Integer">
+	    select count(1) from oa_diploma_task_configure where `diploma_id` = #{diplomaId}
+	</select>
+	
+</mapper>

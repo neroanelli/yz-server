@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.operate.BdEnrollLotteryMapper" >
+  <resultMap id="BaseResultMap" type="com.yz.model.operate.BdEnrollLotteryInfo" >
+    <id column="lottery_id" property="lotteryId" jdbcType="VARCHAR" />
+    <result column="lottery_name_name" property="lotteryName" jdbcType="VARCHAR" />
+    <result column="lottery_num" property="lotteryNum" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TIMESTAMP" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    <result column="lottery_url" property="lotteryUrl" jdbcType="VARCHAR"/>
+    <result column="if_limit_reg_time" property="ifLimitRegTime" jdbcType="VARCHAR"/>
+    <association property="attrList" column="lottery_id" select="selectAtsCustomizeAttr" />
+  </resultMap>
+  
+  <select id="getEnrollLotteryList" resultMap="BaseResultMap" parameterType="com.yz.model.operate.BdEnrollLotteryInfo">
+  	SELECT 
+	  lottery_id,
+	  lottery_name_name,
+	  lottery_num,
+	  DATE_FORMAT(start_time, '%Y-%m-%d %H:%i:%s') start_time,
+	  DATE_FORMAT(end_time, '%Y-%m-%d %H:%i:%s') end_time,
+	  `status` 
+	FROM
+	  goods.`gs_lottery`
+	where 1=1
+	<if test="lotteryName !=null and '' !=lotteryName">
+		and lottery_name_name like concat('%',#{lotteryName,jdbcType=VARCHAR},'%');
+	</if> 
+  </select>
+  
+  <select id="getScholarshipList" resultType="java.util.HashMap">
+  		SELECT sd.`dict_name` dictName,sd.`dict_value` dictValue, '' attrValue FROM
+		bms.`sys_dict` sd WHERE sd.p_id='scholarship' order by create_time desc
+  </select>
+  
+  <insert id="addLotteryInfo" parameterType="com.yz.model.operate.BdEnrollLotteryInfo" >
+    insert into goods.`gs_lottery`
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        lottery_id,
+      <if test="lotteryName != null and '' != lotteryName" >
+        lottery_name_name,
+      </if>
+      <if test="lotteryNum != null and '' != lotteryNum" >
+        lottery_num,
+      </if>
+      <if test="status != null and '' != status" >
+        `status`,
+      </if>
+      <if test="startTime !=null and '' != startTime">
+      	start_time,
+      </if>
+      <if test="endTime !=null and '' != endTime">
+      	end_time,
+      </if>
+      <if test="lotteryUrl !=null and '' != lotteryUrl">
+      	lottery_url,
+      </if>
+      <if test="ifLimitRegTime !=null and '' !=ifLimitRegTime">
+      	if_limit_reg_time,
+      </if>
+      <if test="updateUser != null and '' != updateUser" >
+        update_user,
+        update_time,
+      </if>
+      <if test="updateUserId != null and '' != updateUserId" >
+        update_user_id,
+      </if>
+      <if test="remark !=null and '' != remark">
+      	 remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{lotteryId,jdbcType=VARCHAR},
+      <if test="lotteryName != null and '' != lotteryName" >
+        #{lotteryName,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryNum != null and '' != lotteryNum" >
+        #{lotteryNum,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null and '' != status" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="startTime !=null and '' != startTime">
+      	#{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime !=null and '' != endTime">
+      	#{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryUrl !=null and '' != lotteryUrl">
+      	#{lotteryUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ifLimitRegTime !=null and '' !=ifLimitRegTime">
+      	#{ifLimitRegTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null and '' != updateUser" >
+        #{updateUser,jdbcType=VARCHAR},
+        NOW(),
+      </if>
+      <if test="updateUserId != null and '' != updateUserId" >
+        #{updateUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null and '' !=remark">
+      	#{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>;
+    <if test="items.size() >0">
+	    insert into common.`ats_customize_attr`(ref_type,ref_handler,attr_name,attr_desc,attr_value,attr_seq)
+		values
+		<foreach collection="items" item="item" index="index" separator="," >  
+	       	('lotteryRule',#{lotteryId},#{item.dictValue},#{item.dictName},#{item.attrValue},#{item.attrSeq})
+	   	</foreach>
+    </if>
+    
+  </insert>
+  
+  <update id="updateLotteryInfo" parameterType="com.yz.model.operate.BdEnrollLotteryInfo" >
+    update goods.`gs_lottery`
+    <set >
+      <if test="lotteryName != null and '' !=lotteryName" >
+        lottery_name_name = #{lotteryName,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryNum != null and '' != lotteryNum" >
+        lottery_num = #{lotteryNum,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null and '' != status" >
+        `status` = #{status,jdbcType=CHAR},
+      </if>
+      <if test="lotteryUrl !=null and '' !=lotteryUrl">
+      	lottery_url = #{lotteryUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ifLimitRegTime !=null and '' != ifLimitRegTime">
+      	if_limit_reg_time =#{ifLimitRegTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null and ''!=updateUser" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null and '' != updateUserId" >
+        update_user_id = #{updateUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime !=null and '' != startTime">
+      	start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime !=null and '' != endTime">
+      	end_time =#{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="remark !=null and '' != remark">
+      	 remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where lottery_id = #{lotteryId,jdbcType=VARCHAR};
+    
+    delete from common.`ats_customize_attr` where ref_type='lotteryRule' and ref_handler=#{lotteryId,jdbcType=VARCHAR};
+    <if test="items.size() >0">
+	    insert into common.`ats_customize_attr`(ref_type,ref_handler,attr_name,attr_desc,attr_value,attr_seq)
+		values
+		<foreach collection="items" item="item" index="index" separator="," >  
+	       	('lotteryRule',#{lotteryId},#{item.dictValue},#{item.dictName},#{item.attrValue},#{item.attrSeq})
+	   	</foreach>
+    </if>
+  </update>
+  <select id="getEnrollLotteryInfo" resultMap="BaseResultMap">
+  	SELECT 
+	  lottery_id,
+	  lottery_name_name,
+	  lottery_num,
+	  start_time,
+	  end_time,
+	  `status`,
+	  remark,
+	  lottery_url,
+	  if_limit_reg_time
+	FROM
+	  goods.`gs_lottery` 
+	  where lottery_id=#{lotteryId,jdbcType=VARCHAR}
+  </select>
+   <select id="selectAtsCustomizeAttr" parameterType="java.lang.String" resultType="java.util.HashMap">
+		SELECT sd.`dict_name` dictName,sd.`dict_value` dictValue,
+		(SELECT aca.`attr_value` FROM common.`ats_customize_attr` aca
+		WHERE aca.`attr_name` = sd.`dict_value` AND aca.`ref_handler`=#{lotteryId,jdbcType=VARCHAR})
+		attrValue FROM
+		bms.`sys_dict` sd WHERE sd.p_id='scholarship' ORDER BY sd.`create_time` DESC
+	</select>
+	
+	<select id="getLotteryInfoByStatus" resultType="java.util.HashMap">
+		SELECT 
+		  lottery_id AS dictValue,
+		  lottery_name_name AS dictName 
+		FROM
+		  goods.`gs_lottery` gl
+		WHERE 1=1
+		<if test="status !=null and '' != status">
+		  and gl.`status`= #{status,jdbcType=VARCHAR}
+		</if>
+		ORDER BY update_time DESC
+	</select>
+	
+	<select id="getCouponInfoByCond" resultType="java.util.HashMap">
+		SELECT 
+		  coupon_id AS dictValue,
+		  coupon_name AS dictName
+		FROM
+		  bms.`bd_coupon` 
+		WHERE is_allow = '1' 
+		  AND coupon_name LIKE concat('%',"学费抵用",'%')
+		ORDER BY create_time DESC
+	</select>
+</mapper>

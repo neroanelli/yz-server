@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.operate.BdLotteryPrizeMapper" >
+  <resultMap id="BaseResultMap" type="com.yz.model.operate.BdLotteryPrizeInfo" >
+    <id column="prize_id" property="prizeId" jdbcType="VARCHAR" />
+    <result column="lottery_id" property="lotteryId" jdbcType="VARCHAR" />
+    <result column="prize_name" property="prizeName" jdbcType="VARCHAR" />
+    <result column="prize_type" property="prizeType" jdbcType="TIMESTAMP" />
+    <result column="prize_desc" property="prizeDesc" jdbcType="TIMESTAMP" />
+    <result column="prize_count" property="prizeCount" jdbcType="VARCHAR" />
+    <result column="coupon_id" property="couponId" jdbcType="VARCHAR"/>
+    <result column="is_carousel" property="isCarousel" jdbcType="VARCHAR"/>
+    <result column="is_allow" property="isAllow" jdbcType="VARCHAR"/>
+    <result column="order_num" property="orderNum" jdbcType="VARCHAR"/>
+    <result column="original_price" property="originalPrice" jdbcType="VARCHAR"/>
+    <result column="unit" property="unit" jdbcType="VARCHAR"/>
+    <result column="cost_price" property="costPrice" jdbcType="VARCHAR"/>
+    <result column="lottery_name" property="lotteryName" jdbcType="VARCHAR"/>
+    <result column="init_prize_count" property="initPrizeCount" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    <result column="begin" property="begin" jdbcType="VARCHAR"/>
+    <result column="end" property="end" jdbcType="VARCHAR"/>
+    <result column="probability" property="probability" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <select id="getLotteryPrizeList" resultMap="BaseResultMap" parameterType="com.yz.model.operate.BdEnrollLotteryInfo">
+		SELECT 
+		  prize_id,
+		  glp.lottery_id,
+		  prize_name,
+		  prize_type,
+		  prize_desc,
+		  prize_count,
+		  init_prize_count,
+		  coupon_id,
+		  is_carousel,
+		  is_allow,
+		  order_num,
+		  original_price,
+		  unit,
+		  cost_price,
+		  gl.`lottery_name_name` AS lottery_name
+		FROM
+		  goods.`gs_lottery_prize` glp
+		 LEFT JOIN goods.`gs_lottery` gl
+		  ON gl.`lottery_id` = glp.`lottery_id`
+		 where 1=1
+		 <if test="prizeName !=null and '' != prizeName">
+		 	and glp.prize_name like concat('%',#{prizeName,jdbcType=VARCHAR},'%')
+		 </if>
+		 <if test="lotteryName !=null and '' != lotteryName">
+		 	and gl.`lottery_name_name` like concat('%',#{lotteryName,jdbcType=VARCHAR},'%')
+		 </if>
+		 order by gl.update_time DESC,order_num ASC 
+  </select>
+  <insert id="addLotteryPrizeInfo" parameterType="com.yz.model.operate.BdLotteryPrizeInfo">
+  	insert into goods.`gs_lottery_prize`
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        prize_id,
+      <if test="lotteryId != null and '' != lotteryId" >
+        lottery_id,
+      </if>
+      <if test="prizeName != null and '' != prizeName" >
+        prize_name,
+        prize_desc,
+      </if>
+      <if test="prizeType != null and '' != prizeType" >
+        `prize_type`,
+      </if>
+      <if test="prizeCount !=null and '' != prizeCount">
+      	prize_count,
+      	init_prize_count,
+      </if>
+      <if test="begin !=null and '' != begin">
+      	begin,
+      </if>
+      <if test="end !=null and '' != end">
+      	end,
+      </if>
+      <if test="probability !=null and '' !=probability">
+      	probability,
+      </if>
+      <if test="couponId != null and '' != couponId">
+      	coupon_id,
+      </if>
+      <if test="isCarousel !=null and '' != isCarousel">
+      	is_carousel,
+      </if>
+      <if test="isAllow !=null and '' != isAllow">
+      	is_allow,
+      </if>
+      <if test="orderNum !=null and '' != orderNum">
+      	order_num,
+      </if>
+      <if test="updateUser != null and '' != updateUser" >
+        update_user,
+        update_time,
+      </if>
+      <if test="updateUserId != null and '' != updateUserId" >
+        update_user_id,
+      </if>
+      <if test="remark !=null and '' != remark">
+      	 remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+         #{prizeId,jdbcType=VARCHAR},
+      <if test="lotteryId != null and '' != lotteryId" >
+        #{lotteryId,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeName != null and '' != prizeName" >
+        #{prizeName,jdbcType=VARCHAR},
+        #{prizeName,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeType != null and '' != prizeType" >
+        #{prizeType,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeCount !=null and '' != prizeCount">
+      	#{prizeCount,jdbcType=VARCHAR},
+      	#{prizeCount,jdbcType=VARCHAR},
+      </if>
+      <if test="begin !=null and '' != begin">
+      	#{begin,jdbcType=VARCHAR},
+      </if>
+      <if test="end !=null and '' != end">
+      	#{end,jdbcType=VARCHAR},
+      </if>
+      <if test="probability !=null and '' !=probability">
+      	#{probability,jdbcType=VARCHAR},
+      </if>
+      <if test="couponId != null and '' != couponId">
+      	#{couponId,jdbcType=VARCHAR},
+      </if>
+      <if test="isCarousel !=null and '' != isCarousel">
+      	#{isCarousel,jdbcType=VARCHAR},
+      </if>
+      <if test="isAllow !=null and '' != isAllow">
+      	#{isAllow,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNum !=null and '' != orderNum">
+      	#{orderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null and '' != updateUser" >
+        #{updateUser,jdbcType=VARCHAR},
+        NOW(),
+      </if>
+      <if test="updateUserId != null and '' != updateUserId" >
+        #{updateUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="remark !=null and '' != remark">
+      	#{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateLotteryPrizeInfo" parameterType="com.yz.model.operate.BdLotteryPrizeInfo">
+  	 update goods.`gs_lottery_prize`
+    <set >
+      <if test="lotteryId != null and '' != lotteryId" >
+        lottery_id = #{lotteryId,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeName != null and '' != prizeName" >
+        prize_name = #{prizeName,jdbcType=VARCHAR},
+        prize_desc = #{prizeName,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeType != null and '' !=prizeType" >
+        `prize_type` = #{prizeType,jdbcType=CHAR},
+      </if>
+      <if test="prizeCount != null and '' !=prizeCount" >
+        prize_count = #{prizeCount,jdbcType=VARCHAR},
+        init_prize_count = #{prizeCount,jdbcType=VARCHAR},
+      </if>
+      <if test="begin !=null and '' != begin">
+      	begin = #{begin,jdbcType=VARCHAR},
+      </if>
+      <if test="end !=null and '' != end">
+      	end = #{end,jdbcType=VARCHAR},
+      </if>
+      <if test="probability !=null and '' !=probability">
+      	probability = #{probability,jdbcType=VARCHAR},
+      </if>
+      <if test="couponId !=null and '' != couponId">
+      	coupon_id = #{couponId,jdbcType=VARCHAR},
+      </if>
+      <if test="isCarousel !=null and '' != isCarousel">
+      	is_carousel = #{isCarousel,jdbcType=VARCHAR},
+      </if>
+      <if test="isAllow !=null and '' !=isAllow">
+      	is_allow = #{isAllow,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNum !=null and '' != orderNum">
+      	order_num = #{orderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null and '' != updateUserId" >
+        update_user_id = #{updateUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser !=null and '' !=updateUser">
+      	update_user = #{updateUser,jdbcType=VARCHAR},
+      	update_time = NOW(),
+      </if>
+      <if test="remark !=null and '' != remark">
+      	 remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where prize_id = #{prizeId,jdbcType=VARCHAR};
+  </update>
+  
+  <select id="getLotteryPrizeInfo" resultMap="BaseResultMap">
+  	SELECT 
+	  prize_id,
+	  lottery_id,
+	  prize_name,
+	  prize_type,
+	  prize_count,
+	  remark,
+	  probability,
+	  coupon_id,
+	  is_carousel,
+	  is_allow,
+	  order_num,
+	  begin,
+	  end
+	FROM
+	  goods.`gs_lottery_prize`
+	  where prize_id=#{prizeId,jdbcType=VARCHAR}
+  </select>
+</mapper>

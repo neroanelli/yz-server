@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yz.dao.stdService.StudentDiplomaMapper">
+
+	<resultMap type="com.yz.model.stdService.StudentDiplomaInfo" id="StudentDiplomaMap">
+		<result column="follow_id" property="followId" jdbcType="VARCHAR"/>
+		<result column="task_title" property="taskTitle" jdbcType="VARCHAR"/>
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR"/>
+		<result column="recruit_type" property="recruitType" jdbcType="VARCHAR"/>
+		<result column="diploma_id" property="diplomaId" jdbcType="VARCHAR"/>
+		<result column="school_roll" property="schoolRoll" jdbcType="VARCHAR"/>
+		<result column="std_no" property="stdNo" jdbcType="VARCHAR"/>
+		<result column="std_id" property="stdId" jdbcType="VARCHAR"/>
+		<result column="std_name" property="stdName" jdbcType="VARCHAR"/>
+		<result column="grade" property="grade" jdbcType="VARCHAR"/>
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR"/>
+		<result column="pfsn_code" property="pfsnCode" jdbcType="VARCHAR"/>
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR"/>
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR"/>
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR"/>
+		<result column="emp_name" property="tutor" jdbcType="VARCHAR"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="id_card" property="idCard" jdbcType="VARCHAR"/>
+		<result column="task_id" property="taskId" jdbcType="VARCHAR"/>
+		<result column="is_reset" property="isReset" jdbcType="VARCHAR"/>
+		<result column="is_view" property="isView" jdbcType="VARCHAR"/>
+		<result column="view_time" property="viewTime" jdbcType="VARCHAR"/>
+		<result column="diploma_code" property="diplomaCode" jdbcType="VARCHAR"/>
+		<result column="is_affirm" property="isAffirm" jdbcType="VARCHAR"/>
+		<result column="affirm_starttime" property="affirmStartTime" jdbcType="VARCHAR"/>
+    	<result column="affirm_endtime" property="affirmEndTime" jdbcType="VARCHAR"/>
+    	<result column="receive_address" property="receiveAddress" jdbcType="VARCHAR"/>
+		<result column="unconfirm_reason" property="unconfirmReason" jdbcType="VARCHAR"/>
+		<result column="other_reason" property="otherReason" jdbcType="VARCHAR"/>
+		<result column="receive_province" property="receiveProvince" jdbcType="VARCHAR"/>
+		<result column="receive_city" property="receiveCity" jdbcType="VARCHAR"/>
+		<result column="receive_district" property="receiveDistrict" jdbcType="VARCHAR"/>
+		<result column="receive_status" property="receiveStatus" jdbcType="VARCHAR"/>
+		<result column="receive_time" property="receiveTime" jdbcType="VARCHAR"/>
+		<result column="is_mail" property="isMail" jdbcType="VARCHAR"/>
+		<result column="invoice_no" property="invoiceNo" jdbcType="VARCHAR"/>
+		<result column="addressee" property="addressee" jdbcType="VARCHAR"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+		<result column="address" property="address" jdbcType="VARCHAR"/>
+		<result column="province" property="province" jdbcType="VARCHAR"/>
+		<result column="city" property="city" jdbcType="VARCHAR"/>
+		<result column="district" property="district" jdbcType="VARCHAR"/>
+		<result column="logistics_no" property="logisticsNo" jdbcType="VARCHAR"/>
+		<result column="config_id" property="configId" jdbcType="VARCHAR"/>
+		<result column="place_id" property="placeId" jdbcType="VARCHAR"/>
+		<result column="place_name" property="placeName" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="findAllDiplomaList" resultMap="StudentDiplomaMap">
+		SELECT
+		a.follow_id,
+		oti.task_title,
+		bli.recruit_type,
+		bli.std_no,
+		bli.std_id,
+		bli.school_roll,
+		bsi.std_name,
+		bsi.id_card,
+		bli.grade,
+		u.unvs_name,
+		p.pfsn_code,
+		p.pfsn_level,
+		p.pfsn_name,
+		bli.std_stage,
+		a.is_view,
+		date_format(a.view_time,'%Y-%m-%d %H:%i:%S') view_time,
+		a.diploma_code,
+		a.is_affirm,
+		DATE_FORMAT(otc.start_time,'%Y-%m-%d %p %H:%i') affirm_starttime,
+	    DATE_FORMAT(otc.end_time, '%H:%i') affirm_endtime,
+		a.unconfirm_reason,
+		a.other_reason,
+		a.receive_status,
+		a.receive_address,
+		odp.city_code receive_province,
+		odp.city_code receive_city,
+		odp.district_code receive_district,
+		date_format(a.receive_time,'%Y-%m-%d %H:%i:%S') receive_time,
+		a.is_mail,
+		a.invoice_no,
+		a.addressee,
+		a.mobile,
+		a.province,
+		a.city,
+		a.district,
+		a.address,
+		a.logistics_no,
+		oe.emp_name,
+		a.is_reset,
+		a.remark,
+		a.task_id,
+		a.learn_id,
+		a.diploma_id,
+		a.config_id,
+		otc.place_id,
+		odp.place_name
+		FROM
+		oa_student_diploma_give_task a
+		LEFT JOIN oa_diploma_task_configure otc ON a.config_id = otc.config_id	
+		LEFT JOIN oa_diploma_place odp ON odp.place_id = otc.place_id
+		LEFT JOIN bd_learn_info bli ON a.learn_id = bli.learn_id
+		LEFT JOIN bd_student_info bsi ON bli.std_id = bsi.std_id
+		LEFT JOIN oa_task_info oti ON a.task_id = oti.task_id
+		LEFT JOIN bd_learn_rules blr ON a.learn_id = blr.learn_id
+		LEFT JOIN oa_employee oe ON blr.tutor = oe.emp_id
+		LEFT JOIN bd_university u ON bli.unvs_id = u.unvs_id
+		LEFT JOIN bd_unvs_profession p ON bli.pfsn_id = p.pfsn_id
+		WHERE 1=1
+			<if test="queryInfo.followId !=null and '' != queryInfo.followId">
+				and a.`follow_id` = #{queryInfo.followId,jdbcType=VARCHAR}
+			</if>
+		  	<if test="queryInfo.stdName !=null and '' != queryInfo.stdName">
+		  		and bsi.`std_name` like concat('%',#{queryInfo.stdName,jdbcType=VARCHAR},'%')
+		  	</if>
+			<if test="queryInfo.stdNo !=null and '' != queryInfo.stdNo">
+				and bli.`std_no` like concat('%',#{queryInfo.stdNo,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="queryInfo.schoolRoll !=null and '' != queryInfo.schoolRoll">
+				and bli.`school_roll` like concat('%',#{queryInfo.schoolRoll,jdbcType=VARCHAR},'%')
+			</if>
+		  	<if test="queryInfo.idCard !=null and '' != queryInfo.idCard">
+		  		and bsi.`id_card` like concat('%',#{queryInfo.idCard,jdbcType=VARCHAR},'%')
+		  	</if>
+			<if test="queryInfo.remark !=null and '' != queryInfo.remark">
+				and a.`remark` like concat('%',#{queryInfo.remark,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="queryInfo.taskId !=null and '' != queryInfo.taskId">
+				and a.`task_id` = #{queryInfo.taskId,jdbcType=VARCHAR}
+			</if>
+		  	<if test="queryInfo.grade !=null and '' != queryInfo.grade">
+		  		and bli.`grade` = #{queryInfo.grade,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.unvsId !=null and '' != queryInfo.unvsId">
+		  		and bli.`unvs_id` = #{queryInfo.unvsId,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.pfsnLevel !=null and '' != queryInfo.pfsnLevel">
+		  		and p.`pfsn_level` = #{queryInfo.pfsnLevel,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.pfsnId !=null and '' != queryInfo.pfsnId">
+		  		and bli.`pfsn_id` = #{queryInfo.pfsnId,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.isView !=null and '' != queryInfo.isView">
+		  		and a.`is_view` = #{queryInfo.isView,jdbcType=VARCHAR}
+		  	</if>
+			<if test="queryInfo.isReset !=null and '' != queryInfo.isReset">
+				and a.`is_reset` = #{queryInfo.isReset,jdbcType=VARCHAR}
+			</if>
+		  	<if test="queryInfo.tutor !=null and '' != queryInfo.tutor">
+		  		and oe.`emp_name` like concat('%',#{queryInfo.tutor,jdbcType=VARCHAR},'%')
+		  	</if>	
+			<if test="queryInfo.receiveAddress !=null and '' != queryInfo.receiveAddress">
+		  		and a.`receive_address` like concat('%',#{queryInfo.receiveAddress,jdbcType=VARCHAR},'%')
+		  	</if>
+		  	<if test="queryInfo.isAffirm !=null and '' != queryInfo.isAffirm">
+		  		and a.`is_affirm` = #{queryInfo.isAffirm,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.affirmTime !=null and '' != queryInfo.affirmTime">
+		  		and a.`config_id` = #{queryInfo.affirmTime,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.unconfirmReason !=null and '' != queryInfo.unconfirmReason">
+		  		and a.`unconfirm_reason` = #{queryInfo.unconfirmReason,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.isUnconfirmReason !=null and '' != queryInfo.isUnconfirmReason">
+				<if test="queryInfo.isUnconfirmReason == 0">
+					and a.`unconfirm_reason` is null
+				</if>
+				<if test="queryInfo.isUnconfirmReason == 1">
+					and LENGTH(a.`unconfirm_reason`)>0 
+				</if>
+			</if>
+			<if test="queryInfo.receiveStatus !=null and '' != queryInfo.receiveStatus">
+		  		and a.`receive_status` = #{queryInfo.receiveStatus,jdbcType=VARCHAR}
+		  	</if>	
+		  	<if test="queryInfo.isInvoiceNo !=null and '' != queryInfo.isInvoiceNo">
+		  		<if test="queryInfo.isInvoiceNo == 0">
+					and a.`invoice_no` is null
+				</if>
+				<if test="queryInfo.isInvoiceNo == 1">
+					and LENGTH(a.`invoice_no`)>0 
+				</if>
+		  	</if>
+		  	<if test="queryInfo.isMail !=null and '' != queryInfo.isMail">
+		  		and a.`is_mail` = #{queryInfo.isMail,jdbcType=VARCHAR}
+		  	</if>	
+		  	<if test="queryInfo.isLogistics !=null and '' != queryInfo.isLogistics">
+				<if test="queryInfo.isLogistics == 0">
+					and (a.logistics_no is null or a.logistics_no='')
+				</if>
+				<if test="queryInfo.isLogistics == 1">
+					and LENGTH(a.logistics_no)>0
+				</if>
+			</if>	
+		  	<if test="queryInfo.receiveTimeStart !=null and '' !=queryInfo.receiveTimeStart">	
+			 	<![CDATA[ and DATE_FORMAT(a.`receive_time`, '%Y-%m-%d') >=  DATE_FORMAT(#{queryInfo.receiveTimeStart}, '%Y-%m-%d')   ]]>
+			</if>
+			<if test="queryInfo.receiveTimeEnd !=null and '' !=queryInfo.receiveTimeEnd">
+			 	<![CDATA[ and DATE_FORMAT(a.`receive_time`, '%Y-%m-%d') <=  DATE_FORMAT(#{queryInfo.receiveTimeEnd}, '%Y-%m-%d')   ]]>
+			</if>
+			<if test="queryInfo.affirmTimeStart !=null and '' != queryInfo.affirmTimeStart">	
+			 	<![CDATA[ and DATE_FORMAT(otc.`affirm_time`, '%Y-%m-%d') >=  DATE_FORMAT(#{queryInfo.affirmTimeStart}, '%Y-%m-%d')   ]]>
+			</if>
+			<if test="queryInfo.affirmTimeStart !=null and '' != queryInfo.affirmTimeStart">
+			 	<![CDATA[ and DATE_FORMAT(otc.`affirm_time`, '%Y-%m-%d') <=  DATE_FORMAT(#{queryInfo.affirmTimeEnd}, '%Y-%m-%d')   ]]>
+			</if>
+			<if test="queryInfo.isRemark !=null and '' != queryInfo.isRemark">
+				<if test="queryInfo.isRemark == 0">
+					and a.remark is null
+				</if>
+				<if test="queryInfo.isRemark == 1">
+					and LENGTH(a.remark)>0
+				</if>
+			</if>	
+			
+			<if test="user.userLevel != 1">
+				<choose>
+					<when test="user.userLevel == 2">
+						and bli.recruit_type = '1'
+					</when>
+					<when test="user.userLevel == 3">
+						and bli.recruit_type = '2'
+					</when>
+					<when test="user.userLevel == 6">
+						and blr.tutor = #{user.empId, jdbcType=VARCHAR}
+					</when>
+					<otherwise>
+						and blr.tutor = #{user.empId, jdbcType=VARCHAR}
+					</otherwise>
+				</choose>
+			</if>
+		order by a.create_time desc
+	</select>
+	
+	<!-- 通过任务得到确认时间列表 -->
+	<select id="findAffirmTimeList" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+		oc.config_id,
+		DATE_FORMAT(oc.start_time,'%Y-%m-%d %H:%i') start_time,
+	    DATE_FORMAT(oc.end_time, '%H:%i') end_time
+        FROM
+        oa_diploma_task_configure oc
+        LEFT JOIN oa_task_info ot ON ot.ey_id = oc.diploma_id
+        WHERE 1=1
+        <if test="taskId != null and '' != taskId">
+           and ot.task_id = #{taskId,jdbcType=VARCHAR}
+        </if>
+        order by oc.start_time asc
+	</select>
+	
+	<select id="selectDiplomaStatisticsInfo"  resultType="java.util.Map">
+		select a.task_id taskId,
+		      oti.task_title taskTitle,
+		      oe.emp_name tutor,
+		      COUNT(bli.learn_id) as total,
+			  COUNT(IF(a.receive_status=0,a.receive_status,NULL)) unfinishedCount,
+			  COUNT(IF((a.receive_status=1 or a.receive_status=2 ),a.receive_status,NULL)) finishCount,
+			  COUNT(IF(a.unconfirm_reason=1 ,a.unconfirm_reason,NULL)) reason1,
+			  COUNT(IF(a.unconfirm_reason=2 ,a.unconfirm_reason,NULL)) reason2,
+			  COUNT(IF(a.unconfirm_reason=3 ,a.unconfirm_reason,NULL)) reason3,
+			  COUNT(IF(a.unconfirm_reason=4 ,a.unconfirm_reason,NULL)) reason4,
+			  COUNT(IF(a.unconfirm_reason=5 ,a.unconfirm_reason,NULL)) reason5
+		FROM oa_student_diploma_give_task a
+			  LEFT JOIN bd_learn_info bli ON a.learn_id = bli.learn_id
+			  LEFT JOIN oa_task_info oti ON a.task_id = oti.task_id
+			  LEFT JOIN bd_learn_rules blr ON a.learn_id = blr.learn_id
+			  LEFT JOIN oa_employee oe ON blr.tutor = oe.emp_id
+		 WHERE 1=1
+		<if test="taskId != null and '' != taskId">
+           and oti.task_id = #{taskId,jdbcType=VARCHAR}
+        </if>
+        <if test="tutor != null and '' != tutor">
+           and oe.`emp_name` like concat('%',#{tutor,jdbcType=VARCHAR},'%')
+        </if>
+		GROUP BY a.task_id,oti.task_title,oe.emp_name
+	</select>
+	<select id="getReceivePlaceList"  parameterType="com.yz.model.stdService.StudentDiplomaInfo" resultType="java.util.Map">
+		select odp.place_id,odp.place_name
+		from oa_diploma_place odp 
+		left join oa_diploma_task_configure  oc
+		on odp.place_id=oc.place_id
+		left join oa_diploma_task_configure_unvis ocu
+		on oc.config_id=ocu.config_id
+		left join bd_unvs_profession bup 
+		on (bup.unvs_id=ocu.unvs_id or ocu.unvs_id='ALL')
+		and (bup.grade=ocu.grade or ocu.grade='ALL')
+		and (bup.pfsn_level=ocu.pfsn_level or ocu.pfsn_level='ALL')
+		left join bd_learn_info bli 
+		on bli.grade=bup.grade  and bli.unvs_id=bup.unvs_id and bli.pfsn_id=bup.pfsn_id
+		where oc.diploma_id=#{diplomaId,jdbcType=VARCHAR}
+		and bli.learn_id=#{learnId,jdbcType=VARCHAR}
+		group by  odp.place_id,odp.place_name
+	</select>
+	
+	<select id="getReceiveAddress" parameterType="java.lang.String"  resultType="java.util.Map">
+		select odp.place_id placeId,
+			  odp.place_name placeName,
+			  province_code  provinceCode,
+			  city_code      cityCode,
+			  district_code  districtCode,
+			  address
+		from oa_diploma_place odp 
+		where odp.place_id=#{placeId,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 通过学员得到其确认时间列表 -->
+	<select id="findAffirmDateListByLearnId" resultType="java.util.Map" parameterType="com.yz.model.stdService.StudentDiplomaInfo">
+		select 
+		DATE_FORMAT(oc.start_time,'%Y-%m-%d') start_time
+		from oa_diploma_task_configure  oc
+		left join oa_diploma_task_configure_unvis ocu
+		on oc.config_id=ocu.config_id
+		left join bd_unvs_profession bup 
+		on (bup.unvs_id=ocu.unvs_id or ocu.unvs_id='ALL')
+		and (bup.grade=ocu.grade or ocu.grade='ALL')
+		and (bup.pfsn_level=ocu.pfsn_level or ocu.pfsn_level='ALL')
+		left join bd_learn_info bli 
+		on bli.grade=bup.grade  and bli.unvs_id=bup.unvs_id and bli.pfsn_id=bup.pfsn_id
+		where oc.diploma_id=#{diplomaId,jdbcType=VARCHAR}		
+		and bli.learn_id=#{learnId,jdbcType=VARCHAR}
+		and oc.place_id=#{placeId,jdbcType=VARCHAR}
+        group by DATE_FORMAT(oc.start_time,'%Y-%m-%d')
+        order by oc.start_time asc
+	</select>
+	
+	<!-- 通过学员得到其确认时间列表 -->
+	<select id="findAffirmTimeListByLearnId" resultType="java.util.Map" parameterType="com.yz.model.stdService.StudentDiplomaInfo">
+		select oc.config_id,
+		DATE_FORMAT(oc.start_time,'%p %H:%i') start_time,
+		DATE_FORMAT(oc.end_time, '%H:%i') end_time,
+		oc.available_numbers,
+		oc.number
+		from oa_diploma_task_configure  oc
+		left join oa_diploma_task_configure_unvis ocu
+		on oc.config_id=ocu.config_id
+		left join bd_unvs_profession bup 
+		on (bup.unvs_id=ocu.unvs_id or ocu.unvs_id='ALL')
+		and (bup.grade=ocu.grade or ocu.grade='ALL')
+		and (bup.pfsn_level=ocu.pfsn_level or ocu.pfsn_level='ALL')
+		left join bd_learn_info bli 
+		on bli.grade=bup.grade  and bli.unvs_id=bup.unvs_id and bli.pfsn_id=bup.pfsn_id
+		where oc.diploma_id=#{diplomaId,jdbcType=VARCHAR}
+		and bli.learn_id=#{learnId,jdbcType=VARCHAR}
+		and oc.place_id=#{placeId,jdbcType=VARCHAR}
+		and DATE_FORMAT(oc.start_time,'%Y-%m-%d')=#{affirmStartTime,jdbcType=VARCHAR}
+		and oc.available_numbers>0
+		group by oc.config_id
+        order by oc.start_time asc
+	</select>
+	
+	
+	<update id="updateRemark">
+		UPDATE oa_student_diploma_give_task SET remark= #{remark,jdbcType=VARCHAR}
+		WHERE follow_id =#{followId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="editDiplomaInfo"  parameterType="com.yz.model.stdService.StudentDiplomaInfo">
+		UPDATE oa_student_diploma_give_task
+    <set >
+      <if test="diplomaCode != null" >
+        diploma_code = #{diplomaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceNo != null" >
+        invoice_no = #{invoiceNo,jdbcType=CHAR},
+      </if>
+     
+      <if test="unconfirmReason != null" >
+        unconfirm_reason = #{unconfirmReason,jdbcType=VARCHAR},
+      </if>
+      <if test="otherReason != null" >
+        other_reason = #{otherReason,jdbcType=VARCHAR},
+      </if>
+      <if test="addressee != null" >
+        addressee = #{addressee,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        district = #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsNo != null" >
+        logistics_no = #{logisticsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="isMail != null" >
+        is_mail = #{isMail,jdbcType=VARCHAR},
+      </if>
+       <if test="receiveStatus != null" >
+        receive_status = #{receiveStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveTime != null" >
+	      <if test="receiveTime != null and '' == receiveTime" >
+	      	  receive_time = NULL,
+	      </if>
+	      <if test="receiveTime != null and '' != receiveTime" >
+	      	  receive_time = #{receiveTime,jdbcType=VARCHAR},
+	      </if>
+       
+      </if>
+      <if test="receiveAddress != null" >
+        receive_address = #{receiveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="configId != null" >
+        config_id = #{configId,jdbcType=VARCHAR},
+      </if>
+       <if test="isAffirm != null" >
+        is_affirm = #{isAffirm,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where follow_id = #{followId,jdbcType=VARCHAR} 
+	
+	</update>
+	
+	<update id="resetUnconfirmReason">
+		UPDATE oa_student_diploma_give_task SET other_reason=NULL,unconfirm_reason=NULL
+		WHERE follow_id = #{followId,jdbcType=VARCHAR};
+	</update>
+	
+	<update id="receiveInfoSet" parameterType="java.lang.String" >
+		UPDATE oa_diploma_task_configure  oc
+		SET oc.available_numbers = oc.available_numbers-1
+		WHERE oc.config_id = #{configId,jdbcType=VARCHAR};
+		
+		UPDATE oa_diploma_task_configure  oc
+		SET oc.available_numbers = oc.available_numbers+1
+		WHERE oc.config_id = #{configIdOld,jdbcType=VARCHAR};
+		
+		UPDATE oa_student_task set task_status = '1'
+		WHERE task_id = #{taskId,jdbcType=VARCHAR} and learn_id = #{learnId,jdbcType=VARCHAR};
+	</update>
+	
+	
+	<update id="resetTask">
+		UPDATE oa_diploma_task_configure  oc
+		INNER JOIN oa_student_diploma_give_task a
+		ON  oc.config_id=a.config_id
+		set oc.available_numbers = oc.available_numbers+1
+		WHERE a.config_id is not null and a.follow_id = #{followId,jdbcType=VARCHAR};
+		
+		UPDATE oa_student_task set task_status = 0
+		WHERE task_id = #{taskId,jdbcType=VARCHAR} and learn_id = #{learnId,jdbcType=VARCHAR};
+		
+		UPDATE oa_student_diploma_give_task SET is_view=0,view_time=NULL,is_reset = 1,
+		is_affirm = 0,config_id=NULL,unconfirm_reason=NULL,other_reason=NULL,receive_status='0',
+		receive_address=NULL,receive_time=NULL,
+		reset_time=now()
+		WHERE follow_id = #{followId,jdbcType=VARCHAR};
+
+	</update>
+	
+	<select id="getNonExistsStudent" resultType="java.util.Map">
+		DROP TEMPORARY TABLE IF EXISTS tmp_student_diploma;
+		CREATE TEMPORARY TABLE tmp_student_diploma (
+		std_name VARCHAR (50),
+		id_card VARCHAR (50),
+		grade VARCHAR (50));
+		INSERT INTO tmp_student_diploma (
+		std_name,
+		id_card,
+		grade
+		)
+		VALUES
+		<foreach collection="studentDiplomaInfoList" item="info" separator=",">
+			(
+			#{info.stdName, jdbcType=VARCHAR},
+			#{info.idCard, jdbcType=VARCHAR},
+			#{info.grade, jdbcType=VARCHAR}
+			)
+		</foreach>;
+		SELECT
+		d.std_name,
+		d.id_card,
+		d.grade
+		FROM
+		oa_student_diploma_give_task a
+		LEFT JOIN bd_learn_info bli ON a.learn_id = bli.learn_id
+		LEFT JOIN bd_student_info bsi ON bsi.std_id = bli.std_id
+		RIGHT JOIN tmp_student_diploma d 
+		ON d.std_name = bsi.std_name
+		AND d.id_card = bsi.id_card
+		AND d.grade = bli.grade
+		WHERE
+		a.follow_id IS NULL;
+	</select>
+	
+	<insert id="insertByExcel">
+		DROP TEMPORARY TABLE IF EXISTS tmp_student_diploma;
+		CREATE TEMPORARY TABLE tmp_student_diploma (
+		std_name VARCHAR (50),
+		id_card VARCHAR (50),
+		grade VARCHAR (50),
+		diploma_code VARCHAR(50),
+		invoice_no VARCHAR(50)
+		);
+		INSERT INTO tmp_student_diploma
+		VALUES
+		<foreach collection="studentDiplomaInfoList" item="info" separator=",">
+			(
+			#{info.stdName, jdbcType=VARCHAR},
+			#{info.idCard, jdbcType=VARCHAR},
+			#{info.grade, jdbcType=VARCHAR},
+			#{info.diplomaCode, jdbcType=VARCHAR},
+			#{info.invoiceNo, jdbcType=VARCHAR}
+			)
+		</foreach>;
+		UPDATE oa_student_diploma_give_task ost
+		INNER JOIN bd_learn_info bli ON ost.learn_id = bli.learn_id
+		INNER JOIN bd_student_info bsi ON bsi.std_id = bli.std_id
+		INNER JOIN tmp_student_diploma d 
+		ON  d.std_name = bsi.std_name
+		AND d.id_card = bsi.id_card
+		AND d.grade = bli.grade
+		SET ost.diploma_code = d.diploma_code,ost.invoice_no=d.invoice_no;
+	</insert>
+
+	<select id="checkIfExistByLearnId" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM `oa_student_diploma_give_task` WHERE learn_id =#{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="addStuDiplomaInfo">
+		INSERT INTO bms.`oa_student_diploma_give_task`(follow_id,task_id,diploma_id,learn_id,create_time)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.followId, jdbcType=VARCHAR},
+			 #{item.taskId, jdbcType=VARCHAR},
+			 #{item.diplomaId, jdbcType=VARCHAR},
+			 #{item.learnId,jdbcType=VARCHAR},
+			 NOW())
+		</foreach>
+	</insert>
+	
+	<delete id="delStuDiplomaInfo">
+		delete from bms.`oa_student_diploma_give_task`
+		where task_id=#{taskId,jdbcType=VARCHAR} and learn_id in
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id, jdbcType=CHAR}
+		</foreach>
+	</delete>
+	<insert id="singleAddStuDiplomaInfo">
+		INSERT INTO bms.`oa_student_diploma_give_task`(follow_id,task_id,diploma_id,learn_id,create_time)
+		VALUES
+			(#{followId, jdbcType=VARCHAR},
+			 #{taskId, jdbcType=VARCHAR},
+			 #{diplomaId, jdbcType=VARCHAR},
+			 #{learnId,jdbcType=VARCHAR},
+			 NOW())
+	</insert>
+	
+	<delete id="aloneDelStuDiplomaInfo">
+		delete from bms.`oa_student_diploma_give_task`
+		where task_id=#{taskId,jdbcType=VARCHAR} and learn_id =#{learnId,jdbcType=VARCHAR}
+	</delete>
+</mapper>

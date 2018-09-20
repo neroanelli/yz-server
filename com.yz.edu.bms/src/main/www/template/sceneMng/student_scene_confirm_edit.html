@@ -1,0 +1,303 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="/favicon.ico" >
+	<link rel="Shortcut Icon" href="/favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="lib/html5shiv.js"></script>
+	<script type="text/javascript" src="lib/respond.min.js"></script>
+	<![endif]-->
+	<script type="text/javascript" th:src="@{/js/html5shiv.js}"></script>
+	<script type="text/javascript" th:src="@{/js/respond.min.js}"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.min.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.admin.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/js/Hui-iconfont/1.0.8/iconfont.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/skin/default/skin.css}" id="skin" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/style.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/jquery.select2/select2.min.css}" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--/meta 作为公共模版分离出去-->
+	<title>编辑</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+</head>
+<body>
+	<article class="page-container">
+		<form action="" method="post" class="form form-horizontal" th:object="${dataInfo}" id="form-xuexin-edit">
+		<input type="hidden" th:value="*{learnId}" name="learnId" id="learnId" />
+		<input type="hidden" th:value="*{stdId}" name="stdId" id="stdId" />
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">学员姓名：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="stdName" th:text="*{stdName}"></span>
+				</div>
+			</div>
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">身份证号码：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="idCard" th:text="*{idCard}"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">年级：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="grade" th:text="*{grade}"></span>
+				</div>
+			</div>
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">院校专业：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="unvsInfo"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">学员阶段：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="stdStage"></span>
+				</div>
+			</div>
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">考试县区：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="taName" th:text="*{taName}"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">联系电话：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="mobile" th:text="*{mobile}"></span>
+				</div>
+			</div>
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">招生老师：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="recruit" th:text="*{recruit}"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">优惠类型：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="scholarship"></span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+			    <label class="form-label col-xs-4 col-sm-4">现场预约点：</label>
+				<div class="formControls col-xs-8 col-sm-8">
+					<span id="placeConfirmStatus1" th:if="*{placeConfirmStatus == '0'}">未预约</span>
+					<span id="placeConfirmStatus2" th:if="*{placeConfirmStatus == '1'}">已预约</span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+			    <label class="form-label col-xs-4 col-sm-4">预约内容：</label>
+				<div class="formControls col-xs-8 col-sm-8">
+				   <div id="content">
+						<div>确认城市：<span th:text="*{confirmCity}"></span></div>
+					   <div>确认点：<span th:text="*{confirmName}"></span></div>
+					   <div>日期：<span id="date"></span></div>
+					   <div>时间段：<span id="time"></span></div>
+					   <div>地址：<span th:text="*{address}"></span></div>
+				   </div>
+				</div>
+		   </div>
+		</div>
+		
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+			    <label class="form-label col-xs-4 col-sm-4">网报状态：</label>
+				<div class="formControls col-xs-8 col-sm-8">
+					<span id="webRegisterStatus1" th:if="*{webRegisterStatus == '0'}">待网报</span>
+					<span id="webRegisterStatus2" th:if="*{webRegisterStatus == '1'}">网报成功</span>
+				</div>
+			</div>
+		</div>
+		<div style="margin:10px 135px">
+			<div class="cl">
+				<span class="l mt-15 mb-15">
+				<a href="javascript:;" onclick="insertRegisterNo()" class="btn btn-primary radius"><i
+							class="iconfont"></i>新增预报名</a>
+				</span>	
+			</div>
+			<table class="table table-border table-bordered table-bg table-sort dataTable no-footer">
+				<thead>
+				<tr>
+					<th>预报名时间</th>
+					<th>预报名号</th>
+					<th>预报名密码</th>
+					<th>预报名表编号</th>
+					<th>设置为有效网报信息</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="reg:${regInfo}" >
+					<td th:text="${reg.reg_time}"></td>
+					<td th:text="${reg.username}"></td>
+					<td th:text="${reg.password}"></td>
+					<td th:text="${reg.register_no}"></td>
+					<td>
+						<div class="radio-box">
+						<input type="radio" th:id="${reg.register_id}" th:username="${reg.username}"  name="registerStatus"  th:value="${reg.register_status}" th:if="${reg.register_status} =='1'" checked="checked">
+						<input type="radio" th:id="${reg.register_id}" th:username="${reg.username}"  name="registerStatus"  th:value="${reg.register_status}" th:if="${reg.register_status} =='0'" >
+						</div>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">报考院校及专业：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<div id="confirmUnvsInfo" th:if="*{isUnvsPfsnChange=='0'}" >
+						<div><span th:text="*{confirmUnvsName}" id="confirmUnvsName"></span></div>
+						<div><span th:text="*{confirmPfsnName}" id="confirmPfsnName"></span></div>
+					</div>
+					<div th:if="*{isUnvsPfsnChange=='1'}">
+						<div><span th:text="*{confirmUnvsName}" id="confirmUnvsName" style="color:red;"></span></div>
+						<div><span th:text="*{confirmPfsnName}" id="confirmPfsnName" style="color: red"></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">考试费：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span th:if="*{examPayStatus == '0'}">未缴费</span>
+					<span th:if="*{examPayStatus == '1'}">已缴费</span>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">签到状态：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span th:if="*{signStatus == '0'}">未签到</span>
+					<span th:if="*{signStatus == '1'}">已签到</span>
+				</div>
+			</div>
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">签到时间：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span id="signTime" th:if="*{signStatus == '1'}" th:text="*{signTime}"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">现场确认状态：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span th:if="*{sceneConfirmStatus == '0'}">未确认</span>
+					<span th:if="*{sceneConfirmStatus == '1'}">确认成功</span>
+				</div>
+			</div>
+			<div class="cl col-xs-6 col-sm-6">
+				<label class="form-label col-xs-4 col-sm-4">学历鉴定：</label>
+				<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+					<span th:if="*{educationAppraisal == '0'}">不合格</span>
+					<span th:if="*{educationAppraisal == '1'}">合格</span>
+					<span th:if="*{educationAppraisal == '2'}">通过(应届生)</span>
+					<span th:if="*{educationAppraisal == '3'}">往届待验</span>
+					<span th:if="*{educationAppraisal == '4'}">无需验证</span>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="cl col-xs-6 col-sm-6">
+			<label class="form-label col-xs-4 col-sm-4">考生号：</label>
+			<div class="formControls col-xs-8 col-sm-8" style="padding-left:0;">
+				<input type="text" id="examNo" name="examNo" class="input-text" style="width: 120px;" th:value="*{examNo}" onKeyUp="$.Huitextarealength(this,20)"/>
+			</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2" style="padding-right: 10px;">变更记录：</label>
+			<div class="formControls col-xs-8 col-sm-9" style="padding-left: 5px;">
+				<table>
+					<tr th:each="modify,iterStat:${modifyInfo}">
+						<td width="30" style="padding:5px 0 10px" th:text="${iterStat.count}+'、'"></td>
+						<td width="60" th:text="${modify.create_user}"></td>
+						<td width="180"  th:text="${modify.create_time}"></td>
+						<td th:text="${modify.ext_1}"></td>
+					</tr>
+				</table>
+			</div>
+			
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-2" style="padding-right: 10px;"><span style="color: red"></span>备注：</label>
+			<div class="formControls col-xs-8 col-sm-9" style="padding-left: 5px;">
+				<textarea name="sceneRemark" id="sceneRemark" cols="" rows="" class="textarea" placeholder="请输入备注..." onKeyUp="$.Huitextarealength(this,100)"></textarea>
+                <p class="textarea-numberbar">
+                  <em class="textarea-length">0</em>/100
+                </p>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="submit" class="btn btn-success radius inputW9" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+				<button type="button" class="btn btn-success radius inputW9" id="admin-role-close" name="admin-role-save" onclick="layer_close();"><i class="icon-ok"></i> 取消</button>
+			</div>
+		</div>
+	</form>
+	</article>
+
+	<!--_footer 作为公共模版分离出去-->
+	<script type="text/javascript" th:src="@{/js/jquery/1.9.1/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/layer/2.4/layer.js}"></script>
+	<script type="text/javascript" th:src="@{/js/h-ui/H-ui.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/h-ui/H-ui.admin.js}"></script>
+	<script type="text/javascript" th:src="@{/js/custom/yzCommon.js}"></script>
+	<!--/_footer 作为公共模版分离出去-->
+
+	<!--请在下方写此页面业务相关的脚本-->
+	<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/jquery.validate.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/validate-methods.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/messages_zh.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.select2/select2.full.js}"></script>
+	<script type="text/javascript" th:src="@{/js/My97DatePicker/4.8/WdatePicker.js}"></script>
+	<script type="text/javascript" th:src="${_file_browser + 'cache/dict.json'}"></script>
+	<script type="text/javascript" th:src="${_file_browser + 'cache/pcd.json'}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var dataInfo=[[${dataInfo}]];
+		var stdName=[[${dataInfo.stdName}]];
+		var grade=[[${dataInfo.grade}]];
+		var unvsName=[[${dataInfo.unvsName}]];
+		var pfsnCode=[[${dataInfo.pfsnCode}]];
+		var pfsnName=[[${dataInfo.pfsnName}]];
+		var pfsnLevel=[[${dataInfo.pfsnLevel}]];
+		var stdStage=[[${dataInfo.stdStage}]];
+        var scholarship=[[${dataInfo.scholarship}]];
+        var recruitType=[[${dataInfo.recruitType}]];
+		var sceneRemark=[[${dataInfo.sceneRemark}]]==null?'':[[${dataInfo.sceneRemark}]];
+		var startTime=[[${dataInfo.startTime}]];
+		var endTime=[[${dataInfo.endTime}]];
+		
+	</script>
+	<script type="text/javascript" th:src="@{/js/webjs/sceneMng/student_scene_confirm_edit.js}"></script>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

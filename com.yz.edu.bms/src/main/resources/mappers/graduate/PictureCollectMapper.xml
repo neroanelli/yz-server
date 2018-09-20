@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yz.dao.graduate.PictureCollectMapper">
+
+	<resultMap type="com.yz.model.graduate.PictureCollectInfo" id="PictureCollectMap">
+		<result column="pic_collect_id" property="picCollectId" jdbcType="VARCHAR"/>
+		<result column="school_roll" property="schoolRoll" jdbcType="VARCHAR"/>
+		<result column="std_name" property="stdName" jdbcType="VARCHAR"/>
+		<result column="id_card" property="idCard" jdbcType="VARCHAR"/>
+		<result column="grade" property="grade" jdbcType="VARCHAR"/>
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR"/>
+		<result column="pfsn_code" property="pfsnCode" jdbcType="VARCHAR"/>
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR"/>
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="emp_name" property="tutor" jdbcType="VARCHAR"/>
+		<result column="info_status" property="infoStatus" jdbcType="VARCHAR"/>
+		<result column="confirm_error_message" property="confirmErrorMessage" jdbcType="VARCHAR"/>
+		<result column="picture_no" property="pictureNo" jdbcType="VARCHAR"/>
+		<result column="picture_filename" property="pictureFileName" jdbcType="VARCHAR"/>
+		<result column="picture_url" property="pictureUrl" jdbcType="VARCHAR"/>
+		<result column="is_pay" property="isPay" jdbcType="VARCHAR"/>
+		<result column="check_status" property="checkStatus" jdbcType="VARCHAR"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="sex" property="sex" jdbcType="VARCHAR"/>
+		<result column="unvs_code" property="unvsCode" jdbcType="VARCHAR"/>
+		<result column="unvs_type" property="unvsType" jdbcType="VARCHAR"/>
+		<result column="is_upload_picture" property="isUploadPicture" jdbcType="VARCHAR"/>
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="WhiteListMap" type="com.yz.model.graduate.PictureCollectWhiteInfo">
+		<id column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_code" property="pfsnCode" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pic_collect_id" property="picCollectId" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+		<result column="tutor" property="tutor" jdbcType="VARCHAR" />
+		<result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+		<result column="tutor_name" property="tutorName" jdbcType="VARCHAR" />
+		<result column="std_type" property="stdType" jdbcType="VARCHAR" />
+		<result column="tutor_status" property="tutorStatus" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="findPictureCollectList" resultMap="PictureCollectMap">
+		SELECT
+		a.pic_collect_id,
+		c.std_name,
+		b.school_roll,
+		c.id_card,
+		b.grade,
+		d.unvs_name,
+		e.pfsn_level,
+		e.pfsn_name,
+		e.pfsn_code,
+		g.emp_name,
+		a.info_status,
+		a.confirm_error_message,
+		a.picture_no,
+		a.picture_filename,
+		a.picture_url,
+		ifnull(i.order_status,'0')  is_pay,
+		a.check_status,
+		a.remark,
+		c.sex,
+		d.unvs_code,
+		h.dict_name unvs_type,
+		case when a.picture_filename is not null then '已上传' else '未上传' end is_upload_picture,
+		b.learn_id,
+		b.recruit_type,
+		c.std_id
+		FROM
+		bd_student_picture_collect a
+		LEFT JOIN bd_learn_info b ON a.learn_id = b.learn_id
+		LEFT JOIN bd_student_info c ON b.std_id = c.std_id
+		LEFT JOIN bd_university d ON b.unvs_id = d.unvs_id
+		LEFT JOIN bd_unvs_profession e ON b.pfsn_id = e.pfsn_id
+		LEFT JOIN bd_learn_rules f ON b.learn_id = f.learn_id
+		LEFT JOIN oa_employee g ON f.tutor = g.emp_id
+		LEFT JOIN (
+			SELECT dict_name,dict_value FROM sys_dict WHERE p_id = 'unvsType'
+		) h
+		ON d.unvs_type = h.dict_value
+		LEFT JOIN bd_student_pay_order i ON a.order_no = i.order_no
+		WHERE 1=1
+		  	<if test="queryInfo.stdName !=null and '' != queryInfo.stdName">
+		  		and c.`std_name` like concat('%',#{queryInfo.stdName,jdbcType=VARCHAR},'%')
+		  	</if>
+			<if test="queryInfo.schoolRoll !=null and '' != queryInfo.schoolRoll">
+				and b.`school_roll` like concat('%',#{queryInfo.schoolRoll,jdbcType=VARCHAR},'%')
+			</if>
+		  	<if test="queryInfo.idCard !=null and '' != queryInfo.idCard">
+		  		and c.`id_card` like concat('%',#{queryInfo.idCard,jdbcType=VARCHAR},'%')
+		  	</if>
+		  	<if test="queryInfo.grade !=null and '' != queryInfo.grade">
+		  		and b.`grade` = #{queryInfo.grade,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.unvsId !=null and '' != queryInfo.unvsId">
+		  		and b.`unvs_id` = #{queryInfo.unvsId,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.pfsnLevel !=null and '' != queryInfo.pfsnLevel">
+		  		and e.`pfsn_level` = #{queryInfo.pfsnLevel,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.pfsnId !=null and '' != queryInfo.pfsnId">
+		  		and b.`pfsn_id` = #{queryInfo.pfsnId,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="queryInfo.tutor !=null and '' != queryInfo.tutor">
+		  		and g.emp_name like concat('%',#{queryInfo.tutor,jdbcType=VARCHAR},'%')
+		  	</if>
+			<if test="queryInfo.isRemark !=null and '' != queryInfo.isRemark">
+				<if test="queryInfo.isRemark == 0">
+					and a.remark is null
+				</if>
+				<if test="queryInfo.isRemark == 1">
+					and LENGTH(a.remark)>0
+				</if>
+			</if>
+			<if test="queryInfo.infoStatus !=null and '' != queryInfo.infoStatus">
+				and a.info_status = #{queryInfo.infoStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="queryInfo.checkStatus !=null and '' != queryInfo.checkStatus">
+				and a.check_status = #{queryInfo.checkStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="queryInfo.recruitType !=null and '' != queryInfo.recruitType">
+				and b.recruit_type = #{queryInfo.recruitType,jdbcType=VARCHAR}
+			</if>
+			<if test="queryInfo.isUploadPicture !=null and '' != queryInfo.isUploadPicture">
+				<if test="queryInfo.isUploadPicture == 0">
+					and a.picture_filename is null
+				</if>
+				<if test="queryInfo.isUploadPicture == 1">
+					and a.picture_filename is not null
+				</if>
+			</if>
+			<if test="queryInfo.isPay !=null and '' != queryInfo.isPay">
+				<if test="queryInfo.isPay == 0">
+					and ifnull(i.order_status,'0') = '0'
+				</if>
+				<if test="queryInfo.isPay == 1">
+					and i.order_status = '1'
+				</if>
+			</if>
+			<if test="user.userLevel != 1">
+				<choose>
+					<when test="user.userLevel == 6">
+						and f.tutor = #{user.empId, jdbcType=VARCHAR}
+					</when>
+					<otherwise>
+						and f.tutor = #{user.empId, jdbcType=VARCHAR}
+					</otherwise>
+				</choose>
+			</if>
+		order by a.create_time desc
+	</select>
+
+	<update id="updateRemark">
+		UPDATE bd_student_picture_collect SET remark= #{remark,jdbcType=VARCHAR}
+		WHERE pic_collect_id =#{picCollectId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="check">
+		UPDATE bd_student_picture_collect SET check_status= #{checkStatus,jdbcType=VARCHAR},
+		check_result =#{checkRemark},
+		check_user_id=#{userId},
+		check_time = now()
+		WHERE pic_collect_id IN
+		<foreach collection="picCollectIds" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=VARCHAR}
+		</foreach>
+	</update>
+	
+	<update id="revoke">
+		UPDATE bd_student_picture_collect SET check_status= #{checkStatus,jdbcType=VARCHAR},
+		revoke_user_id=#{userId},
+		revoke_time = now()
+		WHERE pic_collect_id IN
+		<foreach collection="picCollectIds" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=VARCHAR}
+		</foreach>
+	</update>
+
+	<select id="queryWhiteList" resultMap="WhiteListMap"
+			parameterType="com.yz.model.graduate.PictureCollectWhiteQuery">
+		select
+		bsi.`std_id`,
+		bli.`grade`,
+		bli.`learn_id`,
+		bli.`std_stage`,
+		bup.`pfsn_name`,
+		bup.`pfsn_code`,
+		bup.`pfsn_level`,
+		bu.`unvs_name`,
+		pc.`pic_collect_id`,
+		bsi.`std_name`,
+		bli.`recruit_type`,
+		blr.`tutor`,
+		bsi.id_card,
+		oe.`emp_name` tutor_name,
+		oe.`emp_status` tutor_status,
+		bli.`std_type`
+		from
+		bd_learn_info bli
+		left join bd_student_info bsi
+		on bsi.`std_id` = bli.`std_id`
+		left join bd_unvs_profession bup
+		on bli.`pfsn_id` = bup.`pfsn_id`
+		left join bd_university bu
+		on bu.`unvs_id` = bli.`unvs_id`
+		LEFT JOIN bd_learn_rules blr
+		ON blr.`learn_id` = bli.`learn_id`
+		LEFT JOIN bd_student_picture_collect pc
+		ON bli.`learn_id`=pc.`learn_id`
+		LEFT JOIN oa_employee oe
+		ON oe.emp_id = blr.`tutor`
+		where 1=1 and bli.std_stage in ('7','8','14')
+		<if test="tutorId !=null and '' !=tutorId">
+			and oe.`emp_id`=#{tutorId,jdbcType=VARCHAR}
+		</if>
+		<if test="unvsId !=null and '' != unvsId">
+			and bu.`unvs_id`=#{unvsId}
+		</if>
+		<if test="grade !=null and '' != grade">
+			and bli.`grade` =#{grade}
+		</if>
+		<if test="pfsnId !=null and '' != pfsnId">
+			and bup.`pfsn_id` = #{pfsnId,jdbcType=VARCHAR}
+		</if>
+		<if test="stdName !=null and '' != stdName">
+			and bsi.`std_name` like CONCAT('%', CONCAT(#{stdName}, '%'))
+		</if>
+		<if test="idCard !=null and '' != idCard">
+			and bsi.`id_card` = #{idCard}
+		</if>
+		<if test="stdType !=null and '' != stdType">
+			and bli.`std_type` = #{stdType,jdbcType=VARCHAR}
+		</if>
+		<if test="isChecked !=null and '' !=isChecked">
+			<if test="isChecked == 1">
+				and pc.`pic_collect_id` is not null
+			</if>
+			<if test="isChecked == 0">
+				and pc.`pic_collect_id` is null
+			</if>
+		</if>
+		<if test="tutorName !=null and '' != tutorName">
+			and oe.`emp_name` like concat('%',#{tutorName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="pfsnLevel !=null and '' !=pfsnLevel">
+			and bup.`pfsn_level` = #{pfsnLevel,jdbcType=VARCHAR}
+		</if>
+		<if test="stdStageArray != null and stdStageArray.length != '0'.toString()">
+			and bli.std_stage in
+			<foreach collection="stdStageArray" item="item" index="index"
+					 open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	
+	<insert id="addWhiteStu">
+		INSERT INTO bd_student_picture_collect (pic_collect_id,learn_id,std_id,create_user_id,create_user)
+		VALUES
+		<foreach collection="pictureCollectInfos" item="item" separator="," >
+			(
+			#{item.picCollectId, jdbcType=VARCHAR},
+			#{item.learnId, jdbcType=VARCHAR},
+			#{item.stdId,jdbcType=VARCHAR},
+			#{item.createUserId,jdbcType=VARCHAR},
+			#{item.createUser,jdbcType=VARCHAR}
+			)
+		</foreach>
+		ON DUPLICATE KEY UPDATE create_time=now()
+	</insert>
+	
+	<delete id="delWhiteStu">
+		DELETE FROM bd_student_picture_collect
+		WHERE learn_id IN
+		<foreach collection="pictureCollectInfos" item="item" index="index"
+				 open="(" close=")" separator=",">
+			#{item.learnId}
+		</foreach>
+		and picture_filename is null and check_status = 0
+	</delete>
+
+	<select id="getNonExistsWhiteStudent" resultType="java.util.Map">
+		DROP TEMPORARY TABLE IF EXISTS tmp_student_white;
+		CREATE TEMPORARY TABLE tmp_student_white (
+		id_card VARCHAR (50),
+		std_name VARCHAR (50),
+		grade VARCHAR (50));
+		INSERT INTO tmp_student_white (
+		id_card,
+		std_name,
+		grade
+		)
+		VALUES
+		<foreach collection="pictureCollectInfos" item="info" separator=",">
+			(
+			#{info.idCard, jdbcType=VARCHAR},
+			#{info.stdName, jdbcType=VARCHAR},
+			#{info.grade, jdbcType=VARCHAR}
+			)
+		</foreach>;
+		SELECT
+		d.id_card,
+		d.std_name,
+		b.learn_id
+		FROM
+		bd_learn_info b
+		LEFT JOIN bd_student_info c ON b.std_id = c.std_id
+		RIGHT JOIN tmp_student_white d ON d.id_card = c.id_card and d.grade = b.grade
+		WHERE
+		b.learn_id IS NULL;
+	</select>
+
+	<insert id="insertWhite">
+		DROP TEMPORARY TABLE IF EXISTS tmp_student_white;
+		CREATE TEMPORARY TABLE tmp_student_white (
+		id_card VARCHAR (50),
+		std_name VARCHAR (50),
+		grade VARCHAR (50));
+		INSERT INTO tmp_student_white (
+		id_card,
+		std_name,
+		grade
+		)
+		VALUES
+		<foreach collection="pictureCollectInfos" item="info" separator=",">
+			(
+			#{info.idCard, jdbcType=VARCHAR},
+			#{info.stdName, jdbcType=VARCHAR},
+			#{info.grade, jdbcType=VARCHAR}
+			)
+		</foreach>;
+		INSERT INTO bd_student_picture_collect (pic_collect_id,learn_id,std_id,create_user_id,create_user)
+		select seq(),a.learn_id,b.std_id,#{user.userId, jdbcType=VARCHAR},#{user.realName, jdbcType=VARCHAR} from bd_learn_info a
+		join bd_student_info b
+		on a.std_id = b.std_id
+		join tmp_student_white c
+		on c.id_card = b.id_card and a.grade = c.grade
+		ON DUPLICATE KEY UPDATE create_time=now();
+	</insert>
+
+	<select id="getNonExistsStudent" resultType="java.util.Map">
+		DROP TEMPORARY TABLE IF EXISTS tmp_student_collect;
+		CREATE TEMPORARY TABLE tmp_student_collect (
+		id_card VARCHAR (50),
+		std_name VARCHAR (50),
+		grade VARCHAR (50));
+		INSERT INTO tmp_student_collect (
+		id_card,
+		std_name,
+		grade
+		)
+		VALUES
+		<foreach collection="pictureCollectInfos" item="info" separator=",">
+			(
+			#{info.idCard, jdbcType=VARCHAR},
+			#{info.stdName, jdbcType=VARCHAR},
+			#{info.grade, jdbcType=VARCHAR}
+			)
+		</foreach>;
+		SELECT
+		d.id_card,
+		d.std_name,
+		b.learn_id
+		FROM
+		bd_student_picture_collect a
+		LEFT JOIN bd_learn_info b ON a.learn_id = b.learn_id
+		LEFT JOIN bd_student_info c ON b.std_id = c.std_id
+		RIGHT JOIN tmp_student_collect d ON d.id_card = c.id_card and d.grade = b.grade
+		WHERE
+		a.learn_id IS NULL;
+	</select>
+
+	<insert id="insert">
+		DROP TEMPORARY TABLE IF EXISTS tmp_student_collect;
+		CREATE TEMPORARY TABLE tmp_student_collect (
+		id_card VARCHAR (50),
+		std_name VARCHAR (50),
+		grade VARCHAR (50),
+		picture_no VARCHAR (50));
+		INSERT INTO tmp_student_collect (
+		id_card,
+		std_name,
+		grade,
+		picture_no
+		)
+		VALUES
+		<foreach collection="pictureCollectInfos" item="info" separator=",">
+			(
+			#{info.idCard, jdbcType=VARCHAR},
+			#{info.stdName, jdbcType=VARCHAR},
+			#{info.grade, jdbcType=VARCHAR},
+			#{info.pictureNo, jdbcType=VARCHAR}
+			)
+		</foreach>;
+		UPDATE bd_student_picture_collect a
+		join bd_learn_info b on a.learn_id = b.learn_id
+		join bd_student_info c on b.std_id = c.std_id
+		join tmp_student_collect d
+		on d.id_card = c.id_card and b.grade = d.grade
+		set a.picture_no = d.picture_no
+	</insert>
+
+	<select id="getLearnIds" resultType="java.lang.String">
+		SELECT learn_id FROM bd_student_picture_collect WHERE pic_collect_id IN
+		<foreach collection="picCollectIds" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+	<select id="getNotPayStudentList" resultType="java.lang.String">
+		SELECT c.std_name FROM bd_student_picture_collect a
+		LEFT JOIN bd_learn_info b ON a.learn_id = b.learn_id
+		LEFT JOIN bd_student_info c ON b.std_id = c.std_id
+		LEFT JOIN bd_student_pay_order i ON a.order_no = i.order_no
+		WHERE ifnull(i.order_status,'0')=0 and a.pic_collect_id IN
+		<foreach collection="picCollectIds" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=VARCHAR}
+		</foreach>	
+	</select>
+	
+	
+</mapper>

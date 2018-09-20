@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.finance.EditPayableMapper">
+	<resultMap id="BaseResultMap"
+		type="com.yz.model.finance.stdfee.BdPayableInfoResponse">
+		<result column="std_id" property="stdId" />
+		<result column="std_name" property="stdName" />
+		<result column="learn_id" property="learnId" />
+		<result column="std_stage" property="stdStage" />
+		<result column="acc_amount" property="accAmount" />
+		<result column="recruit_type" property="recruitType" />
+		<result column="unvs_name" property="unvsName" />
+		<result column="grade" property="grade" />
+		<result column="pfsn_code" property="pfsnCode" />
+		<result column="pfsn_name" property="pfsnName" />
+		<result column="pfsn_level" property="pfsnLevel" />
+		<result column="learn_id" property="learnId" />
+		<result column="order_status" property="orderStatus" />
+		<result column="std_type" property="stdType" />
+		<result column="fee_id" property="feeId" />
+		<result column="scholarship" property="scholarship" />
+		<result column="inclusion_status" property="inclusionStatus" />
+		<result column="ta_id" property="taId" />
+		<result column="pfsn_id" property="pfsnId" />
+		<association property="payInfos" column="learn_id" select="selectPayInfo" />
+	</resultMap>
+
+	<resultMap type="com.yz.model.finance.stdfee.BdStdPayInfoResponse"
+		id="PayInfoResultMap">
+		<result column="item_code" property="itemCode" />
+		<result column="item_name" property="itemName" />
+		<result column="item_year" property="itemYear" />
+		<result column="payable" property="payable" />
+		<result column="refund_amount" property="refundAmount" />
+		<result column="sub_order_status" property="subOrderStatus" />
+		<result column="sub_order_no" property="subOrderNo" />
+		<result column="amount" property="xjAmount" />
+		<result column="zmamount" property="zmAmount" />
+		<result column="zlamount" property="zlAmount" />
+		<result column="yhqamount" property="yhqAmount" />
+	</resultMap>
+
+	<update id="editPayables" parameterType="java.lang.String">
+		update bms.bd_sub_order
+		<set>
+			<if test="amount != null and amount != ''">
+				fee_amount = #{amount,jdbcType=VARCHAR},
+				payable=#{amount,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where sub_order_no = #{subOrderNo,jdbcType=VARCHAR}
+	</update>
+	<update id="updateOrder" parameterType="java.lang.String">
+		update bms.`bd_student_order`
+		<set>
+			<if test="amount != null and amount != ''">
+				amount = #{amount,jdbcType=VARCHAR},
+				payable = #{amount,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where order_no = #{orderNo,jdbcType=VARCHAR}
+	</update>
+
+	<select id="getEditPayableList" resultMap="BaseResultMap">
+		SELECT
+		bsi.`std_id`,
+		bsi.`std_name`,
+		if(aac.`acc_amount` is
+		null,'0.00',aac.`acc_amount`) acc_amount,
+		bli.`learn_id`,
+		bli.`std_stage`,
+		bs.`order_status`,
+		bu.`recruit_type`,
+		bu.`unvs_name`,
+		bup.`pfsn_code`,
+		bli.`grade`,
+		bli.`std_type`,
+		bup.`pfsn_name`,
+		bup.`pfsn_level`,
+		bli.`fee_id`,
+		bli.`pfsn_id`,
+		bli.`ta_id`,
+		bli.`scholarship`,
+		bli.`inclusion_status`
+		FROM
+		bd_student_info bsi
+		LEFT
+		JOIN bd_learn_info
+		bli
+		ON bli.`std_id` = bsi.`std_id` AND
+		bli.`std_stage` NOT IN('8','10','11')
+		LEFT JOIN
+		bd_student_order bs
+		ON
+		bs.`learn_id` = bli.`learn_id`
+		LEFT JOIN
+		bd_university bu
+		ON
+		bu.`unvs_id`
+		= bli.`unvs_id`
+		LEFT JOIN
+		bd_unvs_profession bup
+		ON
+		bup.`pfsn_id` =
+		bli.`pfsn_id`
+		LEFT JOIN
+		bd_test_area bta
+		ON bta.`ta_id`
+		= bli.`ta_id`
+		LEFT
+		JOIN
+		goods.`ats_account` aac ON aac.`std_id` = bsi.`std_id` AND
+		aac.`acc_type`='3'
+		<where>
+			<if test="query.studentName != null and query.studentName != ''">
+				and bsi.std_name LIKE CONCAT('%',
+				CONCAT(#{query.studentName},
+				'%'))
+			</if>
+			<if test="query.idCard != null and query.idCard != ''">
+				and bsi.id_card = #{query.idCard}
+			</if>
+			<if test="query.mobile != null and query.mobile != ''">
+				and bsi.mobile = #{query.mobile}
+			</if>
+			<if test="query.recruitType != null and query.recruitType != ''">
+				and bli.recruit_type = #{query.recruitType}
+			</if>
+			<if test="query.stdStage != null and query.stdStage != ''">
+				and bli.std_stage = #{query.stdStage}
+			</if>
+			<if test="query.scholarship != null and query.scholarship != ''">
+				and bli.scholarship = #{query.scholarship}
+			</if>
+		</where>
+		order by bs.create_time desc
+	</select>
+
+	<select id="getStudent" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		bsi.`std_id`,
+		bsi.`std_name`,
+		if(aac.`acc_amount` is
+		null,'0.00',aac.`acc_amount`) acc_amount,
+		bli.`learn_id`,
+		bli.`std_stage`,
+		bs.`order_status`,
+		bu.`recruit_type`,
+		bu.`unvs_name`,
+		bup.`pfsn_code`,
+		bli.`grade`,
+		bli.`std_type`,
+		bup.`pfsn_name`,
+		bup.`pfsn_level`,
+		bli.`fee_id`,
+		bli.`pfsn_id`,
+		bli.`ta_id`,
+		bli.`scholarship`,
+		bli.`inclusion_status`
+		FROM
+		bd_student_info bsi
+		LEFT
+		JOIN bd_learn_info
+		bli
+		ON bli.`std_id` = bsi.`std_id` AND
+		bli.`std_stage` NOT IN('8','10','11')
+		LEFT JOIN
+		bd_student_order bs
+		ON
+		bs.`learn_id` = bli.`learn_id`
+		LEFT JOIN
+		bd_university bu
+		ON
+		bu.`unvs_id`
+		= bli.`unvs_id`
+		LEFT JOIN
+		bd_unvs_profession bup
+		ON
+		bup.`pfsn_id` =
+		bli.`pfsn_id`
+		LEFT JOIN
+		bd_test_area bta
+		ON bta.`ta_id`
+		= bli.`ta_id`
+		LEFT
+		JOIN
+		goods.`ats_account` aac ON aac.`std_id` = bsi.`std_id` AND
+		aac.`acc_type`='3'
+		<where>
+			<if test="learnId != null and learnId != ''">
+				and bli.learn_id = #{learnId}
+			</if>
+		</where>
+		order by bs.create_time desc
+	</select>
+
+	<select id="selectPayInfo" parameterType="java.lang.String"
+		resultMap="PayInfoResultMap">
+		SELECT
+		bfi.`item_code`,
+		bfi.`item_name`,
+		bso.`payable`,
+		bso.`sub_order_status`,
+		bso.sub_order_no
+		FROM
+		bd_student_order bs
+		LEFT
+		JOIN bd_sub_order
+		bso
+		ON bso.`order_no` = bs.`order_no`
+		LEFT JOIN
+		bd_fee_item bfi
+		ON
+		bfi.`item_code` = bso.`item_code`
+		WHERE bs.`learn_id`
+		= #{learn_id}
+		and
+		bso.sub_order_status != '4'
+		and
+		bso.sub_order_status !=
+		'3'
+		ORDER BY
+		bfi.order_num
+	</select>
+</mapper>

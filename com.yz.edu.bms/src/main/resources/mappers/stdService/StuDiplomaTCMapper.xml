@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yz.dao.stdService.StuDiplomaTCMapper">
+    
+    <resultMap id="StuDiplomaTCMap" type="com.yz.model.stdService.StuDiplomaTC">
+        <result column="config_id" property="configId" jdbcType="VARCHAR"/>
+        <result column="diploma_id" property="diplomaId" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="place_id" property="placeId" jdbcType="VARCHAR"/>
+        <result column="place_name" property="placeName" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="VARCHAR"/>
+        <result column="end_time" property="endTime" jdbcType="VARCHAR"/>
+        <result column="number" property="number" jdbcType="VARCHAR"/>
+        <result column="available_numbers" property="availableNumbers" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <collection property="stuDiplomaTCU" column="config_id" ofType="list" select="getStuDiplomaTCU"></collection>
+    </resultMap>
+    <insert id="insert" parameterType="com.yz.model.stdService.StuDiplomaConfig">
+    <selectKey resultType="string" order="BEFORE" keyProperty="configId">
+      SELECT seq()
+    </selectKey>
+        INSERT INTO `bms`.`oa_diploma_task_configure`
+        (
+        `config_id`,
+        `diploma_id`,
+        `place_id`,
+        `start_time`,
+        `end_time`,
+        `number`,
+        `available_numbers`,
+        `status`
+        )
+        VALUES
+        (
+        #{configId},
+        #{diplomaId},
+        #{placeId},
+        #{startTime},
+        #{endTime},
+        #{number},
+        #{availableNumbers},
+        '1'
+        );
+    </insert>
+    <insert id="insertUnvis">
+        INSERT INTO bms.oa_diploma_task_configure_unvis(id,config_id,grade,unvs_id,pfsn_level) VALUES
+        <foreach collection="stuDiplomaConfigUnvis" separator="," item="item" index="i">
+            <if test="null != item.grade and '' != item.grade">
+            (
+                seq(),
+                #{configId},
+                #{item.grade},
+                #{item.unvsId},
+                #{item.pfsnLevel}
+                )
+            </if>
+        </foreach>
+    </insert>
+    <update id="updateStatus">
+        update bms.oa_diploma_task_configure set status = #{status}
+        where
+        config_id in (
+        <foreach collection="configIds" item="configId" index="index" separator=",">
+            #{configId}
+        </foreach>
+        )
+        <if test="status != null and ''!= status">
+            <if test="status == 1">
+                and `status` = 2
+            </if>
+            <if test="status == 2">
+                and `status` = 1
+            </if>
+        </if>
+    </update>
+    <update id="update" parameterType="com.yz.model.stdService.StuDiplomaConfig">
+        UPDATE bms.oa_diploma_task_configure SET
+        diploma_id = #{diplomaId},
+        place_id = #{placeId},
+        start_time = #{startTime},
+        end_time = #{endTime},
+        status = #{status},
+        update_time = NOW(),
+        update_user = #{updateUser},
+        update_user_id = #{updateUserId}
+        WHERE config_id = #{configId}
+    </update>
+    <update id="updateNumber">
+        UPDATE bms.oa_diploma_task_configure SET number = #{number},available_numbers = #{alNumber} WHERE config_id = #{configId}
+    </update>
+    <delete id="deleteByConfigId">
+        DELETE FROM bms.oa_diploma_task_configure WHERE config_id = #{configId}
+    </delete>
+    <delete id="deleteUnvisByConfigId">
+        DELETE FROM bms.oa_diploma_task_configure_unvis WHERE config_id = #{configId}
+    </delete>
+    <delete id="deleteUnvisByIds">
+        DELETE FROM bms.oa_diploma_task_configure_unvis WHERE id IN (
+        <foreach collection="delIds" item="id" index="index" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+
+    <select id="findDiplomaTCList" parameterType="com.yz.model.stdService.StuDiplomaTCQuery" resultMap="StuDiplomaTCMap">
+      SELECT
+      a.config_id,
+      b.diploma_id,
+      b.task_name,
+      c.place_id,
+      c.place_name,
+      CONCAT(
+      sp.`province_name`,
+      sc.`city_name`,
+      sd.`district_name`) AS province,
+      c.address,
+      date_format(a.start_time,'%Y-%m-%d %p %H:%i') start_time,
+      date_format(a.end_time,'%H:%i') end_time,
+      a.number,
+      a.available_numbers,
+      a.status
+      FROM
+      bms.oa_diploma_task_configure a
+      LEFT JOIN bms.oa_diploma_task b ON a.diploma_id = b.diploma_id
+        LEFT JOIN bms.oa_diploma_place c ON a.place_id = c.place_id
+        LEFT JOIN sys_province sp
+        ON sp.`province_code` = c.`province_code`
+        LEFT JOIN sys_city sc
+        ON sc.`city_code` = c.`city_code`
+        LEFT JOIN sys_district sd
+        ON sd.`district_code` = c.`district_code`
+      <where>
+          <if test="(null != grade and '' != grade) or (null != unvsId and '' != unvsId) or (null != pfsnLevel and '' != pfsnLevel)">
+              exists(SELECT 1 FROM bms.oa_diploma_task_configure_unvis d WHERE a.config_id = d.config_id
+                  <if test="null != grade and '' != grade">
+                      AND d.grade = #{grade}
+                  </if>
+                  <if test="null != unvsId and '' != unvsId">
+                      AND (d.unvs_id = #{unvsId} or d.unvs_id = 'ALL')
+                  </if>
+                  <if test="null != pfsnLevel and '' != pfsnLevel">
+                      AND (d.pfsn_level = #{pfsnLevel} or d.pfsn_level = 'ALL')
+                  </if>
+              )
+          </if>
+          <if test="null != address and '' != address">
+              AND c.address LIKE concat('%', #{address, jdbcType=VARCHAR}, '%')
+          </if>
+          <if test="null != minPedestal and '' != minPedestal">
+              AND a.available_numbers &gt; CONVERT(#{minPedestal},SIGNED)
+          </if>
+          <if test="null != diplomaId and '' != diplomaId">
+              AND a.diploma_id = #{diplomaId, jdbcType=VARCHAR}
+          </if>
+          <if test="null != placeId and '' != placeId">
+              AND c.place_id = #{placeId, jdbcType=VARCHAR}
+          </if>
+          <if test="null != provinceCode and '' != provinceCode">
+              AND c.province_code = #{provinceCode, jdbcType=VARCHAR}
+          </if>
+          <if test="null != cityCode and '' != cityCode">
+              AND c.city_code = #{cityCode, jdbcType=VARCHAR}
+          </if>
+          <if test="null != districtCode and '' != districtCode">
+              AND c.district_code = #{districtCode, jdbcType=VARCHAR}
+          </if>
+          <if test="startTime != null and ''!= startTime">
+              AND DATE_FORMAT(a.start_time, '%Y-%m-%d') &gt;= #{startTime}
+          </if>
+          <if test="endTime != null and ''!= endTime">
+              AND DATE_FORMAT(a.start_time, '%Y-%m-%d') &lt;= #{endTime}
+          </if>
+          <if test="status != null and ''!= status">
+              AND a.status = #{status}
+          </if>
+      </where>
+        order by a.config_id desc
+    </select>
+    
+    <select id="getStuDiplomaTCU" resultType="map">
+        SELECT
+        a.id,
+        a.pfsn_level pfsnLevel,
+        a.unvs_id unvsId,
+        b.unvs_name unvsName,
+        a.grade grade
+        FROM
+        bms.oa_diploma_task_configure_unvis a
+        LEFT JOIN bms.bd_university b ON a.unvs_id = b.unvs_id
+        WHERE a.config_id = #{config_id}
+    </select>
+    <select id="getDiplomaTCByConfigId" resultMap="StuDiplomaTCMap">
+        SELECT
+      a.config_id,
+      b.diploma_id,
+      b.task_name,
+      c.place_id,
+      c.place_name,
+      CONCAT(
+      sp.`province_name`,
+      sc.`city_name`,
+      sd.`district_name`,c.address) AS address,
+      date_format(a.start_time,'%Y-%m-%d %H:%i') start_time,
+      date_format(a.end_time,'%Y-%m-%d %H:%i') end_time,
+      a.number,
+      a.available_numbers,
+      a.status
+      FROM
+      bms.oa_diploma_task_configure a
+      LEFT JOIN bms.oa_diploma_task b ON a.diploma_id = b.diploma_id
+      LEFT JOIN bms.oa_diploma_place c ON c.status = '1' AND a.place_id = c.place_id
+      LEFT JOIN sys_province sp
+      ON sp.`province_code` = c.`province_code`
+      LEFT JOIN sys_city sc
+      ON sc.`city_code` = c.`city_code`
+      LEFT JOIN sys_district sd
+      ON sd.`district_code` = c.`district_code`
+      WHERE a.config_id = #{configId}
+    </select>
+
+</mapper>

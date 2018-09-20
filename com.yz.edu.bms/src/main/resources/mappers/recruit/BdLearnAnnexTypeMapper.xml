@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yz.dao.recruit.BdLearnAnnexTypeMapper">
+  <resultMap id="BaseResultMap" type="com.yz.model.recruit.BdLearnAnnexType">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="recruit_type" jdbcType="VARCHAR" property="recruitType" />
+    <result column="annex_type_name" jdbcType="VARCHAR" property="annexTypeName" />
+    <result column="annex_type_value" jdbcType="VARCHAR" property="annexTypeValue" />
+    <result column="is_require" jdbcType="VARCHAR" property="isRequire" />
+    <result column="is_visible" jdbcType="VARCHAR" property="isVisible" />
+    <result column="is_upload" jdbcType="VARCHAR" property="isUpload" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_user_id" jdbcType="VARCHAR" property="updateUserId" />
+    <result column="create_user_id" jdbcType="VARCHAR" property="createUserId" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, recruit_type, annex_type_name, annex_type_value, is_require, is_visible, is_upload, date_format(`update_time`, '%Y-%m-%d %H:%i:%s') as update_time,
+    update_user, update_user_id, create_user_id, date_format(`create_time`, '%Y-%m-%d %H:%i:%s') as create_time, create_user
+  </sql>
+
+  <select id="selectAnnexType" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from bd_learn_annex_type where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAnnexTypeCount" parameterType="com.yz.model.recruit.BdLearnAnnexType" resultType="java.lang.Integer">
+    select count(1) as count from bd_learn_annex_type
+    where recruit_type = #{recruitType,jdbcType=VARCHAR}
+    and annex_type_value = #{annexTypeValue,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAnnexTypeList" parameterType="com.yz.model.recruit.BdLearnAnnexType" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />
+    from bd_learn_annex_type where 1=1
+    <if test="recruitType != null and recruitType != ''">
+      and recruit_type = #{recruitType,jdbcType=VARCHAR}
+    </if>
+    <if test="annexTypeName != null and annexTypeName != ''">
+      and annex_type_name like concat('%',#{annexTypeName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="isRequire != null and isRequire != ''">
+      and is_require = #{isRequire,jdbcType=VARCHAR}
+    </if>
+    <if test="isVisible != null and isVisible != ''">
+      and is_visible = #{isVisible,jdbcType=VARCHAR}
+    </if>
+    <if test="isUpload != null and isUpload != ''">
+      and is_upload = #{isUpload,jdbcType=VARCHAR}
+    </if>
+    order by annex_type_value+0 asc
+  </select>
+
+  <delete id="deleteAnnexTypeById" parameterType="java.lang.String">
+    delete from bd_learn_annex_type
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteAnnexTypeByIds" parameterType="java.lang.String">
+    delete from bd_learn_annex_type where id in
+    <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+  <insert id="insertAnnexType" parameterType="com.yz.model.recruit.BdLearnAnnexType">
+    insert into bd_learn_annex_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        id,
+      <if test="recruitType != null">
+        recruit_type,
+      </if>
+      <if test="annexTypeName != null">
+        annex_type_name,
+      </if>
+      <if test="annexTypeValue != null">
+        annex_type_value,
+      </if>
+      <if test="isRequire != null">
+        is_require,
+      </if>
+      <if test="isVisible != null">
+        is_visible,
+      </if>
+      <if test="isUpload != null">
+        is_upload,
+      </if>
+      <if test="createUserId != null">
+        create_user_id,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      seq(),
+      <if test="recruitType != null">
+        #{recruitType,jdbcType=VARCHAR},
+      </if>
+      <if test="annexTypeName != null">
+        #{annexTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="annexTypeValue != null">
+        #{annexTypeValue,jdbcType=VARCHAR},
+      </if>
+      <if test="isRequire != null">
+        #{isRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="isVisible != null">
+        #{isVisible,jdbcType=VARCHAR},
+      </if>
+      <if test="isUpload != null">
+        #{isUpload,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null">
+        #{createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateAnnexType" parameterType="com.yz.model.recruit.BdLearnAnnexType">
+    update bd_learn_annex_type
+    <set>
+      <if test="recruitType != null">
+        recruit_type = #{recruitType,jdbcType=VARCHAR},
+      </if>
+      <if test="annexTypeName != null">
+        annex_type_name = #{annexTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="annexTypeValue != null">
+        annex_type_value = #{annexTypeValue,jdbcType=VARCHAR},
+      </if>
+      <if test="isRequire != null">
+        is_require = #{isRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="isVisible != null">
+        is_visible = #{isVisible,jdbcType=VARCHAR},
+      </if>
+      <if test="isUpload != null">
+        is_upload = #{isUpload,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null">
+        update_user_id = #{updateUserId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="existsName" resultType="java.lang.Integer">
+    select count(*) from bd_learn_annex_type where recruit_type=#{recruitType} and annex_type_name=#{annexTypeName};
+  </select>
+  
+  <select id="existsAnnexType" resultType="java.lang.Integer">
+    SELECT COUNT(*) from bd_learn_annex a join bd_learn_info b
+    on a.learn_id = b.learn_id
+    WHERE a.annex_type=#{annexType} and b.recruit_type =#{recruitType}
+  </select>
+</mapper>

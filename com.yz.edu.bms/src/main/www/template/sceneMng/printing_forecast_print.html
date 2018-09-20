@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<title>预报名表打印单</title>
+	<link rel="icon" href="">
+<!-- 	<link rel="stylesheet" th:href="@{/css/custom/sf-common.css}">-->
+	<link rel="stylesheet" th:href="@{/css/custom/sf-style2.css}">
+	<style id="sfStyle" type="text/css">
+	.outdiv{margin:auto;width:500px;border:1px solid #4d5d6f;margin-top:50px;}
+.top{text-align:center;line-height:35px;background:url(../image/cgbm/bg.gif);color:#904209;font-size: 1.6em;}
+.bt{line-height:25px;background:url(../image/cgbm/bt.gif);width:65px;font-size: 12px;}
+.content{padding:20px;font-size: 0.9em;background:#ededed;padding-right:50px;padding-bottom:50px;}
+.onError{
+  background:#FFE0E9 url(../image/errortip.gif) no-repeat 0 center;
+  padding-left:25px;
+  height:24px;
+}
+.onSuccess{
+    background:#E9FBEB url(../image/successtip.gif) no-repeat 0 center;
+  padding-left:25px;height:24px;
+}
+
+.abase{border:1px solid #4d5d6f;margin-top:50px;margin:auto;}
+td th{border:1px solid #456454}
+table{
+  border-collapse: collapse;
+  border-spacing:0;
+  border: 1px solid #afa6ff;
+  font: 90% "Trebuchet MS", Tahoma, Arial, Helvetica, sans-serif;
+}
+.tlist td,th{
+  height: 20;
+  border-right: 1px solid #afa6ff;
+  border-bottom: 1px solid #afa6ff;
+  border-top: 0px;
+  border-left: 0px;
+  vertical-align: middle;
+}
+.ltd{width:120px;text-align:right;}
+.rtd{width:300px;;}
+.ldiv{float:left;width:400px}
+.rdiv{margin-left:400px}
+.ildiv{float:left;text-align:right;display:inline;}
+.irdiv{margin-left:100px;width:300px;display:inline;}
+.btn {BORDER: #7b9ebd 1px solid; PADDING-top: 2px; FONT-SIZE: 12px; FILTER: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#ffffff, EndColorStr=#cecfde); CURSOR: hand; COLOR: black;}
+.dbgg{
+  margin-top:30px;
+  margin-bottom:10px;
+  font-size:13px;
+  width:800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+  body {
+    font-size: 12px
+  }
+  table {
+    line-height: 12px;
+  }
+
+
+td {
+  text-align: left;
+}
+	</style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <title>预报名表打印单</title>
+    <link rel="icon" href="">
+    <!-- 	<link rel="stylesheet" th:href="@{/css/custom/sf-common.css}">-->
+    <link rel="stylesheet" th:href="@{/css/custom/sf-style2.css}">
+    <style id="sfStyle" type="text/css">
+        .outdiv {
+            margin: auto;
+            width: 500px;
+            border: 1px solid #4d5d6f;
+            margin-top: 50px;
+        }
+
+        .top {
+            text-align: center;
+            line-height: 35px;
+            background: url(../image/cgbm/bg.gif);
+            color: #904209;
+            font-size: 1.6em;
+        }
+
+        .bt {
+            line-height: 25px;
+            background: url(../image/cgbm/bt.gif);
+            width: 65px;
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 20px;
+            font-size: 0.9em;
+            background: #ededed;
+            padding-right: 50px;
+            padding-bottom: 50px;
+        }
+
+        .onError {
+            background: #FFE0E9 url(../image/errortip.gif) no-repeat 0 center;
+            padding-left: 25px;
+            height: 24px;
+        }
+
+        .onSuccess {
+            background: #E9FBEB url(../image/successtip.gif) no-repeat 0 center;
+            padding-left: 25px;
+            height: 24px;
+        }
+
+        .abase {
+            border: 1px solid #4d5d6f;
+            margin-top: 50px;
+            margin: auto;
+        }
+
+        td th {
+            border: 1px solid #456454
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            border: 1px solid #afa6ff;
+            font: 90% "Trebuchet MS", Tahoma, Arial, Helvetica, sans-serif;
+        }
+
+        .tlist td, th {
+            height: 20px;
+            border-right: 1px solid #afa6ff;
+            border-bottom: 1px solid #afa6ff;
+            border-top: 0px;
+            border-left: 0px;
+            vertical-align: middle;
+            padding: 7px;
+        }
+
+        .ltd {
+            width: 120px;
+            text-align: right;
+        }
+
+        .rtd {
+            width: 300px;;
+        }
+
+        .ldiv {
+            float: left;
+            width: 400px
+        }
+
+        .rdiv {
+            margin-left: 400px
+        }
+
+        .ildiv {
+            float: left;
+            text-align: right;
+            display: inline;
+        }
+
+        .irdiv {
+            margin-left: 100px;
+            width: 300px;
+            display: inline;
+        }
+
+        .btn {
+            BORDER: #7b9ebd 1px solid;
+            PADDING-top: 2px;
+            FONT-SIZE: 12px;
+            FILTER: progid: DXImageTransform . Microsoft . Gradient(GradientType = 0, StartColorStr = #ffffff, EndColorStr = #cecfde);
+            CURSOR: hand;
+            COLOR: black;
+        }
+
+        .dbgg {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        body {
+            font-size: 12px
+        }
+
+        table {
+            line-height: 12px;
+        }
+
+        td {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div th:each="list : ${lists}">
+    <div th:utext="${list}"></div>
+    <DIV STYLE="page-break-before:left"></DIV>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/js/jquery/1.9.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="${_file_browser + 'cache/dict.json'}"></script>
+<script type="text/javascript" th:src="@{/js/custom/yzCommon.js}"></script>
+<script type="text/javascript" th:src="@{/js/LodopFuncs.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    $(window).load(function () {
+        if($('#kslbdm').val()=='1'){
+            $('#zsb').show()
+        }else{
+            $("#gqg").show();
+        }
+         window.print();
+    });
+</script>
+</html>

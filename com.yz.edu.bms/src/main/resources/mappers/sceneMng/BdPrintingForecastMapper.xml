@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yz.dao.sceneMng.BdPrintingForecastMapper">
+	
+	<resultMap id="PrintingForecastMap" type="com.yz.model.sceneMng.BdPrintingForecast">
+        <result column="confirm_id" property="confirmId" jdbcType="VARCHAR" />
+        <result column="learn_id" property="learnId" jdbcType="VARCHAR"/>
+        <result column="std_id" property="stdId" jdbcType="VARCHAR"/>
+        <result column="std_name" property="stdName" jdbcType="VARCHAR" />
+        <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="grade" property="grade" jdbcType="VARCHAR" />
+        <result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+        <result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+        <result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+        <result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+        <result column="pfsn_code" property="pfsnCode" jdbcType="VARCHAR" />
+        <result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+        <result column="recruit" property="recruit" jdbcType="VARCHAR" />
+        <result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+        <result column="ta_name" property="taName" jdbcType="VARCHAR" />
+        <result column="exam_info_confirm_status" property="examInfoConfirmStatus" jdbcType="VARCHAR" />
+        <result column="place_confirm_status" property="placeConfirmStatus" jdbcType="VARCHAR" />
+        <result column="confirm_city" property="confirmCity" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="start_time" property="startTime" jdbcType="VARCHAR" />
+        <result column="end_time" property="endTime" jdbcType="VARCHAR" />
+        <result column="confirm_name" property="confirmName" jdbcType="VARCHAR"/>
+        <result column="web_register_status" property="webRegisterStatus" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="register_no" property="registerNo" jdbcType="VARCHAR"/>
+        <result column="exam_pay_status" property="examPayStatus" jdbcType="VARCHAR"/>
+        <result column="scene_confirm_status" property="sceneConfirmStatus" jdbcType="VARCHAR"/>
+        <result column="education_appraisal" property="educationAppraisal" jdbcType="VARCHAR"/>
+        <result column="exam_no" property="examNo" jdbcType="VARCHAR"/>
+        <result column="emp_id" property="empId" jdbcType="VARCHAR"/>
+        <result column="emp_status" property="empStatus" jdbcType="VARCHAR"/>
+        <result column="pic_collect_status" property="picCollectStatus" jdbcType="VARCHAR"/>
+        <result column="mobile_bind_status" property="mobileBindStatus" jdbcType="VARCHAR"/>
+        <result column="register_id" property="registerId" jdbcType="VARCHAR"/>
+         <result column="print_html" property="printHtml" jdbcType="VARCHAR"/>
+        
+    </resultMap>
+    
+    <select id="findPrintingForecastStdPage" resultMap="PrintingForecastMap" >
+        SELECT
+        a.learn_id,
+        c.std_id,
+        a.confirm_id,
+        c.std_name,
+        c.id_card,
+        c.mobile,
+        b.grade,
+        k.pfsn_level,
+        j.unvs_name,
+        b.recruit_type,
+        k.pfsn_name,
+        k.pfsn_code,
+        b.std_stage,
+        f.emp_name recruit,
+        b.scholarship,
+        d.ta_name,
+        a.exam_info_confirm_status,
+        a.pic_collect_status,
+        a.mobile_bind_status,
+        a.place_confirm_status,
+        g.confirm_city,
+        g.address,
+        g.start_time,
+        g.end_time,
+        g.confirm_name,
+        a.web_register_status,
+        i.username,
+        i.`password`,
+        i.`register_no`,
+        i.`register_id`,
+        a.exam_pay_status,
+        a.sign_status,
+        date_format(a.sign_time, '%Y-%m-%d %H:%i:%s') as sign_time,
+        a.scene_confirm_status,
+        a.education_appraisal,
+        f.emp_id,
+        f.emp_status,
+        CASE when a.unvs_id is null and a.pfsn_id is null then 0 when a.unvs_id = b.unvs_id and a.pfsn_id = b.pfsn_id then 0 else 1 end is_unvs_pfsn_change
+        FROM
+        bd_student_scene_confirm a
+        LEFT JOIN bd_learn_info b ON a.learn_id = b.learn_id
+        LEFT JOIN bd_student_info c ON b.std_id = c.std_id
+        LEFT JOIN bd_test_area d ON b.ta_id = d.ta_id
+        LEFT JOIN bd_learn_rules e ON a.learn_id = e.learn_id
+        LEFT JOIN oa_employee f ON e.recruit = f.emp_id
+        LEFT JOIN oa_employee_job oej ON f.`emp_id` = oej.`emp_id`
+         LEFT JOIN oa_confirmation_management g ON a.confirmation_id = g.confirmation_id
+        LEFT JOIN bd_test_prove_info h ON a.learn_id = h.learn_id
+        LEFT JOIN bd_student_scene_register i ON  (i.register_status='1' and i.learn_id = a.learn_id)
+        LEFT JOIN bd_university j ON b.unvs_id = j.unvs_id
+        LEFT JOIN bd_unvs_profession k ON b.pfsn_id = k.pfsn_id
+        WHERE 1=1 AND a.web_register_status ='1'  AND b.std_stage IN ('1','2','3') 
+        <if test="query.confirmId != null and ''!= query.confirmId">
+            AND a.confirm_id =#{query.confirmId,jdbcType=VARCHAR}
+        </if>
+	    <if test="query.campusId !=null and '' !=query.campusId">
+		      and oej.campus_id=#{query.campusId}
+	    </if>
+		<if test="query.dpId !=null and '' != query.dpId">
+		      and oej.dp_id=#{query.dpId}
+		</if>
+        <if test="query.stdName != null and ''!= query.stdName">
+            AND c.std_name LIKE CONCAT('%',#{query.stdName,jdbcType=VARCHAR} , '%')
+        </if>
+        <if test="query.idCard != null and ''!= query.idCard">
+            AND c.id_card LIKE CONCAT('%',#{query.idCard,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="query.mobile != null and ''!= query.mobile">
+            AND c.mobile LIKE CONCAT('%',#{query.mobile,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="query.grade != null and ''!= query.grade">
+            AND b.grade =#{query.grade,jdbcType=VARCHAR}
+        </if>
+        <if test="query.unvsId != null and ''!= query.unvsId">
+            AND b.unvs_id =#{query.unvsId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.pfsnLevel != null and ''!= query.pfsnLevel">
+            AND k.pfsn_level =#{query.pfsnLevel,jdbcType=VARCHAR}
+        </if>
+        <if test="query.pfsnId != null and ''!= query.pfsnId">
+            AND b.pfsn_id = #{query.pfsnId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.scholarship != null and ''!= query.scholarship">
+            AND b.scholarship =#{query.scholarship,jdbcType=VARCHAR}
+        </if>
+        <if test="query.stdStage != null and ''!= query.stdStage">
+            AND b.std_stage =#{query.stdStage,jdbcType=VARCHAR}
+        </if>
+        <if test="query.taId != null and ''!= query.taId">
+            AND d.ta_id = #{query.taId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.isPrinting != null and ''!= query.isPrinting">
+            AND i.is_printing = #{query.isPrinting,jdbcType=VARCHAR}
+        </if>
+      
+        <if test="query.hasUsername != null and ''!= query.hasUsername">
+            <if test="query.hasUsername == 1">
+                and i.`username` is not null
+            </if>
+            <if test="query.hasUsername == 0">
+                and i.`username` is null
+            </if>
+        </if>
+       <if test="user.userLevel != 1 and user.jtList!=null">
+       	  and d.city_code in 
+	      <foreach collection="user.jtList" item="cityCode" index="index" open="(" close=")" separator=",">
+	        '${cityCode}'
+	      </foreach>
+       </if>
+       <if test="user.userLevel == 10">
+       	  and a.confirm_id is null
+       </if>
+        <if test="query.hasRegisterNo != null and ''!= query.hasRegisterNo">
+            <if test="query.hasRegisterNo == 1">
+                and i.`register_no` is not null
+            </if>
+            <if test="query.hasRegisterNo == 0">
+                and i.`register_no` is null
+            </if>
+        </if>
+        <if test="query.examPayStatus != null and ''!= query.examPayStatus">
+            AND a.exam_pay_status =#{query.examPayStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="query.placeConfirmStatus != null and ''!= query.placeConfirmStatus">
+            AND a.place_confirm_status =#{query.placeConfirmStatus,jdbcType=VARCHAR}
+        </if>
+
+        <if test="query.picCollectStatus == 1">
+            AND (a.pic_collect_status = '0' or a.pic_collect_status is null)
+        </if>
+        <if test="query.picCollectStatus == 2">
+            AND a.pic_collect_status = '1'
+        </if>
+        <if test="query.mobileBindStatus == 1">
+            AND (a.mobile_bind_status = '0' or a.mobile_bind_status is null)
+        </if>
+        <if test="query.mobileBindStatus == 2">
+            AND a.mobile_bind_status = '1'
+        </if>
+
+        <if test="query.educationAppraisal != null and ''!= query.educationAppraisal">
+            AND a.education_appraisal = #{query.educationAppraisal,jdbcType=VARCHAR}
+        </if>
+          <if test="query.webRegisterStartTime != null and query.webRegisterStartTime != ''">
+            AND  date_format(a.`web_register_time`,'%Y-%m-%d')  >= #{query.webRegisterStartTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.webRegisterEndTime != null and query.webRegisterEndTime != ''">
+            AND date_format(a.`web_register_time`,'%Y-%m-%d') &lt;= #{query.webRegisterEndTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.startTime != null and query.startTime != ''">
+            AND  date_format(g.`start_time`,'%Y-%m-%d')  >= #{query.startTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.endTime != null and query.endTime != ''">
+            AND date_format(g.`start_time`,'%Y-%m-%d') &lt;= #{query.endTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.content != null and ''!= query.content">
+            AND (g.confirm_city LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%') or g.address LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%') or g.confirm_name LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%'))
+        </if>
+        ORDER BY convert(i.`register_no` using gbk) collate gbk_chinese_ci,a.`create_time` DESC
+    </select>
+    
+    
+    <select id="getAllPrintingForecastStdCount" resultMap="PrintingForecastMap" >
+        SELECT COUNT(0) FROM ( SELECT a.learn_id FROM
+        bd_student_scene_confirm a
+        LEFT JOIN bd_learn_info b ON a.learn_id = b.learn_id
+        LEFT JOIN bd_student_info c ON b.std_id = c.std_id
+        LEFT JOIN bd_test_area d ON b.ta_id = d.ta_id
+        LEFT JOIN bd_learn_rules e ON a.learn_id = e.learn_id
+        LEFT JOIN oa_employee f ON e.recruit = f.emp_id
+        LEFT JOIN oa_employee_job oej ON f.`emp_id` = oej.`emp_id`
+         LEFT JOIN oa_confirmation_management g ON a.confirmation_id = g.confirmation_id
+        LEFT JOIN bd_test_prove_info h ON a.learn_id = h.learn_id
+        LEFT JOIN bd_student_scene_register i ON  (i.register_status='1' and i.learn_id = a.learn_id)
+        LEFT JOIN bd_university j ON b.unvs_id = j.unvs_id
+        LEFT JOIN bd_unvs_profession k ON b.pfsn_id = k.pfsn_id
+        WHERE 1=1 AND a.web_register_status ='1'  AND b.std_stage IN ('1','2','3') 
+        <if test="query.confirmId != null and ''!= query.confirmId">
+            AND a.confirm_id =#{query.confirmId,jdbcType=VARCHAR}
+        </if>
+	    <if test="query.campusId !=null and '' !=query.campusId">
+		      and oej.campus_id=#{query.campusId}
+	    </if>
+		<if test="query.dpId !=null and '' != query.dpId">
+		      and oej.dp_id=#{query.dpId}
+		</if>
+        <if test="query.stdName != null and ''!= query.stdName">
+            AND c.std_name LIKE CONCAT('%',#{query.stdName,jdbcType=VARCHAR} , '%')
+        </if>
+        <if test="query.idCard != null and ''!= query.idCard">
+            AND c.id_card LIKE CONCAT('%',#{query.idCard,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="query.mobile != null and ''!= query.mobile">
+            AND c.mobile LIKE CONCAT('%',#{query.mobile,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="query.grade != null and ''!= query.grade">
+            AND b.grade =#{query.grade,jdbcType=VARCHAR}
+        </if>
+        <if test="query.unvsId != null and ''!= query.unvsId">
+            AND b.unvs_id =#{query.unvsId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.pfsnLevel != null and ''!= query.pfsnLevel">
+            AND k.pfsn_level =#{query.pfsnLevel,jdbcType=VARCHAR}
+        </if>
+        <if test="query.pfsnId != null and ''!= query.pfsnId">
+            AND b.pfsn_id = #{query.pfsnId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.scholarship != null and ''!= query.scholarship">
+            AND b.scholarship =#{query.scholarship,jdbcType=VARCHAR}
+        </if>
+        <if test="query.stdStage != null and ''!= query.stdStage">
+            AND b.std_stage =#{query.stdStage,jdbcType=VARCHAR}
+        </if>
+        <if test="query.taId != null and ''!= query.taId">
+            AND d.ta_id = #{query.taId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.isPrinting != null and ''!= query.isPrinting">
+            AND i.is_printing = #{query.isPrinting,jdbcType=VARCHAR}
+        </if>
+      
+        <if test="query.hasUsername != null and ''!= query.hasUsername">
+            <if test="query.hasUsername == 1">
+                and i.`username` is not null
+            </if>
+            <if test="query.hasUsername == 0">
+                and i.`username` is null
+            </if>
+        </if>
+       <if test="user.userLevel != 1 and user.jtList!=null">
+       	  and d.city_code in 
+	      <foreach collection="user.jtList" item="cityCode" index="index" open="(" close=")" separator=",">
+	        '${cityCode}'
+	      </foreach>
+       </if>
+       <if test="user.userLevel == 10">
+       	  and a.confirm_id is null
+       </if>
+        <if test="query.hasRegisterNo != null and ''!= query.hasRegisterNo">
+            <if test="query.hasRegisterNo == 1">
+                and i.`register_no` is not null
+            </if>
+            <if test="query.hasRegisterNo == 0">
+                and i.`register_no` is null
+            </if>
+        </if>
+        <if test="query.examPayStatus != null and ''!= query.examPayStatus">
+            AND a.exam_pay_status =#{query.examPayStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="query.placeConfirmStatus != null and ''!= query.placeConfirmStatus">
+            AND a.place_confirm_status =#{query.placeConfirmStatus,jdbcType=VARCHAR}
+        </if>
+
+        <if test="query.picCollectStatus == 1">
+            AND (a.pic_collect_status = '0' or a.pic_collect_status is null)
+        </if>
+        <if test="query.picCollectStatus == 2">
+            AND a.pic_collect_status = '1'
+        </if>
+        <if test="query.mobileBindStatus == 1">
+            AND (a.mobile_bind_status = '0' or a.mobile_bind_status is null)
+        </if>
+        <if test="query.mobileBindStatus == 2">
+            AND a.mobile_bind_status = '1'
+        </if>
+
+        <if test="query.educationAppraisal != null and ''!= query.educationAppraisal">
+            AND a.education_appraisal = #{query.educationAppraisal,jdbcType=VARCHAR}
+        </if>
+          <if test="query.webRegisterStartTime != null and query.webRegisterStartTime != ''">
+            AND  date_format(a.`web_register_time`,'%Y-%m-%d')  >= #{query.webRegisterStartTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.webRegisterEndTime != null and query.webRegisterEndTime != ''">
+            AND date_format(a.`web_register_time`,'%Y-%m-%d') &lt;= #{query.webRegisterEndTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.startTime != null and query.startTime != ''">
+            AND  date_format(g.`start_time`,'%Y-%m-%d')  >= #{query.startTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.endTime != null and query.endTime != ''">
+            AND date_format(g.`start_time`,'%Y-%m-%d') &lt;= #{query.endTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.content != null and ''!= query.content">
+            AND (g.confirm_city LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%') or g.address LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%') or g.confirm_name LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%'))
+        </if>
+     ) temp_t
+    </select>
+    
+    
+    
+    <select id="findPrintingForecastStd" resultType="java.lang.String">
+        SELECT
+        i.print_html
+        FROM
+        bd_student_scene_confirm a
+        LEFT JOIN bd_learn_info b ON a.learn_id = b.learn_id
+        LEFT JOIN bd_student_info c ON b.std_id = c.std_id
+        LEFT JOIN bd_test_area d ON b.ta_id = d.ta_id
+        LEFT JOIN bd_learn_rules e ON a.learn_id = e.learn_id
+        LEFT JOIN oa_employee f ON e.recruit = f.emp_id
+        LEFT JOIN oa_employee_job oej ON f.`emp_id` = oej.`emp_id`
+        LEFT JOIN oa_confirmation_management g ON a.confirmation_id = g.confirmation_id
+        LEFT JOIN bd_student_scene_register i ON  (i.register_status='1' and i.learn_id = a.learn_id)
+        WHERE 1=1 AND a.web_register_status ='1'  AND b.std_stage IN ('1','2','3') 
+        <if test="query.confirmId != null and ''!= query.confirmId and 'undefined' != query.confirmId">
+            AND a.confirm_id =#{query.confirmId,jdbcType=VARCHAR}
+        </if>
+	    <if test="query.campusId !=null and '' !=query.campusId and 'undefined' != query.campusId">
+		      and oej.campus_id=#{query.campusId,jdbcType=VARCHAR}
+	    </if>
+		<if test="query.dpId !=null and '' != query.dpId and 'undefined' != query.dpId">
+		      and oej.dp_id=#{query.dpId,jdbcType=VARCHAR}
+		</if>
+        <if test="query.stdName != null and ''!= query.stdName and 'undefined' != query.stdName">
+            AND c.std_name LIKE CONCAT('%',#{query.stdName,jdbcType=VARCHAR} , '%')
+        </if>
+        <if test="query.idCard != null and ''!= query.idCard and 'undefined' != query.idCard">
+            AND c.id_card LIKE CONCAT('%',#{query.idCard,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="query.mobile != null and ''!= query.mobile and 'undefined' != query.mobile">
+            AND c.mobile LIKE CONCAT('%',#{query.mobile,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="query.grade != null and ''!= query.grade and 'undefined' != query.grade">
+            AND b.grade =#{query.grade,jdbcType=VARCHAR}
+        </if>
+        <if test="query.unvsId != null and ''!= query.unvsId and 'undefined' != query.unvsId">
+            AND b.unvs_id =#{query.unvsId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.pfsnLevel != null and ''!= query.pfsnLevel and 'undefined' != query.pfsnLevel">
+            AND k.pfsn_level =#{query.pfsnLevel,jdbcType=VARCHAR}
+        </if>
+        <if test="query.pfsnId != null and ''!= query.pfsnId and 'undefined' != query.pfsnId">
+            AND b.pfsn_id = #{query.pfsnId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.scholarship != null and ''!= query.scholarship and 'undefined' != query.scholarship">
+            AND b.scholarship =#{query.scholarship,jdbcType=VARCHAR}
+        </if>
+        <if test="query.stdStage != null and ''!= query.stdStage and 'undefined' != query.stdStage">
+            AND b.std_stage =#{query.stdStage,jdbcType=VARCHAR}
+        </if>
+        <if test="query.taId != null and ''!= query.taId and 'undefined' != query.taId">
+            AND d.ta_id = #{query.taId,jdbcType=VARCHAR}
+        </if>
+        <if test="query.isPrinting != null and ''!= query.isPrinting and 'undefined' != query.isPrinting">
+            AND i.is_printing = #{query.isPrinting,jdbcType=VARCHAR}
+        </if>
+      
+        <if test="query.hasUsername != null and ''!= query.hasUsername and 'undefined' != query.hasUsername">
+            <if test="query.hasUsername == 1">
+                and i.`username` is not null
+            </if>
+            <if test="query.hasUsername == 0">
+                and i.`username` is null
+            </if>
+        </if>
+       <if test="user.userLevel != 1 and user.jtList!=null">
+       	  and d.city_code in 
+	      <foreach collection="user.jtList" item="cityCode" index="index" open="(" close=")" separator=",">
+	        '${cityCode}'
+	      </foreach>
+       </if>
+       <if test="user.userLevel == 10">
+       	  and a.confirm_id is null
+       </if>
+        <if test="query.hasRegisterNo != null and ''!= query.hasRegisterNo and 'undefined' != query.hasRegisterNo">
+            <if test="query.hasRegisterNo == 1">
+                and i.`register_no` is not null
+            </if>
+            <if test="query.hasRegisterNo == 0">
+                and i.`register_no` is null
+            </if>
+        </if>
+        <if test="query.examPayStatus != null and ''!= query.examPayStatus and 'undefined' != query.examPayStatus">
+            AND a.exam_pay_status =#{query.examPayStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="query.placeConfirmStatus != null and ''!= query.placeConfirmStatus and 'undefined' != query.placeConfirmStatus">
+            AND a.place_confirm_status =#{query.placeConfirmStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="query.educationAppraisal != null and ''!= query.educationAppraisal and 'undefined' != query.educationAppraisal">
+            AND a.education_appraisal = #{query.educationAppraisal,jdbcType=VARCHAR}
+        </if>
+          <if test="query.webRegisterStartTime != null and query.webRegisterStartTime != '' and 'undefined' != query.webRegisterStartTime">
+            AND  date_format(a.`web_register_time`,'%Y-%m-%d')  >= #{query.webRegisterStartTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.webRegisterEndTime != null and query.webRegisterEndTime != '' and 'undefined' != query.webRegisterEndTime">
+            AND date_format(a.`web_register_time`,'%Y-%m-%d') &lt;= #{query.webRegisterEndTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.startTime != null and query.startTime != '' and 'undefined' != query.startTime">
+            AND  date_format(g.`start_time`,'%Y-%m-%d')  >= #{query.startTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.endTime != null and query.endTime != '' and 'undefined' != query.endTime">
+            AND date_format(g.`start_time`,'%Y-%m-%d') &lt;= #{query.endTime,jdbcType=VARCHAR}
+        </if>
+        <if test="query.content != null and ''!= query.content and 'undefined' != query.content">
+            AND (g.confirm_city LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%') or g.address LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%') or g.confirm_name LIKE CONCAT('%',#{query.content,jdbcType=VARCHAR}, '%'))
+        </if>
+    </select>
+    
+    <select id="findConfirmDictValue" resultType="java.lang.String">
+        select dict_value from sys_dict WHERE 1 = 1
+        <if test="confirmName != null and ''!= confirmName">
+            AND dict_name LIKE CONCAT(#{confirmName,jdbcType=VARCHAR}, '%')
+        </if>
+    </select>
+
+    
+     <select id="findPdfHtmlByArrayId" resultType="java.lang.String">
+        select print_html from bd_student_scene_register
+        WHERE register_id IN (
+        <foreach collection="registerIds" item="id" index="index" separator=",">
+            #{id}
+        </foreach>
+        )
+    </select>
+
+    
+    
+     <select id="findPdfHtml" resultType="java.lang.String">
+        select print_html from bd_student_scene_register
+         WHERE register_id = #{registerId,jdbcType=VARCHAR}
+    </select>
+</mapper>

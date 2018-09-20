@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.transfer.BdStudentConfirmModifyMapper">
+	<resultMap id="ResultMap" type="java.util.Map">
+		<result column="ta_name" property="taName" jdbcType="VARCHAR" />
+		<result column="nta_name" property="ntaName" jdbcType="VARCHAR" />
+		<result column="npfsn_name" property="npfsnName" jdbcType="VARCHAR" />
+		<result column="nunvs_name" property="nunvsName" jdbcType="VARCHAR" />
+		<result column="modify_id" property="modifyId" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="cr_id" property="crId" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="modify_type" property="modifyType" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="id_type" property="idType" jdbcType="VARCHAR" />
+		<result column="nation" property="nation" jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+		<result column="unvs_id" property="unvsId" jdbcType="VARCHAR" />
+		<result column="ta_id" property="taId" jdbcType="VARCHAR" />
+		<result column="pfsn_id" property="pfsnId" jdbcType="VARCHAR" />
+		<result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+		<result column="new_std_name" property="newStdName" jdbcType="VARCHAR" />
+		<result column="new_sex" property="newSex" jdbcType="VARCHAR" />
+		<result column="new_id_type" property="newIdType" jdbcType="VARCHAR" />
+		<result column="new_nation" property="newNation" jdbcType="VARCHAR" />
+		<result column="new_id_card" property="newIdCard" jdbcType="VARCHAR" />
+		<result column="new_unvs_id" property="newUnvsId" jdbcType="VARCHAR" />
+		<result column="new_ta_id" property="newTaId" jdbcType="VARCHAR" />
+		<result column="new_pfsn_id" property="newPfsnId" jdbcType="VARCHAR" />
+		<result column="new_scholarship" property="newScholarship"
+			jdbcType="VARCHAR" />
+		<result column="is_del" property="isDel" jdbcType="CHAR" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_user_id" property="updateUserId"
+			jdbcType="VARCHAR" />
+		<result column="create_user_id" property="createUserId"
+			jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="learn_stage" property="learnStage" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_code" property="pfsnCode" jdbcType="VARCHAR" />
+		<result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+		<result column="check_status" property="checkStatus" jdbcType="VARCHAR" />
+		<result column="exam_pay_status" property="examPayStatus" jdbcType="VARCHAR" />
+		<result column="recruit_name" property="recruitName" jdbcType="VARCHAR" />
+		<result column="emp_status" property="empStatus" jdbcType="VARCHAR" />
+		<result column="ext_1" property="ext1" jdbcType="VARCHAR" />
+		<result column="web_register_status" property="webRegisterStatus" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="BaseResultMap" type="com.yz.model.transfer.BdStudentModify">
+		<id column="modify_id" property="modifyId" jdbcType="VARCHAR" />
+		<result column="ta_name" property="taName" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="learn_stage" property="learnStage" jdbcType="VARCHAR" />
+        <result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+		<result column="nta_name" property="ntaName" jdbcType="VARCHAR" />
+		<result column="npfsn_name" property="npfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="nunvs_name" property="nunvsName" jdbcType="VARCHAR" />
+		<result column="check_order" property="checkOrder" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_code" property="pfsnCode" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="emp_name" property="empName" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="bcruptime" property="bcruptime" jdbcType="VARCHAR" />
+		<result column="modify_type" property="modifyType" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="id_type" property="idType" jdbcType="VARCHAR" />
+		<result column="nation" property="nation" jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+		<result column="unvs_id" property="unvsId" jdbcType="VARCHAR" />
+		<result column="ta_id" property="taId" jdbcType="VARCHAR" />
+		<result column="pfsn_id" property="pfsnId" jdbcType="VARCHAR" />
+		<result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+		<result column="new_std_name" property="newStdName" jdbcType="VARCHAR" />
+		<result column="new_sex" property="newSex" jdbcType="VARCHAR" />
+		<result column="new_id_type" property="newIdType" jdbcType="VARCHAR" />
+		<result column="new_nation" property="newNation" jdbcType="VARCHAR" />
+		<result column="new_id_card" property="newIdCard" jdbcType="VARCHAR" />
+		<result column="new_unvs_id" property="newUnvsId" jdbcType="VARCHAR" />
+		<result column="new_ta_id" property="newTaId" jdbcType="VARCHAR" />
+		<result column="new_pfsn_id" property="newPfsnId" jdbcType="VARCHAR" />
+		<result column="npfsn_level" property="npfsnLevel" jdbcType="VARCHAR" />
+		<result column="new_scholarship" property="newScholarship"
+			jdbcType="VARCHAR" />
+		<result column="is_del" property="isDel" jdbcType="CHAR" />
+		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_user_id" property="updateUserId"
+			jdbcType="VARCHAR" />
+		<result column="create_user_id" property="createUserId"
+			jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="graduate_unvs_name" property="graduateUnvsName" jdbcType="VARCHAR" />
+		<result column="graduate_time" property="graduateTime" jdbcType="TIMESTAMP" />
+		<result column="graduate_edcs_type" property="graduateEdcsType" jdbcType="VARCHAR" />
+		<result column="graduate_profession" property="graduateProfession" jdbcType="VARCHAR" />
+		<result column="graduate_diploma" property="graduateDiploma" jdbcType="VARCHAR" />
+		<result column="new_graduate_unvs_name" property="newGraduateUnvsName" jdbcType="VARCHAR" />
+		<result column="new_graduate_time" property="newGraduateTime" jdbcType="TIMESTAMP" />
+		<result column="new_graduate_edcs_type" property="newGraduateEdcsType" jdbcType="VARCHAR" />
+		<result column="new_graduate_profession" property="newGraduateProfession" jdbcType="VARCHAR" />
+		<result column="new_graduate_diploma" property="newGraduateDiploma" jdbcType="VARCHAR" />
+		<result column="exam_pay_status" property="examPayStatus" jdbcType="VARCHAR" />
+		<result column="rpr_address" property="rprAddress" jdbcType="VARCHAR" />
+		<result column="new_rpr_address" property="newRprAddress" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="StudentInfoMap" type="java.util.Map">
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="EnrollInfoMap" type="java.util.Map">
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="ta_name" property="taName" jdbcType="VARCHAR" />
+		<result column="unvs_id" property="unvsId" jdbcType="VARCHAR" />
+		<result column="pfsn_id" property="pfsnId" jdbcType="VARCHAR" />
+		<result column="nation" property="nation" jdbcType="VARCHAR" />
+		<result column="ta_id" property="taId" jdbcType="VARCHAR" />
+		<result column="pfsn_code" property="pfsnCode" jdbcType="VARCHAR" />
+		<result column="inclusion_status" property="inclusionStatus" jdbcType="VARCHAR" />
+		<result column="score" property="score" jdbcType="VARCHAR" />
+		<result column="exam_pay_status" property="examPayStatus" jdbcType="VARCHAR" />
+		<result column="graduate_unvs_name" property="graduateUnvsName" jdbcType="VARCHAR" />
+		<result column="graduate_time" property="graduateTime" jdbcType="TIMESTAMP" />
+		<result column="graduate_edcs_type" property="graduateEdcsType" jdbcType="VARCHAR" />
+		<result column="graduate_profession" property="graduateProfession" jdbcType="VARCHAR" />
+		<result column="graduate_diploma" property="graduateDiploma" jdbcType="VARCHAR" />
+        <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
+		<result column="rpr_address" property="rprAddress" jdbcType="VARCHAR" />
+	</resultMap>
+
+    <select id="getCityCodeByTaId" resultType="java.lang.String" parameterType="java.lang.String">
+        select city_code from bms.bd_test_area where ta_id=#{taId}
+    </select>
+
+    <select id="findConfirmModify" resultMap="ResultMap"
+            parameterType="com.yz.model.transfer.StudentModifyMap">
+        SELECT
+      bsm.modify_id,
+	   bsm.ext_1,
+	   bsm.learn_id,
+	   bsm.remark,
+		 bsm.pfsn_id,
+		 bsm.create_time,
+		 bsm.create_user,
+	   bsi.std_name,
+        bli.`grade`,
+        bli.`std_stage`,
+        bli.`scholarship`,
+        bli.`learn_stage`,
+        bup.`pfsn_name`,
+        bup.`pfsn_level`,
+        bup.`pfsn_code`,
+        bu.`unvs_name`,
+        bu.`recruit_type`,
+        bcr.`check_status`,
+        bta.`ta_name`,
+        bta.`ta_id`,
+        ssc.exam_pay_status,
+        ssc.web_register_status,
+        e.emp_name as recruit_name,
+		e.`emp_status`
+        FROM
+        `bd_student_modify` bsm
+        INNER JOIN bd_learn_info bli ON bsm.`learn_id` = bli.`learn_id`
+				INNER JOIN bd_student_info bsi ON bsi.`std_id` = bsm.`std_id`
+        left JOIN bd_unvs_profession bup ON bup.`pfsn_id` = bsm.`pfsn_id`
+        left JOIN bd_university bu ON bu.`unvs_id` = bsm.`unvs_id`
+        LEFT JOIN bd_check_record bcr ON bcr.`mapping_id` = bsm.`modify_id` AND bcr.check_order = bsm.check_order
+        left JOIN bd_test_area bta ON bta.`ta_id` = bsm.`ta_id`
+        LEFT JOIN bd_learn_rules r ON r.learn_id = bli.learn_id
+        left join bd_student_scene_confirm ssc on bsm.learn_id=ssc.learn_id
+        LEFT JOIN oa_employee e on e.emp_id = r.recruit 
+        WHERE bsm.`modify_type` = '12'  and bcr.check_type = '13'
+        <if test="modi.stdName != null and modi.stdName != ''">
+            AND bsm.`std_name` LIKE CONCAT('%', #{modi.stdName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="modi.idCard != null and modi.idCard != ''">
+            AND bsm.`id_card` = #{modi.idCard,jdbcType=VARCHAR}
+        </if>
+        <if test="modi.mobile != null and modi.mobile != ''">
+            AND bsi.`mobile` = #{modi.mobile,jdbcType=VARCHAR}
+        </if>
+        <if test="modi.unvsName != null and modi.unvsName != ''">
+            AND bu.`unvs_name` LIKE CONCAT('%', #{modi.unvsName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="modi.pfsnName != null and modi.pfsnName != ''">
+            AND bup.`pfsn_name` LIKE CONCAT('%', #{modi.pfsnName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="modi.checkStatus != null and modi.checkStatus != ''">
+            AND bcr.`check_status` = #{modi.checkStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="modi.stdStage != null and modi.stdStage != ''">
+            AND bli.`std_stage` = #{modi.stdStage,jdbcType=VARCHAR}
+        </if>
+         <if test="modi.webRegisterStatus != null and modi.webRegisterStatus != ''">
+            AND ssc.web_register_status = #{modi.webRegisterStatus,jdbcType=VARCHAR}
+        </if>
+         <if test="modi.recruit != null and modi.recruit != ''">
+            AND e.emp_name LIKE CONCAT('%', #{modi.recruit,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="modi.scholarship != null and modi.scholarship != ''">
+            AND bli.`scholarship` = #{modi.scholarship,jdbcType=VARCHAR}
+        </if>
+        <if test="modi.examPayStatus == 1">
+            AND ssc.exam_pay_status = '0'
+        </if>
+        <if test="modi.examPayStatus == 2">
+            AND ssc.exam_pay_status = '1'
+        </if>
+        <if test="modi.taId != null and modi.taId != ''">
+            AND  bta.`ta_id` = #{modi.taId,jdbcType=VARCHAR}
+        </if>
+        <if test="modi.pfsnLevel != null and modi.pfsnLevel != ''">
+            AND  bup.`pfsn_level` = #{modi.pfsnLevel,jdbcType=VARCHAR}
+        </if>
+        <if test="modi.dpId !=null and modi.dpId !=''">
+			and r.`recruit_dp_id` = #{modi.dpId,jdbcType=VARCHAR}
+		</if>
+		<if test="modi.campusId !=null and modi.campusId !=''">
+			and r.`recruit_campus_id` = #{modi.campusId,jdbcType=VARCHAR}
+		</if>
+       <if test="user.userLevel!=1">
+			<choose>
+				<when test="user.userLevel == 3  or user.userLevel == 8">
+					and (r.recruit = #{user.empId, jdbcType=VARCHAR}
+                    <if test="user.myDpList!=null  and user.myDpList.size() > 0">
+                        or (r.recruit_dp_id in (
+                        <foreach collection="user.myDpList" item="info" separator=",">
+                            #{info.dpId, jdbcType=VARCHAR}
+                        </foreach>
+                        )
+                    and e.emp_status='2')
+                    </if>
+                    )
+				</when>
+				<when test="user.userLevel == 4 or user.userLevel == 5">
+					and r.recruit = #{user.empId, jdbcType=VARCHAR}
+				</when>
+				<when test="user.userLevel == 100">
+					and (r.recruit = #{user.empId, jdbcType=VARCHAR}
+                    <if test="user.jtList!=null and user.jtList.size()>0">
+                            or 	bta.city_code in (
+                          <foreach collection="user.jtList" item="cityCode" index="index" separator=",">
+                            '${cityCode}'
+                          </foreach>
+                          )
+                    </if>
+                    )
+				</when>
+				<otherwise>
+					and r.recruit = #{user.empId, jdbcType=VARCHAR}
+				</otherwise>
+			</choose>
+		</if> 
+        order by bsm.create_time desc
+    </select>
+
+    <select id="ifModifyingByLearnId" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT
+      count(bsm.modify_id)
+        FROM
+        `bd_student_modify` bsm
+        LEFT JOIN bd_check_record bcr ON bcr.`mapping_id` = bsm.`modify_id` AND bcr.check_order = bsm.check_order
+        WHERE bsm.`modify_type` = '12'  and bcr.check_type = '13' and (bcr.check_status='1' or bcr.check_status='2')
+         and bsm.learn_id=#{learnId}
+    </select>
+    
+    <delete id="deleteStudentModify">
+		delete from bd_student_modify
+		where modify_id in
+		<foreach collection="ids" item="id" open="(" close=")"
+			separator=",">
+			#{id, jdbcType=CHAR}
+		</foreach>
+		and is_complete = '0'
+	</delete>
+	
+	<select id="findStudentModifyById" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		bsm.modify_id,
+		bsm.new_std_name,
+		bsm.new_sex,
+		bsm.new_nation,
+		bsm.new_id_card,
+		bsm.new_scholarship,
+		bsm.graduate_edcs_type,
+		bsm.new_graduate_edcs_type,
+		bsm.graduate_unvs_name,
+		bsm.new_graduate_unvs_name,
+		date_format(bsm.graduate_time,'%Y-%m-%d') graduate_time,
+		date_format(bsm.new_graduate_time,'%Y-%m-%d') new_graduate_time,
+		bsm.graduate_profession,
+		bsm.new_graduate_profession,
+		bsm.graduate_diploma,
+		bsm.new_graduate_diploma,
+		bsm.create_user,
+		date_format(bsm.create_time,'%Y-%m-%d %H:%i:%s') create_time,
+		bsm.remark,
+		bsm.std_name,
+		bsm.nation,
+		bsm.sex,
+		bsm.id_card,
+		bsm.rpr_address,
+		bsm.new_rpr_address,
+		si.`mobile`,
+		bli.`learn_id`,
+		bli.`std_id`,
+		bli.`grade`,
+		bli.`scholarship`,
+		bli.`learn_stage`,
+		bli.`std_stage`,
+		bup.`pfsn_name`,
+		bup.`pfsn_level`,
+		bu.`unvs_name`,
+		bu.`recruit_type`,
+		bup.`pfsn_level`,
+		bup.`pfsn_code`,
+		bcr.`check_status`,
+		date_format(bcr.`update_time`,'%Y-%m-%d %H:%i:%s') bcruptime,
+		bcr.`reason`,
+		oe.`emp_name`,
+		bta.`ta_name`,
+		(SELECT
+		pfsn_name
+		FROM
+		bd_unvs_profession
+		WHERE pfsn_id = bsm.`new_pfsn_id`) npfsn_name,
+		(SELECT
+		pfsn_level
+		FROM
+		bd_unvs_profession
+		WHERE pfsn_id = bsm.`new_pfsn_id`) npfsn_level,
+		(SELECT
+		unvs_name
+		FROM
+		bd_university
+		WHERE unvs_id = bsm.`new_unvs_id`) nunvs_name,
+		(SELECT
+		ta_name
+		FROM
+		bd_test_area
+		WHERE ta_id = bsm.`new_ta_id`) nta_name,
+		IFNULL(ssc.exam_pay_status,0) exam_pay_status
+		FROM
+		`bd_student_modify` bsm
+		LEFT JOIN bd_learn_info bli
+		ON bsm.`learn_id` = bli.`learn_id`
+		LEFT JOIN bd_unvs_profession bup
+		ON bup.`pfsn_id` = bsm.`pfsn_id`
+		LEFT JOIN bd_university bu
+		ON bu.`unvs_id` = bsm.`unvs_id`
+		LEFT JOIN bd_check_record bcr
+		ON bcr.`mapping_id` = bsm.`modify_id`
+		LEFT JOIN `oa_employee` oe
+		ON bcr.`emp_id` = oe.`emp_id`
+		LEFT JOIN bd_test_area bta
+		ON bta.`ta_id` = bli.`ta_id`
+		left join bd_student_info si
+		on si.std_id = bli.std_id
+		left join bd_student_scene_confirm ssc on bli.learn_id=ssc.learn_id
+		WHERE bsm.`modify_id` =
+		#{modifyId,jdbcType=VARCHAR} LIMIT 1
+	</select>
+	
+	<update id="updateExt1">
+	 	update bd_student_modify set ext_1=#{ext1} where modify_id=#{modifyId}
+	</update>
+	
+	<select id="findStudentInfo" resultMap="StudentInfoMap"
+		parameterType="java.lang.String">
+		SELECT 
+			bsi.`std_name`,bsi.`std_id`,bli.grade,bli.learn_id
+		FROM
+		  bd_student_scene_confirm c inner join bd_learn_info bli on c.learn_id=bli.learn_id
+		  inner JOIN bd_student_info bsi 
+		    ON bsi.`std_id` = bli.`std_id` 
+		  left join bd_student_modify m 
+		    on m.`learn_id` = bli.`learn_id`
+		  LEFT JOIN bd_learn_rules r 
+		    ON r.`learn_id` = bli.`learn_id`  
+		    LEFT JOIN `oa_employee` e
+		ON r.`recruit` = e.`emp_id`
+		LEFT JOIN bd_test_area bta
+		ON bta.`ta_id` = bli.`ta_id`
+		WHERE (
+		    m.`is_complete` = '1' 
+		    or m.`modify_id` is null
+		  ) 
+		 and ((bli.std_stage in(1,2,3) and c.web_register_status = '1') or bli.learn_id in(select learn_id from net_report_data))
+		<if test="sName != null and sName != ''">
+			AND (bsi.`id_card` = #{sName,jdbcType=VARCHAR} or
+			bsi.`std_name` like CONCAT('%',#{sName,jdbcType=VARCHAR},'%')
+			)
+		</if>
+		<if test="user.userLevel!=1">
+			<choose>
+                <when test="user.userLevel == 3  or user.userLevel == 8">
+                    and (r.recruit = #{user.empId, jdbcType=VARCHAR}
+                    <if test="user.myDpList!=null  and user.myDpList.size() > 0">
+                        or (r.recruit_dp_id in (
+                        <foreach collection="user.myDpList" item="info" separator=",">
+                            #{info.dpId, jdbcType=VARCHAR}
+                        </foreach>
+                        )
+                        and e.emp_status='2')
+                    </if>
+                    )
+                </when>
+				<when test="user.userLevel == 4 or user.userLevel == 5">
+					and r.recruit = #{user.empId, jdbcType=VARCHAR}
+				</when>
+                <when test="user.userLevel == 100">
+                    and (r.recruit = #{user.empId, jdbcType=VARCHAR}
+                    <if test="user.jtList!=null and user.jtList.size()>0">
+                        or 	bta.city_code in (
+                        <foreach collection="user.jtList" item="cityCode" index="index" separator=",">
+                            '${cityCode}'
+                        </foreach>
+                        )
+                    </if>
+                    )
+                </when>
+				<otherwise>
+					and r.recruit = #{user.empId, jdbcType=VARCHAR}
+				</otherwise>
+			</choose>
+		</if> 
+		group by bli.`learn_id`
+		ORDER BY bli.`update_time` DESC
+	</select>
+	
+	<select id="findStudentEnrollInfo" resultMap="EnrollInfoMap">
+		SELECT
+		(select hk_name from net_hkdm_code where hk_code = bsi.rpr_address_code)rpr_address,
+		bli.`learn_id`,
+		bli.`std_id`,
+		bli.`grade`,
+		bli.`std_stage`,
+		bli.`scholarship`,
+		bli.`ta_id`,
+		bsi.`std_name`,
+		bsi.`id_card`,
+		bsi.`sex`,
+		bsi.`nation`,
+		bu.`unvs_name`,
+		bu.`unvs_id`,
+		bup.`pfsn_id`,
+		bup.`pfsn_name`,
+		bup.`pfsn_code`,
+		bup.`pfsn_level`,
+		bta.`ta_name`,
+		bta.city_code,
+		bli.inclusion_status,
+		score.score,
+		ssc.exam_pay_status,
+		sh.unvs_name graduate_unvs_name,
+		sh.profession graduate_profession,
+		sh.edcs_type graduate_edcs_type,
+		sh.diploma graduate_diploma,
+		date_format(sh.graduate_time,'%Y-%m-%d') graduate_time
+		FROM
+		bd_learn_info bli
+		LEFT JOIN bd_student_info bsi
+		ON bli.`std_id` =
+		bsi.`std_id`
+		LEFT JOIN bd_unvs_profession bup
+		ON bup.`pfsn_id` =
+		bli.`pfsn_id`
+		LEFT JOIN bd_university bu
+		ON bu.`unvs_id` = bli.`unvs_id`
+		LEFT JOIN bd_test_area bta
+		ON bta.`ta_id` = bli.`ta_id`
+		LEFT JOIN (
+			SELECT learn_id,SUM(score) score FROM bd_student_e_score GROUP BY learn_id
+		) score
+		ON bli.learn_id = score.learn_id
+		left join bd_student_scene_confirm ssc on ssc.learn_id=bli.learn_id
+		left join bd_student_history sh on sh.learn_id=bli.learn_id
+		WHERE
+		bli.`learn_id` = #{learnId}
+	</select>
+	
+</mapper>

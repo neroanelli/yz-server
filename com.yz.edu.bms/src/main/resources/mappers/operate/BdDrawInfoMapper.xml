@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.operate.BdDrawInfoMapper" >
+
+    <resultMap id="GsLotteryTicketMap" type="com.yz.model.operate.GsLotteryTicket">
+        <result column="ticket_id" property="ticketId" jdbcType="VARCHAR" />
+        <result column="lottery_id" property="lotteryId" jdbcType="VARCHAR" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="yz_code" property="yzCode" jdbcType="VARCHAR" />
+        <result column="used_time" property="usedTime" jdbcType="VARCHAR" />
+        <result column="is_used" property="isUsed" jdbcType="VARCHAR" />
+        <result column="give_way_type" property="giveWayType" jdbcType="VARCHAR" />
+        <result column="lottery_name_name" property="lotteryName" jdbcType="VARCHAR" />
+        <result column="start_time" property="startTime" jdbcType="VARCHAR" />
+        <result column="end_time" property="endTime" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+        <result column="trigger_user_name" property="triggerUserName" jdbcType="VARCHAR" />
+        <result column="trigger_user_mobile" property="triggerUserMobile" jdbcType="VARCHAR" />
+        <result column="trigger_yz_code" property="triggerYzCode" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getGsLotteryTicketList" resultMap="GsLotteryTicketMap" parameterType="com.yz.model.operate.GsLotteryTicket">
+        select
+        glt.ticket_id,
+        glt.lottery_id,
+        glt.is_used,
+        glt.user_id,
+        glt.user_name,
+        glt.mobile,
+        glt.yz_code,
+        glt.give_way_type,
+        glt.create_time,
+        glt.trigger_user_name,
+        glt.trigger_user_mobile,
+        glt.trigger_yz_code,
+        glt.used_time,
+        gl.lottery_name_name,
+        gl.start_time,
+        gl.end_time
+        from goods.gs_lottery_ticket glt left join goods.gs_lottery gl on glt.lottery_id=gl.lottery_id where 1=1
+        <if test="userName != null and userName !=''">
+            and glt.user_name = #{userName,jdbcType=VARCHAR}
+        </if>
+        <if test="mobile != null and mobile !=''">
+            and glt.mobile = #{mobile,jdbcType=VARCHAR}
+        </if>
+        <if test="lotteryName !=null and '' != lotteryName">
+			and gl.`lottery_name_name` like concat('%',#{lotteryName,jdbcType=VARCHAR},'%')        
+        </if>
+        order by glt.create_time DESC,glt.ticket_id ASC
+    </select>
+
+    <resultMap id="DrawRecord" type="com.yz.model.operate.DrawRecord">
+        <result column="up_id" property="upId" jdbcType="VARCHAR" />
+        <result column="prize_name" property="prizeName" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="VARCHAR" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="winning_time" property="winningTime" jdbcType="VARCHAR" />
+        <result column="lottery_name_name" property="lotteryName" jdbcType="VARCHAR" />
+        <result column="lottery_id" property="lotteryId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getRecordList" resultMap="DrawRecord">
+      SELECT
+      p.`up_id`,
+      r.`prize_name`,
+      w.`user_id`,
+      w.`real_name`,
+      w.`mobile`,
+      a.`lottery_name_name`,
+      a.`lottery_id`,
+      DATE_FORMAT(p.`winning_time`, '%Y-%m-%d %H:%i:%s') winning_time
+    FROM
+        goods.`gs_user_prize` p
+      LEFT JOIN goods.`gs_lottery_winning` w
+        ON w.`winning_id` = p.`winning_id`
+      LEFT JOIN goods.`gs_lottery_prize` r
+        ON r.`prize_id` = p.`prize_id`
+      LEFT JOIN goods.`gs_lottery` a
+        ON a.`lottery_id` = w.`lottery_id`
+        <where>
+            <if test="realName != null and realName !=''">
+                and w.`real_name` like concat('%',#{realName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="mobile != null and mobile !=''">
+                and w.`mobile` like concat('%',#{mobile,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="lotteryName != null and lotteryName !=''">
+                and a.`lottery_name_name` like concat('%',#{lotteryName,jdbcType=VARCHAR},'%')
+            </if>
+        </where>
+        order by p.`winning_time` DESC
+    </select>
+    
+    <resultMap id="LeaveMessageMap" type="com.yz.model.operate.LeaveMessage">
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="VARCHAR" />
+        <result column="head_img" property="headImg" jdbcType="VARCHAR" />
+        <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+        <result column="yz_code" property="yzCode" jdbcType="VARCHAR" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+        <result column="msg_content" property="msgContent" jdbcType="VARCHAR" />
+        <result column="is_show" property="isShow" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<select id="getLeaveMessageList" resultMap="LeaveMessageMap" parameterType="com.yz.model.operate.LeaveMessage">
+        SELECT * FROM bms.`bd_enroll_activity_msg` beam where 1=1
+        <if test="realName != null and realName !=''">
+            and beam.real_name = #{realName,jdbcType=VARCHAR}
+        </if>
+        <if test="mobile != null and mobile !=''">
+            and beam.mobile = #{mobile,jdbcType=VARCHAR}
+        </if>
+        order by beam.create_time DESC
+    </select>
+    
+    <update id="updateMessage" parameterType="com.yz.model.operate.LeaveMessage">
+  	 update bms.`bd_enroll_activity_msg`
+    <set >
+      <if test="isShow != null and '' != isShow" >
+        is_show = #{isShow,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR};
+  </update>
+	
+	<select id="getLeaveMsgInfoById" resultType="java.util.HashMap">
+		SELECT 
+		  scholarship,
+		  head_img AS headImg,
+		  nickname,
+		  real_name AS realName,
+		  mobile,
+		  msg_content AS msgContent,
+		  DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%S') AS createTime 
+		FROM
+		  bms.`bd_enroll_activity_msg`
+		WHERE id=#{id,jdbcType=VARCHAR}
+	</select>
+</mapper>

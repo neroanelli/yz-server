@@ -1,0 +1,115 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="Bookmark" th:href="@{/favicon.ico}">
+<link rel="Shortcut Icon" th:href="@{/favicon.ico}" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.min.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.admin.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/js/Hui-iconfont/1.0.8/iconfont.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/skin/default/skin.css}" id="skin" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/style.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/jquery.select2/select2.min.css}" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!-- 自定义样式 -->
+<style type="text/css">
+   .table tfoot th{font-weight:500;}
+</style>
+<title>筛选统计</title>
+</head>
+<body>
+	<nav class="breadcrumb">
+		学员服务 <span class="c-gray en">/</span> 筛选统计
+		<a class="btn btn-success radius r" style="line-height: 1.6em; margin-top: 3px" href="javascript:location.replace(location.href);" title="刷新">
+			<i class="Hui-iconfont">&#xe68f;</i>
+		</a>
+	</nav>
+	<div class="page-container">
+		<form id="export-form" >
+		<div class="text-l search" style="position: relative">
+			<div class="cl">
+					<div class="cl">
+						<div class="f-l">
+							<span>任务名称:</span>
+							<select class="select" size="1" id="taskId" name="taskId">
+								<option value="" selected>--请选择任务--</option>
+							</select>
+						</div>
+						<div class="f-l">
+							<span>班主任:</span>
+							<input type="text" class="input-text radius ml-10" placeholder="输入班主任" id="tutor" name="tutor">
+						</div>
+						<div class="f-r mr-5">
+							<a class="btn btn-primary radius" href="javascript:void(0);" onclick="searchResult();"><i class="Hui-iconfont">&#xe665;</i>搜索</a>
+							<a class="btn btn-normal-outline radius" onclick="_reset()" href="javascript:void(0);"><i class="Hui-iconfont Hui-iconfont-huanyipi"></i></a>
+						</div>
+					</div>
+				<div class="text-c showOther" style="background-color: #FBFBFB" onclick="_showOther()">
+					<p style="margin-bottom: 0; cursor: pointer" class="f-12 c-666"><i  class="iconfont  icon-xiala"></i></p>
+				</div>
+			</div>
+		</div>
+		</form>
+		<div class="bg-1">
+			<div class="cl pd-15 bg-1">
+				<div class="mt-35 bg-fff">
+					<table class="table table-border table-bordered table-bg table-sort" id="statTable">
+						<thead>
+							<tr class="text-c">
+								<th width="80">任务名称</th>
+								<th width="100">班主任</th>
+								<th width="50">已完成</th>
+								<th width="50">未完成</th>
+								<th width="50">完成率</th>
+								<th width="80">邮寄(外市外省)</th>
+								<th width="50">失联</th>
+								<th width="50">退学</th>
+								<th width="50">出差</th>
+								<th width="50">其它</th>
+							</tr>
+						</thead>
+						<tfoot class="text-c">
+								<th>总计</th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--_footer 作为公共模版分离出去-->
+	<script type="text/javascript" th:src="@{/js/jquery/1.9.1/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/layer/2.4/layer.js}"></script>
+	<script type="text/javascript" th:src="@{/js/h-ui/H-ui.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/h-ui/H-ui.admin.js}"></script>
+	<script type="text/javascript" th:src="${_file_browser + 'cache/dict.json'}"></script>
+	<script type="text/javascript" th:src="${_file_browser + 'cache/pcd.json'}"></script>
+	<!--/_footer 作为公共模版分离出去-->
+
+	<!--请在下方写此页面业务相关的脚本-->
+	<script type="text/javascript" th:src="@{/js/My97DatePicker/4.8/WdatePicker.js}"></script>
+	<script type="text/javascript" th:src="@{/js/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/custom/yzCommon.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.select2/select2.full.js}"></script>
+	<script type="text/javascript" th:src="@{/js/webjs/stdservice/diploma/student_diploma_statistics.js}"></script>
+</body>
+</html>

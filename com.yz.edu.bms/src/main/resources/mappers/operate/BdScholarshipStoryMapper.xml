@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.operate.BdScholarshipStoryMapper">
+    
+	<resultMap type="com.yz.model.operate.BdScholarshipStory" id="scholarshipStoryInfo">
+	  <id column="scholarship_id" property="scholarshipId" jdbcType="VARCHAR"></id>
+	  <result column="article_title" property="articleTitle" jdbcType="VARCHAR"/>
+	  <result column="text_pre" property="textPre" jdbcType="VARCHAR"/>
+	  <result column="entrance_text" property="entranceText" jdbcType="VARCHAR"/>
+	  <result column="entrance_link" property="entranceLink" jdbcType="VARCHAR"/>
+	  <result column="text_last" property="textLast" jdbcType="VARCHAR"/>
+	  <result column="article_link_title" property="articleLinkTitle" jdbcType="VARCHAR"/>
+	  <result column="article_link_des" property="articleLinkDes" jdbcType="VARCHAR"/>
+	  <result column="article_pic_url" property="articlePicUrl" jdbcType="VARCHAR"/>
+	  <result column="is_allow" property="isAllow" jdbcType="VARCHAR"/>
+	  <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+	  <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+	  <result column="update_user_id" property="updateUserId" jdbcType="VARCHAR"/>
+	  <result column="create_user_id" property="createUserId" jdbcType="VARCHAR"/>
+	  <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+	  <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="getOneScholarshipStory" resultType="java.util.HashMap">
+		select scholarship_id as scholarshipId,article_title as articleTitle,text_pre as textPre,entrance_text as entranceText,entrance_link as entranceLink,
+		text_last as textLast,article_link_title as articleLinkTitle,article_link_des as articleLinkDes,article_pic_url as articlePicUrl
+		from bd_scholarship_story 
+		where scholarship_id = #{scholarshipId}
+	</select>
+	
+	<!-- 毕业发放任务查询 -->
+	<select id="getScholarshipStory" resultMap="scholarshipStoryInfo" parameterType="com.yz.model.operate.BdScholarshipStory">
+	   select 
+	      bss.`scholarship_id`,
+		  bss.`article_title`,
+		  bss.`entrance_text`,
+		  bss.`is_allow`,
+		  bss.`create_time`,
+		  bss.`create_user`
+		from
+		bd_scholarship_story bss
+		where 1 = 1
+		 <if test="createUser !=null and '' != createUser">
+		     and  bss.`create_user` like  CONCAT('%', CONCAT(#{createUser}, '%'))
+		 </if>
+		  <if test="isAllow !=null and '' != isAllow">
+		  	 and bss.`is_allow` = #{isAllow}
+		 </if>
+         order by bss.`create_time` DESC
+	</select>
+	
+	<update id="updateIsAllow" parameterType="com.yz.model.operate.BdScholarshipStory">
+	    update bd_scholarship_story 
+	    <set>
+	    <if test="isAllow !=null and '' != isAllow">
+			     `is_allow` = #{isAllow,jdbcType=VARCHAR},
+		</if>
+	    <if test="updateUser != null and updateUser != ''">
+	             `update_user` = #{updateUser,jdbcType=VARCHAR},
+	    </if>
+	    <if test="updateUserId != null and updateUserId != ''">
+	            `update_user_id` = #{updateUserId,jdbcType=VARCHAR},
+	    </if>
+				`update_time` = now()
+	    </set> 
+	    where scholarship_id = #{scholarshipId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateScholarshipStory" parameterType="com.yz.model.operate.BdScholarshipStory">
+	  update bd_scholarship_story
+		<set>
+		     <if test="articleTitle !=null and '' != articleTitle">
+			  	 `article_title` = #{articleTitle,jdbcType=VARCHAR},
+			 </if>
+			<if test="textPre !=null and '' != textPre">
+			     `text_pre` = #{textPre,jdbcType=VARCHAR},
+			 </if>
+			 <if test="entranceText !=null and '' != entranceText">
+			     `entrance_text` = #{entranceText,jdbcType=VARCHAR},
+			 </if>
+			 <if test="entranceLink !=null and '' != entranceLink">
+			     `entrance_link` = #{entranceLink,jdbcType=VARCHAR},
+			 </if>
+			  <if test="textLast !=null and '' != textLast">
+			     `text_last` = #{textLast,jdbcType=VARCHAR},
+			 </if>
+			  <if test="articleLinkTitle !=null and '' != articleLinkTitle">
+			     `article_link_title` = #{articleLinkTitle,jdbcType=VARCHAR},
+			 </if>
+			  <if test="articleLinkDes !=null and '' != articleLinkDes">
+			     `article_link_des` = #{articleLinkDes,jdbcType=VARCHAR},
+			 </if>
+			  <if test="articlePicUrl !=null and '' != articlePicUrl">
+			     `article_pic_url` = #{articlePicUrl,jdbcType=VARCHAR},
+			 </if>
+			  <if test="isAllow !=null and '' != isAllow">
+			     `is_allow` = #{isAllow,jdbcType=VARCHAR},
+			 </if>
+			  
+			 <if test="updateUser != null and updateUser != ''">
+	             `update_user` = #{updateUser,jdbcType=VARCHAR},
+	       	 </if>
+	         <if test="updateUserId != null and updateUserId != ''">
+	            `update_user_id` = #{updateUserId,jdbcType=VARCHAR},
+	         </if>
+				`update_time` = now()
+		</set>
+	     where scholarship_id = #{scholarshipId,jdbcType=VARCHAR}
+	</update>
+	
+	 <delete id="deleteScholarshipStory">
+	   delete from bd_scholarship_story  where scholarship_id = #{scholarshipId}
+	 </delete> 
+
+	<insert id="insert" parameterType="com.yz.model.operate.BdScholarshipStory">
+        INSERT INTO `bd_scholarship_story` (
+        `scholarship_id`,
+        `article_title`,
+        `text_pre`,
+        `entrance_text`,
+        `entrance_link`,
+        `text_last`,
+        `article_link_title`,
+        `article_link_des`,
+        `article_pic_url`,
+        `is_allow`,
+        `create_user_id`,
+        `create_time`,
+        `create_user`
+        )
+        VALUES
+        (
+        #{scholarshipId},
+        #{articleTitle},
+        #{textPre},
+        #{entranceText},
+        #{entranceLink},
+        #{textLast},
+        #{articleLinkTitle},
+        #{articleLinkDes},
+        #{articlePicUrl},
+        #{isAllow},
+        #{createUserId},
+        #{createTime},
+        #{createUser}
+        );
+    </insert>
+	
+	<delete id="deleteScholarshipStoryByIdArr">
+        DELETE FROM bd_scholarship_story WHERE scholarship_id IN (
+        <foreach collection="scholarshipIds" item="id" index="index" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+	
+</mapper>

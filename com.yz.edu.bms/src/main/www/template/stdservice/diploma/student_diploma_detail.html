@@ -1,0 +1,168 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="/favicon.ico" >
+	<link rel="Shortcut Icon" href="/favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="lib/html5shiv.js"></script>
+	<script type="text/javascript" src="lib/respond.min.js"></script>
+	<![endif]-->
+	<script type="text/javascript" th:src="@{/js/html5shiv.js}"></script>
+	<script type="text/javascript" th:src="@{/js/respond.min.js}"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.min.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/H-ui.admin.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/js/Hui-iconfont/1.0.8/iconfont.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/skin/default/skin.css}" id="skin" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/h-ui/style.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/jquery.select2/select2.min.css}" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--/meta 作为公共模版分离出去-->
+	<title>编辑</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+</head>
+<body>
+	<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" th:object="${dataInfo}" id="form-degree-detail">
+		
+		<input type="hidden" th:value="*{followId}" name="followId" id="followId" />
+		<input type="hidden" th:value="*{taskId}" name="taskId" id="taskId" />
+		<input type="hidden" th:value="*{learnId}" name="learnId" id="learnId" />
+		<input type="hidden" th:value="${_web_token}" name="_web_token" id="_web_token" />
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">姓名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			  	<span id="stdName"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">年级：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   <span id=grade></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">学号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   <span id="schoolRoll"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">院校专业及层次：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span id="unvsInfo"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">毕业证编号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   <span id="diplomaCode"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">领取状态：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span id="receiveStatus"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">领取时间：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   	<span id="receiveTime"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">未确认原因：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   	<span id="unconfirmReason"></span>
+			</div>
+		</div>
+		<div class="row cl" id="otherDiv">
+		    <label class="form-label col-xs-4 col-sm-3">其它原因：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   	<span id="otherReason"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">发票编号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   	<span id="invoiceNo"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">毕业证发放地点：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span id="receiveAddress"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">领取确认日期：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   <span id="affirmStartTime"></span>
+			</div>
+		</div>
+		
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">领取确认时间：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			   		<span id="affirmEndTime"></span>
+			</div>
+		</div>
+		
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">是否邮寄：</label>
+			<div class="formControls col-xs-4 col-sm-4" id="isMailRadio"></div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">邮寄信息：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span id="mailInfo"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">快递单号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span id="logisticsNo"></span>
+			</div>
+		</div>
+		<div class="row cl">
+		    <label class="form-label col-xs-4 col-sm-3">备注：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span id="remark"></span>
+			</div>
+		</div>
+	</form>
+	</article>
+
+	<!--_footer 作为公共模版分离出去-->
+	<script type="text/javascript" th:src="@{/js/jquery/1.9.1/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/layer/2.4/layer.js}"></script>
+	<script type="text/javascript" th:src="@{/js/h-ui/H-ui.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/h-ui/H-ui.admin.js}"></script>
+	<script type="text/javascript" th:src="@{/js/custom/yzCommon.js}"></script>
+	<!--/_footer 作为公共模版分离出去-->
+
+	<!--请在下方写此页面业务相关的脚本-->
+	<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/jquery.validate.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/validate-methods.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.validation/1.14.0/messages_zh.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.select2/select2.full.js}"></script>
+	<script type="text/javascript" th:src="@{/js/My97DatePicker/4.8/WdatePicker.js}"></script>
+	<script type="text/javascript" th:src="${_file_browser + 'cache/dict.json'}"></script>
+	<script type="text/javascript" th:src="${_file_browser + 'cache/pcd.json'}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var dataInfo = [[${dataInfo}]];
+	</script>
+	<script type="text/javascript" th:src="@{/js/webjs/stdservice/diploma/student_diploma_detail.js}"></script>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
