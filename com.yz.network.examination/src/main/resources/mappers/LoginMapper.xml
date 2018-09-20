@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.network.examination.dao.LoginMapper" >
+
+    <resultMap id="loginUser" type="com.yz.network.examination.vo.LoginUser">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="user_pwd"/>
+        <result property="isBlock" column="is_block"/>
+        <result property="isCallNum" column="is_call_num"/>
+        <result property="isSign" column="is_sign"/>
+        <result property="isNetExam" column="is_net_exam"/>
+        <result property="callNumCityCode" column="call_num_city_code"/>
+        <result property="callNumCity" column="call_num_city"/>
+        <result property="signCityCode" column="sign_city_code"/>
+        <result property="signCity" column="sign_city"/>
+    </resultMap>
+    <select id="getUser" resultMap="loginUser">
+        SELECT
+        user_id,
+        user_name,
+        user_pwd
+        FROM bms.bms_user WHERE user_name = #{userName} AND `module` = '2' AND is_block = '0'
+    </select>
+    <select id="assembly" resultMap="loginUser">
+        select
+        bu.`user_id`,
+        bu.`user_name`,
+        bu.`user_pwd`,
+        bu.`is_block`,
+        acae.`attr_value` is_call_num,
+        acaf.`attr_value` is_sign,
+        acag.`attr_value` is_net_exam,
+        sc.`city_code` call_num_city_code,
+        scd.`city_code` sign_city_code,
+        sc.`city_name` call_num_city,
+        scd.`city_name` sign_city
+        from
+        bms.`bms_user` bu
+        LEFT JOIN common.`ats_customize_attr` aca
+        ON aca.`ref_handler` = bu.`user_id` AND aca.`ref_type`='NetWorkExam'
+        AND aca.`attr_name`='callNumberAddr'
+        LEFT JOIN bms.`sys_city` sc ON sc.`city_code` = aca.`attr_value`
+        LEFT JOIN common.`ats_customize_attr` acad
+        ON acad.`ref_handler` = bu.`user_id` AND acad.`ref_type`='NetWorkExam'
+        AND acad.`attr_name`='signAddr'
+        LEFT JOIN bms.`sys_city` scd ON scd.`city_code` = acad.`attr_value`
+        LEFT JOIN common.`ats_customize_attr` acae
+        ON acae.`ref_handler` = bu.`user_id` AND acae.`ref_type`='NetWorkExam'
+        AND acae.`attr_name`='callNumber'
+        LEFT JOIN common.`ats_customize_attr` acaf
+        ON acaf.`ref_handler` = bu.`user_id` AND acaf.`ref_type`='NetWorkExam'
+        AND acaf.`attr_name`='sign'
+        LEFT JOIN common.`ats_customize_attr` acag
+        ON acag.`ref_handler` = bu.`user_id` AND acag.`ref_type`='NetWorkExam'
+        AND acag.`attr_name`='netExam'
+        WHERE bu.user_id = #{userId}
+    </select>
+</mapper>

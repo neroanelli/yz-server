@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.network.examination.dao.QueueMapper" >
+    <resultMap id="queueInfo" type="com.yz.network.examination.model.BdLearnQueueInfo">
+      <result column="queue_id" property="queueId"/>
+      <result column="queue_type" property="queueType"/>
+      <result column="no" property="no"/>
+      <result column="pfsn_level" property="pfsnLevel"/>
+      <result column="id_card" property="idCard"/>
+      <result column="place_confirm_time" property="placeConfirmTime"/>
+      <result column="queue_status" property="queueStatus"/>
+      <result column="std_name" property="stdName"/>
+    </resultMap>
+    <insert id="addQueue" parameterType="com.yz.network.examination.model.BdLearnQueueInfo">
+        INSERT INTO bms.bd_learn_queue(
+          `queue_id`,
+          `queue_type`,
+          `no`,
+          `pfsn_level`,
+          `learn_id`,
+          `std_name`,
+          `id_card`,
+          `queue_status`,
+          `place_confirm_time`,
+          `queue_no`,
+          `city_code`,
+          `sign_user_id`,
+          `sign_time`
+        )
+        VALUES (
+          #{bdLearnQueueInfo.queueId},
+          #{bdLearnQueueInfo.queueType},
+          #{bdLearnQueueInfo.no},
+          #{bdLearnQueueInfo.pfsnLevel},
+          #{bdLearnQueueInfo.learnId},
+          #{bdLearnQueueInfo.stdName},
+          #{bdLearnQueueInfo.idCard},
+          '0',
+          #{bdLearnQueueInfo.placeConfirmTime},
+          #{bdLearnQueueInfo.queueNo},
+          #{bdLearnQueueInfo.cityCode},
+          #{bdLearnQueueInfo.signUserId},
+          #{bdLearnQueueInfo.signTime}
+        )
+    </insert>
+    <select id="getQueueList" resultMap="queueInfo">
+        SELECT
+        `queue_id`,
+        `queue_type`,
+        `queue_status`,
+        `place_confirm_time`,
+        `pfsn_level`,
+        `std_name`,
+        `id_card`,
+        `no`
+        FROM bms.bd_learn_queue
+        WHERE city_code = #{cityCode}
+        AND date(sign_time) = curdate()
+        <choose>
+            <when test="pfsnLevel != null and pfsnLevel !=''">
+                AND pfsn_level = #{pfsnLevel} AND queue_status IN ('0','1') AND queue_no is not null
+                ORDER BY queue_no
+            </when>
+            <otherwise>
+                AND queue_no is null AND queue_status = '0'
+                ORDER BY `no`
+            </otherwise>
+        </choose>
+    </select>
+    <select id="selectNextNumber" resultType="java.lang.String">
+        SELECT queue_id FROM bms.bd_learn_queue
+        WHERE queue_status = '0' AND pfsn_level = #{pfsnLevel} AND city_code = #{cityCode} AND queue_no is not null AND date(sign_time) = curdate()
+        ORDER BY queue_no
+        limit #{number}
+    </select>
+    <select id="selectWaitNum" resultType="java.lang.String">
+        SELECT count(1) FROM bms.bd_learn_queue
+        WHERE queue_status = '0' AND date(sign_time) = curdate() AND pfsn_level = #{pfsnLevel} AND city_code = #{cityCode}
+        <if test="isPlace">
+            AND queue_no is not null
+        </if>
+    </select>
+    <update id="updateNextStatus">
+      <!--更新确认中的为已完成-->
+      UPDATE bms.bd_learn_queue SET queue_status = '2' , queue_user_id = #{userId}, queue_time = now() WHERE queue_status = '1' AND pfsn_level = #{pfsnLevel} AND city_code = #{cityCode};
+      <!--更新下几位等待中为确认中-->
+      <if test="queueIds!=null and queueIds.size() &gt; 0">
+        UPDATE bms.bd_learn_queue SET queue_status = '1'
+            WHERE queue_id IN
+            <foreach collection="queueIds" item="item"
+                     index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+      </if>
+    </update>
+    <update id="jumpQueue">
+      UPDATE bms.bd_learn_queue SET queue_no = #{queueNo} WHERE queue_id = #{queueId}
+    </update>
+ </mapper>

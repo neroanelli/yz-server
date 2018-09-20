@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.network.examination.dao.RegNetWorkExamFrmMapper">
+	
+	<select id="getStudentNetWorkInfo" resultType="java.util.Map">
+		SELECT 
+		  nrd.`id`,
+		  nrd.`learn_id`,
+		  nrd.`xm`,
+		  nrd.`xbdm`,
+		  nrd.`xbname`,
+		  nrd.`mzdm`,
+		  nrd.`mzname`,
+		  nrd.`csrq`,
+		  nrd.`zzmmdm`,
+		  nrd.`zzmmname`,
+		  nrd.`wyyzdm`,
+		  nrd.`wyyzname`,
+		  nrd.`kslbdm`,
+		  nrd.`kslbname`,
+		  nrd.`jhlbdm`,
+		  nrd.`jhlbname`,
+		  nrd.`kmzdm`,
+		  nrd.`xqdm`,
+		  nrd.`xqshort`,
+		  nrd.`xqname`,
+		  nrd.`hkdm`,
+		  nrd.`hkname`,
+		  nrd.`kqxl`,
+		  nrd.`kqxlname`,
+		  nrd.`zydm`,
+		  nrd.`zyname`,
+		  nrd.`zjlxdm`,
+		  nrd.`zjlxname`,
+		  nrd.`zjdm`,
+		  nrd.`byrq`,
+		  nrd.`byxx`,
+		  nrd.`byzy`,
+		  nrd.`byzshm`,
+		  nrd.`yzbm`,
+		  nrd.`lxdh`,
+		  nrd.`txdz`,
+		  nrd.`lxsj`,
+		  nrd.`zsbpc1bkyx1`,
+		  nrd.`zsbpc1bkyx1zy1`,	
+		  nrd.`zsbpc1bkyx2`,
+		  nrd.`zsbpc1bkyx2zy1`,
+		  nrd.`status`,
+		  nrd.`zsbpc1bkyx1` gqgpc4bkyx1,
+		  nrd.`zsbpc1bkyx1zy1` gqgpc4bkyx1zy1,	
+		  nrd.`zsbpc1bkyx2` gqgpc4bkyx2,
+		  nrd.`zsbpc1bkyx2zy1` gqgpc4bkyx2zy1 
+		FROM
+		  bms.`net_report_data` nrd 
+		WHERE nrd.`learn_id` = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<select id="getShowInfoFromStudentInfo" resultType="java.util.Map">
+		SELECT 
+		  nrd.`id`,
+		  nrd.`learn_id`,
+		  bsi.`std_name` as xm,
+		  nrd.`xbdm`,
+		  nrd.`xbname`,
+		  nrd.`mzdm`,
+		  nrd.`mzname`,
+		  nrd.`csrq`,
+		  nrd.`zzmmdm`,
+		  nrd.`zzmmname`,
+		  nrd.`wyyzdm`,
+		  nrd.`wyyzname`,
+		  nrd.`kslbdm`,
+		  nrd.`kslbname`,
+		  nrd.`jhlbdm`,
+		  nrd.`jhlbname`,
+		  nrd.`kmzdm`,
+		  nrd.`xqdm`,
+		  nrd.`xqshort`,
+		  bta.`ta_name` as xqname,
+		  nrd.`hkdm`,
+		  nrd.`hkname`,
+		  nrd.`kqxl`,
+		  nrd.`kqxlname`,
+		  nrd.`zydm`,
+		  nrd.`zyname`,
+		  nrd.`zjlxdm`,
+		  nrd.`zjlxname`,
+		  bsi.`id_card` as zjdm,
+		  nrd.`byrq`,
+		  nrd.`byxx`,
+		  nrd.`byzy`,
+		  nrd.`byzshm`,
+		  nrd.`yzbm`,
+		  bsi.`mobile` as lxdh,
+		  nrd.`txdz`,
+		  bsi.`mobile` as lxsj,
+		  nrd.`zsbpc1bkyx1`,
+		  nrd.`zsbpc1bkyx1zy1`,	
+		  nrd.`zsbpc1bkyx2`,
+		  nrd.`zsbpc1bkyx2zy1`,
+		  nrd.`status`,
+		  nrd.`zsbpc1bkyx1` gqgpc4bkyx1,
+		  nrd.`zsbpc1bkyx1zy1` gqgpc4bkyx1zy1,	
+		  nrd.`zsbpc1bkyx2` gqgpc4bkyx2,
+		  nrd.`zsbpc1bkyx2zy1` gqgpc4bkyx2zy1,
+		  s.`education_appraisal`  
+		FROM
+		  bms.`net_report_data` nrd
+		  left join bms.`bd_learn_info` bli on bli.learn_id=nrd.learn_id
+		  left join bms.`bd_student_info` bsi on bsi.std_id=bli.std_id
+		  left join bms.`bd_test_area` bta on bta.ta_id=bli.ta_id
+		  inner join bms.`bd_student_scene_confirm` s on s.learn_id=nrd.learn_id
+		WHERE nrd.`learn_id` = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getStudentNetWorkInfoByIdCardAndMobile" resultType="java.util.Map">
+		SELECT 
+		  nrd.`id`,
+		  nrd.`learn_id`,
+		  nrd.`xm`,
+		  nrd.`status` 
+		FROM
+		  bms.`net_report_data` nrd 
+		  LEFT JOIN bms.`bd_learn_info` bli 
+		    ON bli.`learn_id` = nrd.`learn_id` 
+		  LEFT JOIN bms.`bd_student_info` bsi 
+		    ON bsi.`std_id` = bli.`std_id` 
+		WHERE bsi.`id_card` = #{idCard,jdbcType=VARCHAR} and bsi.mobile=#{mobile,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getStudentNetWorkInfoByIdCard" resultType="java.util.Map">
+		SELECT 
+		  nrd.`id`,
+		  nrd.`learn_id`,
+		  nrd.`xm`,
+		  nrd.`status` 
+		FROM
+		  bms.`net_report_data` nrd 
+		WHERE nrd.`zjdm` = #{idCard,jdbcType=VARCHAR}
+	</select>
+	
+	
+	
+	<insert id="insertStudentSceneRegister" parameterType="java.util.Map">
+		INSERT INTO bms.`bd_student_scene_register` (
+		  register_id,
+		  learn_id,
+		  username,
+		  `password`,
+		  register_no,
+		  reg_time,
+		  register_status
+		) 
+		VALUES
+		  (#{registerId,jdbcType=VARCHAR},
+		  #{learnId,jdbcType=VARCHAR},
+		  #{username,jdbcType=VARCHAR},
+		  #{password,jdbcType=VARCHAR},
+		  #{registerNo,jdbcType=VARCHAR},
+		  NOW(),
+		  '1'
+		  )
+	</insert>
+	
+	<update id="updateStudentRegisterStatus">
+		update bms.`bd_student_scene_register` set register_status='0' where learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+	
+    <select id="studentSceneRegisterNum" resultType="java.lang.Integer">
+    	select count(0) from bms.`bd_student_scene_register` where learn_id =#{learnId,jdbcType=VARCHAR}
+    </select>
+    
+    <update id="updateNetWorkStatus">
+		update bms.`net_report_data` set `status`=#{status,jdbcType=VARCHAR} where learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	 <update id="updateByzshm">
+		update bms.`net_report_data` set `byzshm`=#{byzshm,jdbcType=VARCHAR},education_check='0' where learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateMobileBindStatus">
+		update bms.`bd_student_scene_confirm` set mobile_bind_status=#{status,jdbcType=VARCHAR} where learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateStudentWebRegisterStatus">
+		update bms.`bd_student_scene_confirm` 
+		set web_register_status='1',
+		    web_register_time=now(),
+			exam_pay_status ='0',
+			pic_collect_status ='0',
+			mobile_bind_status ='0'
+		 where learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+    
+    <select id="getStudentNetWorkInfoBatch" resultType="java.util.Map">
+		SELECT 
+		  cast(nrd.`id` as char) nid,
+		  nrd.`learn_id`,
+		  nrd.`xm`,
+		  nrd.`xbdm`,
+		  nrd.`xbname`,
+		  nrd.`mzdm`,
+		  nrd.`mzname`,
+		  nrd.`csrq`,
+		  nrd.`zzmmdm`,
+		  nrd.`zzmmname`,
+		  nrd.`wyyzdm`,
+		  nrd.`wyyzname`,
+		  nrd.`kslbdm`,
+		  nrd.`kslbname`,
+		  nrd.`jhlbdm`,
+		  nrd.`jhlbname`,
+		  nrd.`kmzdm`,
+		  nrd.`xqdm`,
+		  nrd.`xqshort`,
+		  nrd.`xqname`,
+		  nrd.`hkdm`,
+		  nrd.`hkname`,
+		  nrd.`kqxl`,
+		  nrd.`kqxlname`,
+		  nrd.`zydm`,
+		  nrd.`zyname`,
+		  nrd.`zjlxdm`,
+		  nrd.`zjlxname`,
+		  nrd.`zjdm`,
+		  nrd.`byrq`,
+		  nrd.`byxx`,
+		  nrd.`byzy`,
+		  nrd.`byzshm`,
+		  nrd.`yzbm`,
+		  nrd.`lxdh`,
+		  nrd.`txdz`,
+		  nrd.`lxsj`,
+		  nrd.`zsbpc1bkyx1`,
+		  nrd.`zsbpc1bkyx1zy1`,	
+		  nrd.`zsbpc1bkyx2`,
+		  nrd.`zsbpc1bkyx2zy1`,
+		  nrd.`zsbpc1bkyx1` gqgpc4bkyx1,
+		  nrd.`zsbpc1bkyx1zy1` gqgpc4bkyx1zy1,	
+		  nrd.`zsbpc1bkyx2` gqgpc4bkyx2,
+		  nrd.`zsbpc1bkyx2zy1` gqgpc4bkyx2zy1
+		FROM
+		  bms.`net_report_data` nrd 
+		WHERE nrd.zsbpc1bkyx1='10582' and nrd.`kslbdm`='1' and nrd.`status` = '0' and nrd.`zsbpc1bkyx1` is not null and nrd.`zsbpc1bkyx1zy1` is not null
+		and id >=#{maxId} order by id asc limit #{limit};
+	</select>
+	<update id="updateSceneConfirmStatus">
+		UPDATE bd_student_scene_confirm
+		SET exam_pay_status =#{examPayStatus},
+		pic_collect_status =#{picCollectStatus},
+		mobile_bind_status =#{mobileBindStatus}
+		WHERE learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateScenePrintHtml">
+		UPDATE bd_student_scene_register
+		SET print_html = #{printHtml},
+		print_status = #{printStatus}
+		WHERE learn_id =#{learnId}
+		AND print_html is null
+		AND register_status = '1'
+	</update>
+	
+	<select id="getSceneConfirmCollectStudent" resultType="java.util.Map">
+		SELECT a.learn_id,b.username,b.password FROM bd_student_scene_confirm a
+		LEFT JOIN bd_student_scene_register b
+		ON a.learn_id = b.learn_id
+		WHERE b.username is not null
+		AND b.register_status = 1 AND mobile_bind_status = 1
+		AND (exam_pay_status = 0 or pic_collect_status = 0)
+		order by rand()
+		limit 50
+	</select>
+
+	<select id="getSceneConfirmCollectAllStudent" resultType="java.util.Map">
+		SELECT a.learn_id,b.username,b.password FROM bd_student_scene_confirm a
+		LEFT JOIN bd_student_scene_register b
+		ON a.learn_id = b.learn_id
+		LEFT JOIN bms.`bd_test_prove_info` p
+		ON p.`learn_id`=a.`learn_id`
+		WHERE b.username IS NOT NULL
+		AND b.register_status = 1 AND mobile_bind_status = 0
+		AND (exam_pay_status = 0 OR pic_collect_status = 0 OR IFNULL(p.`exam_no` ,'')='')
+		ORDER BY RAND()
+	</select>
+	
+	
+	<select id="getUnvsInfoByLearnId" resultType="java.util.Map">
+		SELECT 
+		  bli.`learn_id`,
+		  u.`unvs_name`,
+		  bup.`pfsn_name`,
+		  sys_pfsnlevel.`dict_name` as pfsn_level
+		FROM
+		  bms.`bd_learn_info` bli 
+		  LEFT JOIN bms.`bd_university` u 
+		    ON u.`unvs_id` = bli.`unvs_id` 
+		  LEFT JOIN bms.`bd_unvs_profession` bup
+		    ON bup.`pfsn_id` = bli.`pfsn_id`
+		  LEFT JOIN bms.`sys_dict` sys_pfsnlevel 
+			ON sys_pfsnlevel.p_id='pfsnLevel' and sys_pfsnlevel.dict_value=bup.`pfsn_level` 
+		WHERE bli.`learn_id` = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getStudentSceneRegisterByLearnId" resultType="java.util.Map">
+		SELECT 
+		  r.`learn_id`,
+		  r.`username`,
+		  r.`password`
+		FROM
+		  bms.`bd_student_scene_register` r 
+		WHERE r.`learn_id` = #{learnId,jdbcType=VARCHAR} and register_status='1' limit 1
+	</select>
+
+	
+	<select id="getNewMobileByIdCard" resultType="java.lang.String">
+		SELECT 
+		  bsi.`mobile`
+		FROM
+		  bms.`bd_student_info` bsi
+		WHERE bsi.`id_card` = #{idCard,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getNetReportDataStutus" resultType="java.lang.String">
+		SELECT 
+		  nrd.`status`
+		FROM
+		  bms.`net_report_data` nrd
+		WHERE nrd.`learn_id` = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="updateNetReprotDataOfMobile">
+		update bms.`net_report_data` set lxdh=#{mobile,jdbcType=VARCHAR},lxsj=#{mobile,jdbcType=VARCHAR} where zjdm =#{idCard,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateReportStatus">
+		update bms.`net_report_data` set `status`=#{status,jdbcType=VARCHAR} where learn_id=#{learnId,jdbcType=VARCHAR}
+	</update>
+
+    <update id="updateRegIfSuccess">
+    	update bms.`net_report_data` set if_success = '1' where learn_id=#{learnId,jdbcType=VARCHAR}
+    </update>
+    
+    <insert id="insertSuccess">
+	INSERT INTO exam.education_check VALUES(#{learnId,jdbcType=VARCHAR},#{username,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR});
+    </insert>
+
+	<update id="updatePicCollectStatus">
+		UPDATE bd_student_scene_confirm
+		SET pic_collect_status =#{picCollectStatus}
+		WHERE learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getStudentApplyNoByLeanrId">
+		select 
+		  username 
+		from
+		  bms.`bd_student_scene_register` 
+		where learn_id = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 更新报名确认成功 -->
+	<update id="updateStudentSceneConfirmStatus">
+		UPDATE bd_student_scene_confirm
+		SET scene_confirm_status ='1',exam_pay_status='1'
+		WHERE learn_id =#{learnId,jdbcType=VARCHAR};
+		
+		UPDATE net_report_data
+		SET status ='5'
+		WHERE learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 更新报名确认成功 -->
+	<update id="updateStudentSceneConfirmStatusAndExamNo">
+		UPDATE bd_student_scene_confirm
+		SET scene_confirm_status ='1',exam_pay_status='1'
+		WHERE learn_id =#{learnId,jdbcType=VARCHAR};
+		
+		UPDATE bms.bd_test_prove_info
+		SET exam_no =#{examNo,jdbcType=VARCHAR}
+		WHERE learn_id =#{learnId,jdbcType=VARCHAR};
+		
+		INSERT INTO bd_test_prove_info(learn_id,std_id,exam_no,stu_name,stu_sex,id_card)
+		SELECT bli.learn_id,bsi.std_id,#{examNo,jdbcType=VARCHAR} as exam_no,bsi.std_name,bsi.sex,bsi.id_card FROM bd_learn_info bli
+		INNER JOIN bd_student_info bsi ON bsi.std_id =  bli.std_id
+		WHERE  bli.learn_id=#{learnId,jdbcType=VARCHAR} and NOT  EXISTS(select bti.learn_id from bd_test_prove_info bti where  bti.learn_id=bli.learn_id);
+		
+		
+		UPDATE net_report_data
+		SET status ='5'
+		WHERE learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	
+	<select id="getNeedUpdateSceneConfirmStatus" resultType="java.util.Map">
+		SELECT a.learn_id,b.username,b.password FROM bms.bd_student_scene_confirm a
+		LEFT JOIN bms.bd_student_scene_register b ON a.learn_id = b.learn_id
+		WHERE   a.scene_confirm_status='0' and b.register_status='1'
+		and (a.exam_pay_status='1'  or a.`sign_status`='1' )
+		order by rand()
+		limit 50
+	</select>
+	
+	<select id="getSceneConfirmCollectByAlreadyReserved" resultType="java.util.Map">
+		SELECT a.learn_id,b.username,b.password FROM bms.bd_student_scene_confirm a
+		INNER JOIN bms.bd_student_scene_register b ON a.learn_id = b.learn_id
+		INNER JOIN bms.oa_confirmation_management oc  ON   oc.confirmation_id=a.confirmation_id
+		WHERE b.register_status='1' and a.scene_confirm_status='0'
+		and a.place_confirm_status='1' 
+		and <![CDATA[ DATE_FORMAT(oc.start_time, '%Y-%m-%d') <= DATE_FORMAT(now(), '%Y-%m-%d')   ]]>
+		order by rand()
+	</select>
+	
+</mapper>

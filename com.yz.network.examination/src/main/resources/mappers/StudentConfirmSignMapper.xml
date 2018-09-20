@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.network.examination.dao.StudentConfirmSignMapper" >
+
+	<resultMap id="ConfirmInfoMap" type="com.yz.network.examination.model.BdConfirmStudentInfo">
+		<id column="confirm_id" property="confirmId" jdbcType="VARCHAR" />
+		<result column="exam_pay_status" property="examPayStatus" jdbcType="VARCHAR" />
+		<result column="scene_confirm_status" property="sceneConfirmStatus" jdbcType="INTEGER" />
+		<result column="scene_confirm_time" property="sceneConfirmTime" jdbcType="TIMESTAMP" />
+		<result column="scene_remark" property="sceneRemark" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+		<result column="ta_name" property="taName" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="register_no" property="registerNo" jdbcType="VARCHAR" />
+		<result column="exam_no" property="examNo" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="emp_name" property="recruit" jdbcType="VARCHAR" />
+		<result column="emp_status" property="empStatus" jdbcType="INTEGER" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="update_user_id" property="updateUserId" jdbcType="VARCHAR" />
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
+        <result column="web_register_status" property="webRegisterStatus" jdbcType="INTEGER" />
+        <result column="pfsn_code" property="pfsnCode" jdbcType="VARCHAR" />
+        <result column="work_prove" property="workProve" jdbcType="VARCHAR" />
+        <result column="sign_time" property="signTime" jdbcType="TIMESTAMP" />
+        <result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+        <result column="sign_status" property="signStatus" jdbcType="VARCHAR" />
+        <result column="std_id" property="stdId" jdbcType="VARCHAR" />
+        <result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+        <result column="sign_user_id" property="signUserId" jdbcType="VARCHAR" />
+        <result column="pic_collect_status" property="picCollectStatus" jdbcType="VARCHAR" />
+        <result column="mobile_bind_status" property="mobileBindStatus" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getConfirmInfo" resultMap="ConfirmInfoMap" parameterType="string">
+        SELECT
+        a.confirm_id,
+        IFNULL(a.pic_collect_status,0) pic_collect_status,
+        IFNULL(a.mobile_bind_status,0) mobile_bind_status,
+        a.learn_id,
+        a.exam_pay_status,
+        a.scene_confirm_status,
+        DATE_FORMAT(
+        a.scene_confirm_time,
+        '%Y-%m-%d %H:%i:%s'
+        ) scene_confirm_time,
+        a.scene_remark,
+        DATE_FORMAT(
+        a.update_time,
+        '%Y-%m-%d %H:%i:%s'
+        ) update_time,
+        a.update_user_id,
+        a.update_user,
+        a.web_register_status,
+        DATE_FORMAT(
+        a.sign_time,
+        '%Y-%m-%d %H:%i:%s'
+        ) sign_time,
+        a.sign_status,
+        a.work_prove,
+        b.scholarship,
+        c.std_name,
+        c.id_card,
+        d.ta_name,
+        d.city_code,
+        i.username,
+        i.register_no,
+        i.password,
+        h.exam_no,
+        m.unvs_name,
+        DATE_FORMAT(
+        s.start_time,
+        '%Y-%m-%d'
+        ) start_time,
+        n.pfsn_name,
+        n.pfsn_code,
+        n.pfsn_level,
+        f.mobile,
+        f.emp_name,
+        f.emp_status
+        FROM
+        bms.bd_student_scene_confirm a
+        left join bms.oa_confirmation_management s on a.confirmation_id=s.confirmation_id
+        LEFT JOIN bms.bd_learn_info b ON a.learn_id = b.learn_id
+        LEFT JOIN bms.bd_student_info c ON b.std_id = c.std_id
+        LEFT JOIN bms.bd_test_area d ON b.ta_id = d.ta_id
+        LEFT JOIN bms.bd_learn_rules e ON a.learn_id = e.learn_id
+        LEFT JOIN bms.oa_employee f ON e.recruit = f.emp_id
+        LEFT JOIN bms.bd_test_prove_info h ON a.learn_id = h.learn_id
+        LEFT JOIN bms.bd_student_scene_register i ON  (i.register_status='1' and i.learn_id = a.learn_id)
+        LEFT JOIN bms.bd_university m ON  b.unvs_id = m.unvs_id
+        LEFT JOIN bms.bd_unvs_profession n ON b.pfsn_id = n.pfsn_id
+        WHERE 1=1 and b.grade='2019' and b.std_stage!='10' and (c.std_name=#{searchInfo} or c.id_card=#{searchInfo})
+        <if test="cityCode!=null and cityCode!=''">
+            and d.city_code = #{cityCode,jdbcType=VARCHAR}
+        </if>
+	</select>
+
+    <select id="getTodayCount" parameterType="java.lang.String" resultType="java.lang.String">
+        select  count(confirm_id) todayCount from bms.bd_student_scene_confirm where date(sign_time) = curdate() and sign_user_id=#{userId}
+    </select>
+    
+    <select id="getTotalCount" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(confirm_id) totalCount from bms.bd_student_scene_confirm where sign_user_id=#{userId}
+    </select>
+
+    <select id="existExamNo" resultMap="ConfirmInfoMap" parameterType="java.lang.String">
+            SELECT
+            b.exam_no ,
+            a.learn_id,
+            a.sign_status,
+            c.std_id,
+            e.id_card,
+            n.pfsn_level,
+            e.std_name,
+            DATE_FORMAT(
+            s.start_time,
+            '%Y-%m-%d'
+            ) start_time
+        FROM
+            bms.bd_student_scene_confirm a
+            left join bms.oa_confirmation_management s on a.confirmation_id=s.confirmation_id
+            LEFT JOIN bms.bd_test_prove_info b ON a.learn_id = b.learn_id
+            LEFT JOIN bms.bd_learn_info c ON a.learn_id = c.learn_id
+            LEFT JOIN bms.bd_student_info e ON c.std_id = e.std_id
+            LEFT JOIN bms.bd_unvs_profession n ON c.pfsn_id = n.pfsn_id
+        WHERE
+            a.confirm_id = #{confirmId}
+            LIMIT 1
+    </select>
+
+    <insert id="insertExamNo">
+        INSERT INTO bms.`bd_test_prove_info` (
+        `learn_id`,
+        `std_id`,
+        `exam_no`
+        )
+        VALUES
+        (
+        #{learnId},
+        #{stdId},
+        #{examNo}
+        );
+    </insert>
+
+    <update id="updateExamNo">
+        UPDATE bms.bd_test_prove_info SET exam_no = #{examNo} where
+        learn_id = #{learnId}
+    </update>
+
+    <update id="confirmSign" parameterType="com.yz.network.examination.model.BdConfirmStudentInfo">
+        update bms.bd_student_scene_confirm
+        <set>
+            <if test="query.updateUserId != null and '' != query.updateUserId">
+                update_user_id = #{query.updateUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="query.updateUser != null and '' != query.updateUser">
+                update_user = #{query.updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="query.signUserId != null and '' != query.signUserId">
+                sign_user_id = #{query.signUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="query.sceneRemark != null">
+                scene_remark = #{query.sceneRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="query.workProve != null">
+                work_prove = #{query.workProve},
+            </if>
+            <if test="query.signStatus != null">
+                sign_status = #{query.signStatus},
+            </if>
+            <if test="query.signTime != null and '' != query.signTime">
+                sign_time = #{query.signTime},
+            </if>
+            update_time=now()
+        </set>
+        where confirm_id=#{query.confirmId}
+    </update>
+    
+    <insert id="insertSelectiveBdStudentModify" parameterType="com.yz.network.examination.model.BdStudentModify">
+		insert into bms.bd_student_modify
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			modify_id,
+			<if test="learnId != null and learnId != ''">
+				learn_id,
+			</if>
+			<if test="stdId != null and stdId != ''">
+				std_id,
+			</if>
+			<if test="modifyType != null and modifyType != ''">
+				modify_type,
+			</if>
+			<if test="updateUser != null and updateUser != ''">
+				update_user,
+			</if>
+			<if test="updateUserId != null and updateUserId != ''">
+				update_user_id,
+			</if>
+			<if test="createUserId != null and createUserId != ''">
+				create_user_id,
+			</if>
+			<if test="createUser != null and createUser != ''">
+				create_user,
+			</if>
+			<if test="ext1 != null and ext1 != ''">
+				ext_1,
+			</if>
+			<if test="isComplete != null and isComplete != ''">
+				is_complete,
+			</if>
+			<if test="remark != null and remark != ''">
+				remark,
+			</if>
+			update_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{modifyId,jdbcType=VARCHAR},
+			<if test="learnId != null  and learnId != ''">
+				#{learnId,jdbcType=VARCHAR},
+			</if>
+			<if test="stdId != null  and stdId != ''">
+				#{stdId,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyType != null  and modifyType != ''">
+				#{modifyType,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null and updateUser != ''">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUserId != null and updateUserId != ''">
+				#{updateUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="createUserId != null and createUserId != ''">
+				#{createUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null and createUser != ''">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="ext1 != null and ext1 != ''">
+				#{ext1,jdbcType=VARCHAR},
+			</if>
+			<if test="isComplete != null and isComplete != ''">
+				#{isComplete,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null and remark != ''">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			now()
+		</trim>
+	</insert>
+    
+    <update id="discardNum" parameterType="java.lang.String">
+        update bms.bd_learn_queue set queue_status='3' where learn_id=#{learnId}
+    </update>
+
+</mapper>

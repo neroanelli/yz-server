@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.network.examination.dao.NetworkExamFrmInfoMapper">
+
+	<select id="getNetWorkDucation" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT sr.`learn_id` AS
+		learnId,sr.`username`,rd.`zjdm`,rd.`xm`,sr.`password`,rd.`education_check`,rd.`appraisal_count`
+		FROM bms.`bd_student_scene_register` sr
+		LEFT JOIN bms.`net_report_data`
+		rd ON rd.`learn_id`=sr.`learn_id`
+		WHERE kslbdm='1' AND sr.register_status='1'  AND rd.learn_id=#{learnId}
+	</select>
+
+	<select id="getNetWorkList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		sc.learn_id,si.`std_name` as
+		stdName,li.`grade`,un.`unvs_name` as unvsName ,pro.`pfsn_name` as
+		pfsnName,li.`std_stage` as stdStage,li.`std_type` as stdType ,
+		bt.`ta_name` as taName,sc.place_confirm_status as
+		yuYue,sc.web_register_status as wangBaoStatus,sc.exam_pay_status as
+		jiaoFeiStatus,sc.education_appraisal as jianDing,
+		IF(pro.`pfsn_level`='1','1>专科升本科类 ','5>高中起点高职高专') kslbname,
+		pro.`pfsn_level` as pfsnLevel
+		FROM
+		bms.bd_student_scene_confirm sc
+		LEFT JOIN bms.`bd_learn_info` li
+		ON
+		li.`learn_id`=sc.`learn_id`
+		LEFT JOIN bms.`bd_student_info` si ON
+		si.`std_id`= li.`std_id`
+		LEFT JOIN bms.`bd_university` un ON
+		un.`unvs_id`=li.`unvs_id`
+		LEFT JOIN bms.`bd_unvs_profession` pro ON
+		pro.`pfsn_id`=li.`pfsn_id`
+		LEFT JOIN bms.`bd_test_area` bt ON
+		bt.`ta_id`=li.`ta_id`
+		WHERE si.`id_card` = #{idCard}
+	</select>
+
+	<update id="upNetReportData" parameterType="java.util.HashMap">
+		update
+		bms.net_report_data
+		set
+		hkdm= #{hkdm,jdbcType=VARCHAR},
+		hkname=
+		#{hkname,jdbcType=VARCHAR},
+		xqdm= #{xqdm,jdbcType=VARCHAR},
+		xqname=
+		#{xqname,jdbcType=VARCHAR},
+		zjdm= #{zjdm,jdbcType=VARCHAR},
+		byzshm=
+		#{byzshm,jdbcType=VARCHAR},
+		yzbm= #{yzbm,jdbcType=VARCHAR},
+		txdz=
+		#{txdz,jdbcType=VARCHAR},
+		jhlbdm=
+		#{jhlbdm,jdbcType=VARCHAR},
+		jhlbname=
+		#{jhlbname,jdbcType=VARCHAR},
+		kmzdm=
+		#{kmzdm,jdbcType=VARCHAR},
+		kmzname=
+		#{kmzname,jdbcType=VARCHAR},
+		zsbpc1bkyx1=
+		#{zsbpc1bkyx1,jdbcType=VARCHAR},
+		zsbpc1bkyx1zy1=
+		#{zsbpc1bkyx1zy1,jdbcType=VARCHAR},
+		zsbpc1bkyx2=
+		#{zsbpc1bkyx2,jdbcType=VARCHAR},
+		zsbpc1bkyx2zy1=
+		#{zsbpc1bkyx2zy1,jdbcType=VARCHAR}
+		where
+		learn_id =
+		#{learnId,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="addNetReportData" parameterType="java.util.HashMap">
+		INSERT INTO
+		`bms`.`net_report_data` (
+		`learn_id`,
+		`xm`,
+		`xbdm`,
+		`xbname`,
+		`mzdm`,
+		`mzname`,
+		`csrq`,
+		`zzmmdm`,
+		`zzmmname`,
+		`wyyzdm`,
+		`wyyzname`,
+		`kslbdm`,
+		`kslbname`,
+		`jhlbdm`,
+		`jhlbname`,
+		`kmzdm`,
+		`kmzname`,
+		`xqdm`,
+		`xqshort`,
+		`xqname`,
+		`hkdm`,
+		`hkname`,
+		`kqxl`,
+		`kqxlname`,
+		`zydm`,
+		`zyname`,
+		`zjlxdm`,
+		`zjlxname`,
+		`zjdm`,
+		`byxx`,
+		`byrq`,
+		`byzy`,
+		`byzshm`,
+		`yzbm`,
+		`lxdh`,
+		`lxsj`,
+		`txdz`,
+		`ta_city_code`,
+		`zsbpc1bkyx1`,
+		`first_unvs_name`,
+		`zsbpc1bkyx1zy1`,
+		`first_pfsn_name`,
+		`first_pfsn_level`,
+		`zsbpc1bkyx2`,
+		`second_unvs_name`,
+		`zsbpc1bkyx2zy1`,
+		`second_pfsn_name`
+		)
+		VALUES(
+		#{learn_id,jdbcType=VARCHAR},
+		#{xm,jdbcType=VARCHAR},
+		#{xbdm,jdbcType=VARCHAR},
+		#{xbname,jdbcType=VARCHAR},
+		#{mzdm,jdbcType=VARCHAR},
+		#{mzname,jdbcType=VARCHAR},
+		#{csrq,jdbcType=VARCHAR},
+		#{zzmmdm,jdbcType=VARCHAR},
+		#{zzmmname,jdbcType=VARCHAR},
+		#{wyyzdm,jdbcType=VARCHAR},
+		#{wyyzname,jdbcType=VARCHAR},
+		#{kslbdm,jdbcType=VARCHAR},
+		#{kslbname,jdbcType=VARCHAR},
+		#{jhlbdm,jdbcType=VARCHAR},
+		#{jhlbname,jdbcType=VARCHAR},
+		#{kmzdm,jdbcType=VARCHAR},
+		#{kmzname,jdbcType=VARCHAR},
+		#{xqdm,jdbcType=VARCHAR},
+		#{xqshort,jdbcType=VARCHAR},
+		#{xqname,jdbcType=VARCHAR},
+		#{hkdm,jdbcType=VARCHAR},
+		#{hkname,jdbcType=VARCHAR},
+		#{kqxl,jdbcType=VARCHAR},
+		#{kqxlname,jdbcType=VARCHAR},
+		#{zydm,jdbcType=VARCHAR},
+		#{zyname,jdbcType=VARCHAR},
+		#{zjlxdm,jdbcType=VARCHAR},
+		#{zjlxname,jdbcType=VARCHAR},
+		#{zjdm,jdbcType=VARCHAR},
+		#{byxx,jdbcType=VARCHAR},
+		#{byrq,jdbcType=VARCHAR},
+		#{byzy,jdbcType=VARCHAR},
+		#{byzshm,jdbcType=VARCHAR},
+		#{yzbm,jdbcType=VARCHAR},
+		#{lxdh,jdbcType=VARCHAR},
+		#{lxsj,jdbcType=VARCHAR},
+		#{txdz,jdbcType=VARCHAR},
+		#{ta_city_code,jdbcType=VARCHAR},
+		#{zsbpc1bkyx1,jdbcType=VARCHAR},
+		#{first_unvs_name,jdbcType=VARCHAR},
+		#{zsbpc1bkyx1zy1,jdbcType=VARCHAR},
+		#{first_pfsn_name,jdbcType=VARCHAR},
+		#{first_pfsn_level,jdbcType=VARCHAR},
+		#{zsbpc1bkyx2,jdbcType=VARCHAR},
+		#{second_unvs_name,jdbcType=VARCHAR},
+		#{zsbpc1bkyx2zy1,jdbcType=VARCHAR},
+		#{second_pfsn_name,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="getcount" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		SELECT count(0) FROM bms.`net_report_data` where learn_id=
+		#{learnId,jdbcType=VARCHAR}
+	</select>
+	<!-- 获取网报预报名信息 -->
+	<select id="getNetRegistCount" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		SELECT COUNT(0) FROM bms.`bd_student_scene_register` WHERE
+		learn_id=
+		#{learnId,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 获取学员数据 -->
+	<select id="getStudentInfo" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT si.`std_name`,si.`id_card`,li.`ta_id`,bt.`ta_short`
+		FROM bms.`bd_learn_info` li
+		LEFT JOIN bms.`bd_student_info` si ON
+		si.`std_id`=li.`std_id`
+		LEFT JOIN bms.`bd_test_area` bt ON
+		bt.`ta_id`=li.`ta_id`
+		WHERE li.learn_id= #{learnId,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 获取提交数据 -->
+	<select id="getRegReportData" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		cast(nrd.`id` as char) nid,
+		nrd.`learn_id`,
+		nrd.`xm`,
+		nrd.`xbdm`,
+		nrd.`xbname`,
+		nrd.`mzdm`,
+		nrd.`mzname`,
+		nrd.`csrq`,
+		nrd.`zzmmdm`,
+		nrd.`zzmmname`,
+		nrd.`wyyzdm`,
+		nrd.`wyyzname`,
+		nrd.`kslbdm`,
+		nrd.`kslbname`,
+		nrd.`jhlbdm`,
+		nrd.`jhlbname`,
+		nrd.`kmzdm`,
+		nrd.`xqdm`,
+		nrd.`xqshort`,
+		nrd.`xqname`,
+		nrd.`hkdm`,
+		nrd.`hkname`,
+		nrd.`kqxl`,
+		nrd.`kqxlname`,
+		nrd.`zydm`,
+		nrd.`zyname`,
+		nrd.`zjlxdm`,
+		nrd.`zjlxname`,
+		nrd.`zjdm`,
+		nrd.`byrq`,
+		nrd.`byxx`,
+		nrd.`byzy`,
+		nrd.`byzshm`,
+		nrd.`yzbm`,
+		nrd.`lxdh`,
+		nrd.`txdz`,
+		nrd.`lxsj`,
+		nrd.`zsbpc1bkyx1`,
+		nrd.`zsbpc1bkyx1zy1`,
+		nrd.`zsbpc1bkyx2`,
+		nrd.`zsbpc1bkyx2zy1`,
+		nrd.`zsbpc1bkyx1` gqgpc4bkyx1,
+		nrd.`zsbpc1bkyx1zy1` gqgpc4bkyx1zy1,
+		nrd.`zsbpc1bkyx2` gqgpc4bkyx2,
+		nrd.`zsbpc1bkyx2zy1` gqgpc4bkyx2zy1
+		FROM
+		bms.`net_report_data` nrd
+		where not exists (
+		select bssr.`learn_id` from
+		bms.`bd_student_scene_register` bssr
+		where bssr.`learn_id` =
+		nrd.`learn_id`)
+		and nrd.`status`='0' and nrd.`zsbpc1bkyx1` is not null
+		and nrd.`learn_id`=
+		#{learnId,jdbcType=VARCHAR}
+	</select>
+
+
+	<select id="getStdReportData" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT li.`learn_id` , si.`std_name` xm,si.`sex`
+		xbdm,IF(si.`sex`='1','男','女') xbname,
+		si.nation mzdm,sd.`dict_name` mzname,si.`birthday`
+		csrq,si.political_status zzmmdm,sd2.`dict_name` zzmmname,'1'
+		wyyzdm,'英语' wyyzname,pro.`pfsn_level` kslbdm,
+		IF(pro.`pfsn_level`='1','1>专科升本科类 ','5>高中起点高职高专') kslbname,
+		CASE
+		pro.`pfsn_cata`
+		WHEN '1' THEN '1'
+		WHEN '2' THEN '2'
+		WHEN '3' THEN '3'
+		WHEN '4' THEN '4'
+		WHEN '5' THEN '5'
+		WHEN '6' THEN '1'
+		WHEN '7' THEN '1'
+		WHEN '8' THEN '1'
+		WHEN '9' THEN '1'
+		ELSE '2' END jhlbdm,pro.`pfsn_cata`
+		jhlbdm,sd3.`dict_name` jhlbname,pro.group_id kmzdm,sd4.`dict_name`
+		kmzname,ta.ta_code xqdm,ta.ta_short xqshort,ta.ta_name
+		xqname,IF(LEFT(si.`rpr_district_code`,2)='44',si.`rpr_district_code`,'999999')
+		hkdm,
+		sdist.district_name hkname,his.edcs_type
+		kqxl,sd5.`dict_name`
+		kqxlname,si.job_type zydm,sd7.`dict_name`
+		zyname,si.`id_type`
+		zjlxdm,sd6.`dict_name` zjlxname,si.`id_card`
+		zjdm,his.`unvs_name` byxx,
+		his.graduate_time byrq,his.profession
+		byzy,his.`diploma`
+		byzshm,IF(si.zip_code=NULL||si.zip_code='','516000',si.zip_code)
+		yzbm,si.`mobile` lxdh
+		,si.`mobile` lxsj,si.`address`
+		txdz,ta.`city_code` ta_city_code,
+		un.`unvs_code`,pro.`pfsn_name`,pro.`pfsn_level`,ta.`ta_name` FROM
+		bms.`bd_learn_info` li
+		LEFT JOIN bms.`bd_student_info` si ON
+		si.`std_id`=li.`std_id`
+		LEFT JOIN bms.`sys_dict` sd ON
+		sd.`p_id`='nation' AND
+		sd.`dict_value`=si.`nation`
+		LEFT JOIN
+		bms.`sys_dict` sd2 ON
+		sd2.`p_id`='politicalStatus' AND
+		sd2.`dict_value`=si.`political_status`
+		LEFT JOIN
+		bms.`bd_unvs_profession` pro ON pro.`pfsn_id`=li.`pfsn_id`
+		LEFT JOIN
+		bms.`sys_dict` sd3 ON sd3.`p_id`='pfsnCata' AND
+		sd3.`dict_value`=pro.`pfsn_cata`
+		LEFT JOIN bms.`sys_dict` sd4 ON
+		sd4.`p_id`='tsGroup' AND sd4.`dict_value`=pro.`group_id`
+		LEFT JOIN
+		bms.`bd_test_area` ta ON ta.ta_id=li.ta_id
+		LEFT JOIN bms.`sys_district`
+		sdist ON
+		sdist.district_code=si.rpr_district_code
+		LEFT JOIN
+		bms.`bd_student_history` his ON his.`std_id`=si.`std_id`
+		LEFT JOIN
+		bms.`sys_dict` sd5 ON sd5.`p_id`='edcsType' AND
+		sd5.`dict_value`=his.edcs_type
+		LEFT JOIN bms.`sys_dict` sd6 ON
+		sd6.`p_id`='idType' AND sd6.`dict_value`=si.`id_type`
+		LEFT JOIN
+		bms.`sys_dict` sd7 ON sd7.`p_id`='jobType' AND
+		sd7.`dict_value`=si.job_type
+		LEFT JOIN bms.`bd_university` un ON
+		un.unvs_id=li.unvs_id
+		where li.learn_id=#{learnId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getUnvsDataForExam" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		first_unvs_code zsbpc1bkyx1,
+		first_unvs_name,
+		first_pfsn_code
+		zsbpc1bkyx1zy1,
+		first_pfsn_name,
+		first_pfsn_level,
+		second_unvs_code
+		zsbpc1bkyx2,
+		second_unvs_name,
+		second_pfsn_code zsbpc1bkyx2zy1,
+		second_pfsn_name,
+		first_unvs_code gqgpc4bkyx1,
+		first_pfsn_code
+		gqgpc4bkyx1zy1,
+		second_unvs_code gqgpc4bkyx2,
+		second_pfsn_code
+		gqgpc4bkyx2zy1
+		FROM bms.`temp_sheet3` WHERE
+		first_unvs_code=#{unvsCode,jdbcType=VARCHAR}
+		AND
+		first_pfsn_level=#{pfsnLevel,jdbcType=VARCHAR} AND
+		first_pfsn_name=#{pfsnName,jdbcType=VARCHAR}
+		<if test="objCode != null and objCode != '' ">
+			AND exam_obj_code LIKE
+			CONCAT('%',LEFT(#{objCode,jdbcType=VARCHAR},2),'%')
+		</if>
+	</select>
+
+	<!-- 保存网报表单数据 -->
+	<insert id="saveNetworkExamFrm" useGeneratedKeys="true"
+		keyProperty="id" parameterType="com.yz.network.examination.model.YzNetworkExamInfoFrm">
+		replace into
+		exam.yz_network_exam_frm (
+		frm_id, frm_name,
+		frm_type, frm_date)
+		values
+		(
+		#{frmId,jdbcType=VARCHAR},
+		#{frmName,jdbcType=VARCHAR},
+		#{frmType,jdbcType=VARCHAR}, now())
+	</insert>
+
+	<!-- 保存网报表单数据 -->
+	<insert id="saveNetworkExamFrmAttrs" parameterType="java.util.List">
+		insert into exam.yz_network_exam_frm_attr ( frm_id, attr_name,
+		attr_val, attr_seq )
+		values
+		<foreach collection="attrs" item="attr" index="index"
+			separator=",">
+			(#{attr.frmId,jdbcType=INTEGER},
+			#{attr.attrName,jdbcType=VARCHAR},
+			#{attr.attrVal,jdbcType=VARCHAR},
+			#{attr.attrSeq,jdbcType=INTEGER}
+			)
+		</foreach>
+	</insert>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.network.examination.dao.NetworkExamFrmLogMapper">
+	<!-- 保存网报表单 -->
+	<insert id="saveNetworkExamFrm" parameterType="com.yz.network.examination.model.YzNetworkExamLogFrm">
+		insert into exam.yz_network_exam_record ( frm_id,
+		frm_name,
+		frm_type, frm_action, frm_param,
+		frm_time, frm_no,
+		frm_code,frm_key,
+		frm_addr, frm_date,
+		frm_result,frm_errmsg,
+		frm_user_id,frm_user_name)
+		values (
+		#{frmId,jdbcType=VARCHAR}, #{frmName,jdbcType=VARCHAR},
+		#{frmType,jdbcType=VARCHAR}, #{frmAction,jdbcType=VARCHAR},
+		#{frmParam,jdbcType=VARCHAR},
+		#{frmTime,jdbcType=SMALLINT},
+		#{frmNo,jdbcType=VARCHAR},
+		#{frmCode},
+		#{frmKey,jdbcType=VARCHAR},
+		#{frmAddr,jdbcType=VARCHAR},
+		#{frmDate},
+		#{frmResult},
+		#{frmErrmsg},
+		#{frmUserId},
+		#{frmUserName}
+		)
+	</insert>
+
+</mapper>

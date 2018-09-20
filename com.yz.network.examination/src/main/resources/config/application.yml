@@ -1,0 +1,65 @@
+spring:
+  http:
+    encoding:
+      enabled: true
+      charset: UTF-8
+    multipart:
+      enabled: true
+      file-size-threshold: 0
+      max-file-size: 30Mb
+      max-request-size: 30Mb
+server:
+  display-name: examination
+  port: 8085
+logging:
+  config: classpath:config/logback.xml
+  dir:  /mnt/logs/examination
+yunsu:
+  username: yuanzhi
+  password: Zm171123z
+  softid: 77240
+  softkey: 85cc1f13773c4c849296769ae05c85e9
+jdbc:
+  global:
+    user: ${jdbc_user}
+    password: ${jdbc_password} 
+    poolsize: ${jdbc_poolsize}
+    driverClassName: ${jdbc_driverclassName}
+    minIdle: ${jdbc_minIdle}
+    maxActive: ${jdbc_maxActive}
+    maxWait: ${jdbc_maxWait}
+    minEictableIdleTimeMillis: ${jdbc_minEictableIdleTimeMillis}
+    defaultDatasource: exam
+  jdbcConfigInfos:
+    - name: exam
+      url: ${jdbc_url}
+      uniqueResourceName: mysql.bms.write
+redis.pool:
+  minIdle: 10
+  maxIdle: 300
+  maxWait: 100000
+  testOnReturn: false
+  testOnBorrow: false
+  timeout: 600000
+  maxActive: 300
+  redisInfos:
+    - name:default
+      isdefault:true
+      host:${redis_host}
+      port:${redis_port}
+      authKey:${redis_authKey}
+      connectType:single
+oss:
+  accessKeyId: LTAICtJ0nsZL33rZ
+  accessKeySecret: iWfK0ZvQMEZQlddj23lF1iwz9O1eLH
+  endpoint: oss-cn-shenzhen.aliyuncs.com
+oss.file.browser: ${oss_file_browser}
+task:
+  serverList: ${yz.task.serverList}
+  namespace: exam
+  shardingTotalCount: ${yz.task.shardingTotalCount}
+  switch: ${yz.task.switch}
+yzsysconfig:
+  smsSwitch: ${sms.is.on}
+  tempBucket: ${aliyun.oss.tempBucket}
+  bucket: ${aliyun.oss.bucket}
