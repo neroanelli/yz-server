@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.BdsTaskMapper">
+	<resultMap id="TaskResultMap" type="java.util.HashMap">
+		<result column="task_id" property="taskId" jdbcType="VARCHAR"/>
+		<result column="task_type" property="taskType" jdbcType="VARCHAR"/>
+		<result column="task_title" property="taskTitle" jdbcType="VARCHAR"/>
+		<result column="task_content" property="taskContent" jdbcType="VARCHAR"/>
+		<result column="start_time" property="startTime" jdbcType="VARCHAR"/>
+		<result column="end_time" property="endTime" jdbcType="VARCHAR"/>
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR"/>
+		<result column="tutor_name" property="tutorName" jdbcType="VARCHAR"/>
+		<result column="recruit_name" property="recruitName" jdbcType="VARCHAR"/>		
+		<result column="task_url" property="taskUrl" jdbcType="VARCHAR"/>
+		<result column="ey_id" property="eyId" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="selectAllEmpNoContains" parameterType="java.lang.String" resultType="java.lang.String">
+	  	SELECT 
+		  e.emp_id
+		FROM
+		  `bms`.oa_employee e 
+		  LEFT JOIN `bms`.oa_expense o 
+		    ON (o.`emp_id` = e.`emp_id` AND o.`year` = #{year})
+		WHERE o.`emp_id` IS NULL 
+	</select>
+	
+	 <insert id="insertExpenses">
+	  	INSERT INTO `bms`.`oa_expense` (
+		  `expense_id`,
+		  `emp_id`,
+		  `year`
+		) 
+		VALUES
+		  <foreach collection="empIds" item="empId" index="index" separator="," >  
+	       	(seq(),#{empId},#{year})
+	   	  </foreach>
+	</insert>
+	
+	<select id="getMyTaskInfo" resultMap="TaskResultMap">
+		select 
+		  oti.`task_id`,
+		  oti.`task_type`,
+		  oti.`task_title`,
+		  oti.`task_content`,
+		  oti.`start_time`,
+		  oti.`end_time`,
+		  ost.`learn_id`,
+		  oe.`emp_name` as tutor_name,
+		  oer.`emp_name` as recruit_name,
+		  oti.`task_url`,
+		  oti.`ey_id`,
+		  ost.`task_status` as  taskStatus
+		from
+		  `bms`.oa_student_task ost 
+		  left join `bms`.oa_task_info oti 
+		    on ost.`task_id` = oti.`task_id` 
+		  left join `bms`.oa_employee oe 
+		    on ost.`tutor_id` = oe.`emp_id` 
+		  LEFT JOIN bms.`bd_learn_rules` blr 
+		    ON blr.`learn_id` = ost.`learn_id` 
+		  LEFT JOIN bms.`oa_employee` oer 
+		    ON oer.`emp_id` = blr.`recruit` 
+		where oti.`is_allow`='1' and ost.`learn_id` = #{learnId,jdbcType=VARCHAR} 
+		  <if test="taskStatus !=null and '' !=taskStatus">	
+		  and ost.`task_status` = #{taskStatus,jdbcType=VARCHAR} 
+		  </if>
+		 order by oti.`create_time` desc
+	</select>
+	
+	<update id="updateTaskStatus">
+		UPDATE 
+		  `bms`.oa_student_task 
+		SET
+		  task_status = '1',finish_time = NOW() 
+		WHERE task_id = #{taskId,jdbcType=VARCHAR} AND learn_id=#{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getStudentInfo" resultType="java.util.HashMap">
+		SELECT 
+		  bli.`learn_id` as learnId,
+		  bli.`pfsn_id` as pfsnId,
+		  bsi.`std_name` as stdName,
+		  bsi.`id_card` as idCard,
+		  bli.`grade` as grade,
+		  bli.`recruit_type` as recruitType
+		FROM
+		  `bms`.bd_learn_info bli 
+		  LEFT JOIN `bms`.bd_student_info bsi 
+		    ON bsi.`std_id` = bli.`std_id` 
+		  LEFT JOIN `bms`.bd_unvs_profession bup 
+		    ON bup.`pfsn_id` = bli.`pfsn_id` 
+		WHERE bli.`learn_id` = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getProvince" resultType="java.util.HashMap">
+		SELECT 
+		  sp.`province_code` provinceCode,
+		  sp.`province_name` provinceName
+		FROM
+		  `bms`.bd_place_year bpy left join `bms`.bd_exam_place bep
+		    on bep.`ep_id` = bpy.`place_id` 
+		  LEFT JOIN `bms`.sys_province sp 
+		    ON sp.`province_code` = bep.`province_code` 
+		WHERE bep.`status` = '1' and bpy.`ey_id`=#{eyId,jdbcType=VARCHAR} GROUP BY bep.`province_code`
+	</select>
+	<select id="getCity" resultType="java.util.HashMap">
+		SELECT 
+		  sc.`city_code` cityCode,
+		  sc.`city_name` cityName
+		FROM  `bms`.bd_place_year bpy 
+		  left join `bms`.bd_exam_place bep on bep.`ep_id` = bpy.`place_id` 
+		  LEFT JOIN `bms`.sys_city sc 
+		    ON sc.`city_code` = bep.`city_code`
+		WHERE bep.`status` = '1' and bpy.`ey_id`=#{eyId,jdbcType=VARCHAR} GROUP by bep.`city_code`
+	</select>
+	<select id="getDistrict" resultType="java.util.HashMap">
+		SELECT 
+		  sd.`district_code` districtCode,
+		  sd.`district_name` districtName
+		FROM `bms`.bd_place_year bpy 
+		  left join `bms`.bd_exam_place bep on bep.`ep_id` = bpy.`place_id` 
+		  LEFT JOIN `bms`.sys_district sd 
+		    ON sd.`district_code` = bep.`district_code`
+		WHERE bep.`status` = '1' and bpy.`ey_id`=#{eyId,jdbcType=VARCHAR} GROUP BY bep.`district_code`
+	</select>
+	
+	<select id="getExamPlace" resultType="java.util.HashMap">
+		SELECT 
+		  ep_id epId,
+		  ep_name epName,
+		  province_code provinceCode,
+		  city_code cityCode,
+		  district_code districtCode,
+		  address 
+		FROM
+		  `bms`.`bd_place_year` bpy left join 
+		  `bms`.bd_exam_place bep on bep.`ep_id` = bpy.`place_id`
+		WHERE bep.`status` = '1' and bpy.ey_id=#{eyId,jdbcType=VARCHAR}
+		  AND province_code = #{provinceCode,jdbcType=VARCHAR}
+		  AND city_code = #{cityCode,jdbcType=VARCHAR}
+		  <if test="districtCode !=null and '' !=districtCode">
+		  	AND district_code =#{districtCode,jdbcType=VARCHAR}	
+		  </if>
+		   group by ep_id
+	</select>
+	
+	<select id="getPlaceYear" resultType="java.util.HashMap">
+		 SELECT 
+		  bpy.py_id,
+		  bpy.seats,
+		  bpy.start_time,
+		  bpy.end_time,
+		  (SELECT 
+		    COUNT(1) 
+		  FROM
+		    `bms`.bd_student_exam_affirm 
+		  WHERE py_id = bpy.py_id) affirm_count 
+		FROM
+		  `bms`.bd_place_year bpy 
+		WHERE bpy.place_id = #{placeId,jdbcType=VARCHAR} 
+		  and bpy.`ey_id` = #{eyId,jdbcType=VARCHAR}
+		  AND `status` = '1'
+	</select>
+	
+	<select id="getStudentReasonById" resultType="java.lang.String">
+		SELECT 
+		  er_id 
+		FROM
+		  `bms`.bd_student_exam_affirm 
+		WHERE task_id = #{taskId,jdbcType=VARCHAR} 
+		  AND learn_Id = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="taskIfPast" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM `bms`.oa_task_info WHERE task_id=#{taskId,jdbcType=VARCHAR} AND end_time >NOW()
+	</select>
+	
+	<select id="getExamAffirmCount" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM `bms`.bd_student_exam_affirm WHERE ey_id=#{eyId,jdbcType=VARCHAR} AND py_id=#{pyId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getExamSeats" resultType="java.lang.String">
+		SELECT seats FROM `bms`.bd_place_year WHERE py_id=#{pyId,jdbcType=VARCHAR};
+	</select>
+	
+	<update id="affirmExamInfo">
+		update `bms`.bd_student_exam_affirm set py_id=#{pyId,jdbcType=VARCHAR},affirm_time=now()
+		where task_id=#{taskId,jdbcType=VARCHAR} and ey_id=#{eyId,jdbcType=VARCHAR} and learn_Id=#{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getExamAffirmResult" resultType="java.util.HashMap">
+		SELECT 
+		  bli.`learn_id` AS learnId,
+		  bli.`pfsn_id` as pfsnId,
+		  bli.grade,
+		  bsi.`std_name` AS stdName,
+		  bsi.`id_card` AS idCard,
+		  bep.`ep_name` epName,
+		  bpy.`start_time` startTime,
+		  bpy.`end_time` endTime,
+		  bep.`province_code` provinceCode,
+		  bep.`city_code` cityCode,
+		  bep.`district_code` districtCode,
+		  bep.`address`,
+		  bey.`tips` 
+		FROM
+		  `bms`.bd_learn_info bli 
+		  LEFT JOIN `bms`.bd_student_info bsi 
+		    ON bsi.`std_id` = bli.`std_id` 
+		  LEFT JOIN `bms`.bd_unvs_profession bup 
+		    ON bup.`pfsn_id` = bli.`pfsn_id` 
+		  LEFT JOIN `bms`.bd_student_exam_affirm bsea
+		   ON bsea.`learn_id` = bli.`learn_id`
+		  LEFT JOIN `bms`.bd_place_year bpy 
+		   ON bpy.`py_id` = bsea.`py_id`
+		  LEFT JOIN `bms`.bd_exam_place bep 
+		   ON bep.`ep_id` =  bpy.`place_id` 
+		  LEFT JOIN `bms`.bd_exam_year bey
+		   ON bey.`ey_id` = bsea.`ey_id`    
+		WHERE bli.`learn_id` = #{learnId,jdbcType=VARCHAR}
+		 AND bsea.`ey_id`=#{eyId,jdbcType=VARCHAR}
+		 AND bsea.`task_id`=#{taskId,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<select id="getExamYearSubject" resultType="java.util.HashMap">
+		select grade,semester from `bms`.bd_year_subject where exam_year_id=#{eyId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getStudentTestSubject" resultType="java.lang.String">
+		select 
+		  GROUP_CONCAT(temp_table.test_subject) testSubject
+		from
+		  (select 
+		    btp.`test_subject` 
+		  from
+		    `bms`.bd_teach_plan btp 
+		  where btp.pfsn_id = #{pfsnId,jdbcType=VARCHAR} 
+		    and btp.semester = #{semester,jdbcType=VARCHAR}
+		    and btp.`grade` = #{grade,jdbcType=VARCHAR}
+		  group by btp.`test_subject`) temp_table
+
+	</select>
+
+	<resultMap type="java.util.HashMap" id="gkExamStudentInfo">
+  		<result column="std_name" property="stdName" jdbcType="VARCHAR"/>
+  		<result column="id_card" property="idCard" jdbcType="VARCHAR"/>
+  		<result column="std_no" property="stdNo" jdbcType="VARCHAR"/>
+  		<result column="grade" property="grade" jdbcType="VARCHAR"/>
+  		<result column="exam_year" property="examYear" jdbcType="VARCHAR"/>
+  		<result column="learn_id" property="learnId" jdbcType="VARCHAR"/>
+  		<association property="examInfos" column="{learnId=learn_id,examYear=exam_year}" select="selectStudentExamInfo"/>
+	</resultMap>
+	
+	<select id="getStudentForGkExam" resultMap="gkExamStudentInfo">
+		SELECT 
+		  bsi.`std_name`,
+		  bsi.`id_card`,
+		  bli.`school_roll` std_no,
+		  bseg.grade,
+		  bseg.exam_year,
+		  bli.`learn_id` 
+		FROM
+		  `bms`.bd_student_exam_gk bseg 
+		  LEFT JOIN `bms`.bd_learn_info bli 
+		    ON bli.`learn_id` = bseg.learn_id 
+		  LEFT JOIN `bms`.bd_student_info bsi 
+		    ON bsi.`std_id` = bli.`std_id` 
+		WHERE bseg.exam_year = #{examYear,jdbcType=VARCHAR}
+		  AND bseg.learn_id = #{learnId,jdbcType=VARCHAR} 
+		GROUP BY bseg.learn_id
+	</select>
+	<select id="selectStudentExamInfo" resultType="java.util.HashMap">
+		SELECT 
+		  bseg.exam_course as examCourse,
+		  bseg.exam_start_time as examStartTime,
+		  bseg.exam_end_time as examEndTime,
+		  bseg.exam_place as examPlace,
+		  bseg.place_name as placeName,
+		  bseg.seat_num as seatNum,
+		  bseg.exam_address as examAddress,
+		  bseg.tips 
+		FROM
+		  `bms`.bd_student_exam_gk bseg 
+		WHERE  bseg.learn_id = #{learnId,jdbcType=VARCHAR}
+		  AND bseg.exam_year = #{examYear,jdbcType=VARCHAR}
+		 ORDER BY bseg.`exam_start_time` ASC 
+	</select>
+	
+	<update id="updateStudentExamGkIsRead">
+		update `bms`.bd_student_exam_gk set is_read='1',read_time=NOW()
+		where learn_id = #{learnId,jdbcType=VARCHAR} AND exam_year = #{examYear,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getStudentGraduateTemplate" resultType="java.lang.String">
+		SELECT ost.`template_url` FROM `bms`.bd_learn_info bli 
+		LEFT JOIN `bms`.oa_student_graduate_data_tel ost
+		ON ost.`unvs_id` = bli.`unvs_id` WHERE learn_Id=#{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="updateStudentGraduateAddress" parameterType="java.util.Map">
+		update `bms`.oa_student_graduate_data_task
+		set 
+		  user_name=#{userName,jdbcType=VARCHAR},
+		  mobile = #{mobile,jdbcType=VARCHAR},
+		  province_code = #{provinceCode,jdbcType=VARCHAR},
+		  city_code = #{cityCode,jdbcType=VARCHAR},
+		  district_code = #{districtCode,jdbcType=VARCHAR},
+		  address = #{address,jdbcType=VARCHAR},
+		  if_submit='1',
+		  if_mail='1'
+		where
+		  task_id = #{taskId,jdbcType=VARCHAR}
+		  and learn_id = #{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getStudentGraduateAddressById" resultType="java.lang.String">
+		SELECT 
+		  user_name 
+		FROM
+		  `bms`.oa_student_graduate_data_task 
+		WHERE task_id = #{taskId,jdbcType=VARCHAR} 
+		  AND learn_Id = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="stuLookXueXinNet">
+		update `bms`.oa_student_xuexin_task 
+		set is_view ='1',view_time=now()
+		where task_id=#{taskId,jdbcType=VARCHAR}
+		and learn_id = #{learnId,jdbcType=VARCHAR}
+	</update>
+	<update id="stuSubmitXueXinInfo">
+		update `bms`.oa_student_xuexin_task
+		<set>
+			<if test="isError !=null and '' !=isError">
+				is_error = #{isError,jdbcType=VARCHAR},
+			</if>
+			<if test="feedback !=null and '' !=feedback">
+				feedback = #{feedback,jdbcType=VARCHAR},
+			</if>
+			submit_time =now()
+		</set>
+		where task_id=#{taskId,jdbcType=VARCHAR}
+		and learn_id = #{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="stuIfLookXueXinInfo" resultType="java.lang.Integer">
+		select count(1) from `bms`.oa_student_xuexin_task
+		 where task_id=#{taskId,jdbcType=VARCHAR}
+		and learn_id = #{learnId,jdbcType=VARCHAR} and is_view ='1'
+	</select>
+	
+	<update id="stuDegreeEnglishEnroll">
+		update `bms`.oa_student_degree_english_task
+		<set>
+			<if test="isEnroll !=null and '' !=isEnroll">
+				is_enroll = #{isEnroll,jdbcType=VARCHAR},
+			</if>
+			<if test="enrollNo !=null and '' !=enrollNo">
+				enroll_no = #{enrollNo,jdbcType=VARCHAR},
+			</if>
+			is_view ='1',
+			view_time = NOW()
+		</set>
+		where task_id=#{taskId,jdbcType=VARCHAR}
+		and learn_id = #{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getDegreeScoreByLearnId" resultType="java.lang.String">
+		SELECT degree_score FROM `bms`.bd_learn_info WHERE learn_Id=#{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="stuDegreeEnglish">
+		<result column="is_enroll" property="isEnroll" jdbcType="VARCHAR"/>
+		<result column="enroll_no" property="enrollNo" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="getStuDegreeEnglishInfo" resultMap="stuDegreeEnglish">
+		select is_enroll,enroll_no from `bms`.oa_student_degree_english_task
+		where task_id=#{taskId,jdbcType=VARCHAR}
+		and learn_id = #{learnId,jdbcType=VARCHAR}
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="paperTemplateUrl">
+		<result column="template_url" property="templateUrl" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="getTemplateUrlByUnvsIdAndPfsnLevel" resultMap="paperTemplateUrl">
+		SELECT template_url FROM `bms`.`oa_student_graduate_paper_template`
+		WHERE unvs_id=#{unvsId,jdbcType=VARCHAR} AND pfsn_level=#{pfsnLevel,jdbcType=VARCHAR} AND grade=#{grade,jdbcType=VARCHAR} AND is_show='1' ORDER BY seq_num DESC
+	</select>
+	
+	<update id="updateNoticeTaskViewTime">
+		update `bms`.oa_student_lecture_notice_task set is_view='1',view_time=NOW() 
+		where task_id =#{taskId,jdbcType=VARCHAR}
+		and learn_id = #{learnId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateSubmitAffirmInfo">
+		update `bms`.oa_student_lecture_notice_task set is_receive_book=#{isReceiveBook,jdbcType=VARCHAR},
+		is_know_timetables=#{isKnowTimetables,jdbcType=VARCHAR},
+		is_know_course_type=#{isKnowCourseType,jdbcType=VARCHAR},
+		submit_time=NOW() 
+		where task_id =#{taskId,jdbcType=VARCHAR}
+		and learn_id = #{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getQingshuInfo" resultType="java.util.Map">
+		SELECT
+			b.std_name,
+			b.id_card,
+			a.qingshu_id,
+			a.qingshu_pwd
+		FROM
+			`bms`.bd_learn_info a
+		LEFT JOIN `bms`.bd_student_info b ON a.std_id = b.std_id WHERE learn_id =#{learnId}
+	</select>
+
+	<update id="updateQingshuConfirmStatus">
+		update `bms`.oa_student_qingshu_task set confirm_status=#{confirmStatus,jdbcType=VARCHAR},
+		update_time=NOW()
+		where task_id =#{taskId,jdbcType=VARCHAR}
+		and learn_id = #{learnId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getExamCityGk" resultType="java.util.HashMap">
+		SELECT ec_id ecId,ec_name ecName FROM bms.`bd_exam_city_gk` WHERE `status` = '1'
+	</select>
+	
+	<select id="getUnconfirmedReason" resultType="java.lang.String">
+		SELECT reason FROM bms.`oa_student_examcityaffirm_gk_task` 
+		WHERE task_id=#{taskId,jdbcType=VARCHAR} AND learn_id =#{learnId,jdbcType=VARCHAR} limit 1;
+	</select>
+	
+	<update id="affirmExamCityGKInfo">
+		update bms.oa_student_examcityaffirm_gk_task set ec_id=#{ecId,jdbcType=VARCHAR},is_affirm='1',is_exam='1',submit_time=NOW()
+		WHERE task_id=#{taskId,jdbcType=VARCHAR} AND learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+
+	<select id="getAffirmExamCityGKInfo" resultType="java.util.HashMap">
+		select osegt.`is_affirm` isAffirm,becg.`ec_name`
+		ecName from bms.oa_student_examcityaffirm_gk_task osegt
+		left join bms.bd_exam_city_gk becg on becg.`ec_id` = osegt.`ec_id`
+		where osegt.`task_id`=#{taskId,jdbcType=VARCHAR} and osegt.`learn_id`=#{learnId,jdbcType=VARCHAR} limit 1;
+	</select>
+
+	<update id="updatePaperTaskViewTime">
+		UPDATE bms.oa_student_graduate_paper_task SET is_view='1',view_time=NOW()
+		WHERE task_id=#{taskId,jdbcType=VARCHAR} AND learn_id =#{learnId,jdbcType=VARCHAR}
+	</update>
+
+	<select id="getStuGraduatePaperTaskInfo" resultType="java.util.Map">
+		SELECT
+		a.`school_department` schoolDepartment,
+        a.`paper_title` paperTitle,
+        a.`guide_teacher` guideTeacher,
+        a.`guide_teacher_email` guideTeacherEmail,
+        a.`guide_teacher_phone` guideTeacherPhone
+		FROM
+		`bms`.oa_student_graduate_paper_task a
+        WHERE a.`learn_id`=#{learnId,jdbcType=VARCHAR} AND a.`task_id`=#{taskId,jdbcType=VARCHAR}
+
+	</select>
+	
+	<select id="getGkUnifiedExamSet" resultType="java.util.HashMap">
+		SELECT 
+		  `id`,
+		  `title`,
+		  `describe`,
+		  `start_time` startTime,
+		  `end_time` endTime,
+		  `test_subject` testSubject,
+		  `operation_desc` operationDesc,
+		  `file_url` fileUrl,
+		  `file_name` fileName 
+		FROM
+		  bms.`bd_gk_unified_exam_set` 
+		WHERE id = #{eyId,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateGkUnifiedExamInfo">
+		UPDATE bms.`oa_student_graduateexam_gk_task` SET notification = #{operType,jdbcType=VARCHAR}
+		WHERE task_id=#{taskId,jdbcType=VARCHAR}  AND learn_id=#{learnId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateDiplomaGiveTaskView">
+		UPDATE bms.oa_student_diploma_give_task SET
+		is_view = '1',
+		view_time = NOW()
+		WHERE task_id = #{taskId} AND learn_id = #{learnId}
+	</update>
+	<update id="updateDiplomaAvailableNumbers">
+		UPDATE bms.oa_diploma_task_configure SET available_numbers = #{availableNumbers} WHERE config_id = #{configId}
+	</update>
+	<update id="updateDiplomaGiveTask">
+		UPDATE bms.oa_student_diploma_give_task SET
+		config_id = #{configId},
+		is_affirm = '1',
+		receive_address = #{receiveAddres},
+		submit_time = NOW()
+		WHERE task_id = #{taskId} AND learn_id = #{learnId}
+	</update>
+    <update id="updateConfirmInfo">
+		UPDATE bms.`bd_student_scene_confirm` SET exam_info_confirm_status = '1' ,exam_info_confirm_time = now() WHERE learn_id = #{learnId}
+	</update>
+
+    <select id="getDiplomaWarmTips" resultType="java.util.Map">
+		SELECT
+		a.diploma_id diplomaId,
+		b.warm_tips warmTips
+		FROM
+		bms.oa_student_diploma_give_task a
+		LEFT JOIN bms.oa_diploma_task b ON a.diploma_id = b.diploma_id
+		WHERE a.task_id = #{taskId} AND a.learn_id = #{learnId} limit 1
+	</select>
+	
+	<sql id="configIdIn">
+        exists(select 1 from bms.oa_diploma_task_configure_unvis b
+		WHERE a.config_id = b.config_id AND b.grade = #{grade}
+		AND (b.unvs_id = 'ALL' OR b.unvs_id = #{unvsId})
+		AND (b.pfsn_level = 'ALL' OR b.pfsn_level = #{pfsnLevel}))
+	</sql>
+	
+	<select id="getDiplomaPlace" resultType="java.util.Map">
+		SELECT
+		DISTINCT b.place_id placeId,
+		b.place_name placeName,
+		b.province_code provinceCode,
+		b.city_code cityCode,
+		b.district_code districtCode,
+		b.address address
+		FROM
+		bms.oa_diploma_task_configure a
+		LEFT JOIN bms.oa_diploma_place b ON a.place_id = b.place_id
+		WHERE a.diploma_id = #{diplomaId} AND a.status = '1' AND b.status = '1' AND
+		<include refid="configIdIn"/>
+	</select>
+	<select id="getDiplomaTaskDate" resultType="java.lang.String">
+		SELECT
+		DISTINCT date_format(a.start_time,'%Y-%m-%d')
+		FROM bms.oa_diploma_task_configure a
+		WHERE a.diploma_id = #{diplomaId} AND a.place_id = #{placeId} AND a.status = '1' AND
+		<include refid="configIdIn"/>
+	</select>
+	<select id="getDiplomaTaskTime" resultType="java.util.Map">
+		SELECT
+		a.config_id configId,
+		date_format(a.start_time,'%H:%i') startTime,
+		date_format(a.end_time,'%H:%i') endTime,
+		a.number,
+		(a.number - a.available_numbers) selectNumber
+		FROM bms.oa_diploma_task_configure a
+		WHERE a.diploma_id = #{diplomaId} AND a.place_id = #{placeId} AND a.status = '1' AND DATE_FORMAT(a.start_time, '%Y-%m-%d') = #{date} AND
+		<include refid="configIdIn"/>
+	</select>
+	<select id="getDiplomaAvailableNumbers" resultType="java.lang.Integer">
+		SELECT a.available_numbers from bms.oa_diploma_task_configure a WHERE a.config_id = #{configId}
+	</select>
+    <select id="getDiplomaGiveTask" resultType="java.util.Map">
+        SELECT
+        b.warm_tips warmTips,
+        d.place_name placeName,
+        a.receive_address receiveAddress,
+        date_format(c.start_time,'%Y-%m-%d') `date`,
+        date_format(c.start_time,'%H:%i') startTime,
+        date_format(c.end_time,'%H:%i') endTime,
+        b.warm_reminder warmReminder
+        FROM
+        bms.oa_student_diploma_give_task a
+        LEFT JOIN bms.oa_diploma_task b ON a.diploma_id = b.diploma_id
+        LEFT JOIN bms.oa_diploma_task_configure c ON a.config_id = c.config_id
+        LEFT JOIN bms.oa_diploma_place d ON c.place_id = d.place_id
+        WHERE a.task_id = #{taskId} AND a.learn_id = #{learnId} limit 1
+    </select>
+    <select id="getDiplomaUnconfirmed" resultType="java.lang.String">
+		SELECT
+		unconfirm_reason
+		FROM
+		bms.oa_student_diploma_give_task
+		WHERE
+		task_id = #{taskId} AND learn_id = #{learnId} limit 1
+	</select>
+
+    <select id="selectConfirmFinishByLearnId" resultType="java.lang.Integer">
+        SELECT count(1) FROM
+        bms.`oa_student_task` a
+        LEFT JOIN bms.`oa_task_info` b ON a.task_id = b.task_id
+        WHERE a.learn_id = #{learnId} AND a.task_status = '1' AND b.task_type = '16' limit 1;
+    </select>
+    <select id="getTaskInfoOtherByTaskId" resultType="java.util.Map">
+        SELECT
+        warm_prompt warmPrompt,
+        basic_explain basicExplain,
+        graduate_explain graduateExplain,
+        attach_explain attachExplain
+        FROM bms.`oa_task_info`
+        WHERE task_id = #{taskId}
+    </select>
+	
+	<select id="selectTestAreaByLearnId" resultType="java.util.Map">
+		SELECT
+		bta.ta_id AS taId,
+		bta.ta_name AS taName
+		FROM
+		bms.bd_test_area bta
+		LEFT JOIN bms.bd_learn_info bli ON bta.ta_id=bli.ta_id
+		WHERE
+		bli.learn_id = #{learnId} limit 1
+	</select>
+	
+	
+	
+	<select id="getTaskInfoById" resultType="java.util.Map">
+		SELECT
+		task_title AS taskTitle,
+		task_content AS taskContent,
+		task_type AS taskType,
+		ey_id AS eyId,
+		basic_explain AS basicExplain,
+		graduate_explain AS graduateExplain,
+		attach_explain AS attachExplain,
+		warm_prompt AS warmPrompt
+		FROM
+		bms.oa_task_info oti	
+		WHERE
+		oti.task_id = #{taskId} limit 1
+	</select>
+	
+	<sql id="SceneConfirmConfigWhere">
+        (ocm.confirm_address_level =#{pfsnLevel} or ocm.confirm_address_level='3') AND ocm.is_allow='1' AND
+		ocm.ta_id = #{taId}  
+	</sql>
+	
+	<select id="getSceneConfirmCity" resultType="java.lang.String">
+		SELECT DISTINCT
+		ocm.confirm_city AS confirmCity
+		FROM
+		bms.oa_confirmation_management ocm
+		WHERE
+		<include refid="SceneConfirmConfigWhere"/>
+	</select>
+	
+	<select id="getSceneConfirmPlace" resultType="java.lang.String">
+		SELECT DISTINCT
+		ocm.confirm_name AS confirmName
+		FROM
+		bms.oa_confirmation_management ocm
+		WHERE ocm.confirm_city=#{confirmCity} AND
+		<include refid="SceneConfirmConfigWhere"/>
+	</select>
+	
+	<select id="getSceneConfirmTaskDate" resultType="java.lang.String">
+		SELECT
+		DISTINCT date_format(ocm.start_time,'%Y-%m-%d') AS `date`
+		FROM bms.oa_confirmation_management ocm
+		WHERE ocm.confirm_city=#{confirmCity} AND ocm.confirm_name=#{confirmName} AND   
+		date_format(ocm.start_time,'%Y-%m-%d')>=date_format(now(),'%Y-%m-%d') AND  
+		<include refid="SceneConfirmConfigWhere"/>
+	</select>
+	
+	<select id="getSceneConfirmTaskTime" resultType="java.util.Map">
+		SELECT
+		confirmation_id  AS confirmationId,
+		date_format(ocm.start_time,'%H:%i') AS startTime,
+		date_format(ocm.end_time,'%H:%i') AS endTime,
+		ocm.address AS address,
+		ocm.required_materials AS requiredMaterials,
+		ocm.number,
+		ocm.available_numbers AS availableNumbers
+		FROM bms.oa_confirmation_management ocm
+		WHERE ocm.confirm_city=#{confirmCity} AND ocm.confirm_name=#{confirmName}  AND 
+		DATE_FORMAT(ocm.start_time, '%Y-%m-%d') = #{date} AND
+		((date_format(#{date},'%Y-%m-%d')>date_format(now(),'%Y-%m-%d')) OR
+		(date_format(#{date},'%Y-%m-%d')=date_format(now(),'%Y-%m-%d') and DATE_FORMAT(ocm.start_time, '%H:%i') >= date_format(now(),'%H:%i') ) 
+		) AND
+
+		<include refid="SceneConfirmConfigWhere"/>
+	</select>
+	
+	
+	<select id="getSceneConfirmAvailableNumbers" resultType="java.lang.Integer">
+		SELECT ocm.available_numbers from bms.oa_confirmation_management ocm WHERE ocm.confirmation_id = #{confirmationId}
+	</select>
+	<update id="updateSceneConfirmAvailableNumbers">
+		UPDATE bms.oa_confirmation_management SET available_numbers = #{availableNumbers} WHERE confirmation_id = #{confirmationId}
+	</update>
+	<update id="updateSceneConfirmTask">
+		UPDATE bms.bd_student_scene_confirm SET
+		confirmation_id = #{confirmationId},
+		place_confirm_status = '1',
+		place_confirm_time = NOW()
+		WHERE  learn_id = #{learnId};
+		
+		INSERT INTO bms.bd_student_scene_record(record_id,learn_id,confirmation_id,create_time)
+		values(#{resetId},#{learnId},#{confirmationId},now());
+		
+	</update>
+	 
+	 
+	 <select id="getSceneConfirmTask" resultType="java.util.Map">
+        SELECT
+        bsi.std_name stdName,
+        bsi.id_card idCard,
+        ocm.ta_id taId,
+        ocm.ta_name taName,
+        ocm.confirm_city confirmCity,
+        ocm.confirm_name confirmName,
+        ocm.address address,
+        ocm.required_materials requiredMaterials,
+        date_format(ocm.start_time,'%Y-%m-%d') `date`,
+        date_format(ocm.start_time,'%H:%i') startTime,
+        date_format(ocm.end_time,'%H:%i') endTime
+        FROM
+        bms.bd_learn_info bli
+        LEFT JOIN bms.bd_student_info bsi ON bsi.std_id = bli.std_id
+        LEFT JOIN bms.bd_student_scene_confirm bsc ON bsc.learn_id = bli.learn_id
+        LEFT JOIN bms.oa_confirmation_management ocm ON bsc.confirmation_id = ocm.confirmation_id
+        WHERE bli.learn_id = #{learnId} limit 1
+    </select>
+	<select id="getRecruitByLearnId" resultType="java.lang.String">
+		SELECT
+		emp_name
+		FROM
+		bms.bd_learn_rules a
+		LEFT JOIN bms.oa_employee b ON a.recruit = b.emp_id
+		WHERE a.learn_id = #{learnId} limit 1;
+	</select>
+
+</mapper>

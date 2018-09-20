@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.BdConfirmReceiptMapper" >
+  <resultMap id="BaseResultMap" type="com.yz.model.BdConfirmReceipt" >
+    <result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+    <result column="exam_no" property="examNo" jdbcType="VARCHAR" />
+    <result column="annex_id" property="annexId" jdbcType="VARCHAR" />
+    <result column="annex_type" property="annexType" jdbcType="VARCHAR" />
+    <result column="annex_name" property="annexName" jdbcType="VARCHAR" />
+    <result column="annex_url" property="annexUrl" jdbcType="VARCHAR" />
+    <result column="annex_status" property="annexStatus" jdbcType="CHAR" />
+    <result column="upload_user" property="uploadUser" jdbcType="VARCHAR" />
+    <result column="upload_user_id" property="uploadUserId" jdbcType="VARCHAR" />
+    <result column="upload_time" property="uploadTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="is_require" property="isRequire" jdbcType="CHAR" />
+    <result column="std_id" property="stdId" jdbcType="VARCHAR" />
+    <result column="ext_1" property="operateNum" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="getReceiptInfo" resultMap="BaseResultMap" parameterType="string" >
+        SELECT
+            b.annex_id,
+            b.annex_url,
+            IFNULL(c.ext_1,0) ext_1,
+            c.exam_no,
+            a.learn_id,
+            a.std_id
+        FROM
+            bms.bd_learn_info a
+            LEFT JOIN bms.bd_learn_annex b ON a.learn_id = b.learn_id  and b.`annex_type` = '20'
+            LEFT JOIN bms.bd_test_prove_info c ON a.learn_id = c.learn_id
+        WHERE
+           a.learn_id = #{learnId} limit 1
+  </select>
+
+    <insert id="insertReceiptFile" parameterType="com.yz.model.BdConfirmReceipt" >
+        insert into bms.bd_learn_annex
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="annexId != null" >
+                annex_id,
+            </if>
+            <if test="annexType != null" >
+                annex_type,
+            </if>
+            <if test="learnId != null" >
+                learn_id,
+            </if>
+            <if test="annexName != null" >
+                annex_name,
+            </if>
+            <if test="annexUrl != null" >
+                annex_url,
+            </if>
+            <if test="annexStatus != null" >
+                annex_status,
+            </if>
+            <if test="isRequire != null" >
+                is_require,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="updateUser != null" >
+                update_user,
+            </if>
+            <if test="updateUserId != null" >
+                update_user_id,
+            </if>
+            <if test="uploadUser != null" >
+                upload_user,
+            </if>
+            <if test="uploadUserId != null" >
+                upload_user_id,
+            </if>
+            <if test="uploadTime != null" >
+                upload_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="annexId != null" >
+                #{annexId,jdbcType=VARCHAR},
+            </if>
+            <if test="annexType != null" >
+                #{annexType,jdbcType=VARCHAR},
+            </if>
+            <if test="learnId != null" >
+                #{learnId,jdbcType=VARCHAR},
+            </if>
+            <if test="annexName != null" >
+                #{annexName,jdbcType=VARCHAR},
+            </if>
+            <if test="annexUrl != null" >
+                #{annexUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="annexStatus != null" >
+                #{annexStatus,jdbcType=CHAR},
+            </if>
+            <if test="isRequire != null" >
+                #{isRequire,jdbcType=CHAR},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null" >
+                #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateUserId != null" >
+                #{updateUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadUser != null" >
+                #{uploadUser,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadUserId != null" >
+                #{uploadUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadTime != null" >
+                #{uploadTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    
+    <update id="updateReceiptFile" parameterType="com.yz.model.BdConfirmReceipt">
+        update bms.bd_learn_annex
+        <set>
+            <if test="annexUrl != null" >
+                annex_url = #{annexUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=VARCHAR},
+            </if>
+            <if test="updateUser != null" >
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateUserId != null" >
+                update_user_id = #{updateUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadTime != null" >
+                upload_time = #{uploadTime},
+            </if>
+            <if test="uploadUser != null" >
+                upload_user = #{uploadUser,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadUserId != null" >
+                upload_user_id = #{uploadUserId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where annex_id = #{annexId}
+    </update>
+  
+    <insert id="insertExamNo">
+        INSERT INTO bms.`bd_test_prove_info` (
+        `learn_id`,
+        `std_id`,
+        `exam_no`,
+        `ext_1`
+        )
+        VALUES
+        (
+        #{learnId},
+        #{stdId},
+        #{examNo},
+        #{operateNum}
+        );
+    </insert>
+
+    <update id="updateExamNo">
+        UPDATE bms.bd_test_prove_info SET exam_no = #{examNo},ext_1 = #{operateNum} where
+        learn_id = #{learnId}
+    </update>
+
+    <update id="updateNum">
+        UPDATE bms.bd_test_prove_info SET ext_1 = #{operateNum} where
+        learn_id = #{learnId}
+    </update>
+
+    <select id="existExamNo" resultType="java.util.HashMap" parameterType="java.lang.String">
+            SELECT
+            b.exam_no ,
+            a.learn_id,
+            c.std_id
+        FROM
+            bms.bd_student_scene_confirm a
+            LEFT JOIN bms.bd_test_prove_info b ON a.learn_id = b.learn_id
+            LEFT JOIN bms.bd_learn_info c ON a.learn_id = c.learn_id
+        WHERE
+            a.confirm_id = #{confirmId}
+            LIMIT 1
+    </select>
+
+</mapper>

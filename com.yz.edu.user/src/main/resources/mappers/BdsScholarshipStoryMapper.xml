@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.BdScholarshipStoryMapper">
+	<resultMap id="scholarshipStoryMap" type="com.yz.model.scholarshipStory.BdScholarshipStory">
+	  <id column="scholarship_id" property="scholarshipId" jdbcType="VARCHAR"></id>
+	  <result column="article_title" property="articleTitle" jdbcType="VARCHAR"/>
+	  <result column="text_pre" property="textPre" jdbcType="VARCHAR"/>
+	  <result column="entrance_text" property="entranceText" jdbcType="VARCHAR"/>
+	  <result column="entrance_link" property="entranceLink" jdbcType="VARCHAR"/>
+	  <result column="text_last" property="textLast" jdbcType="VARCHAR"/>
+	  <result column="article_link_title" property="articleLinkTitle" jdbcType="VARCHAR"/>
+	  <result column="article_link_des" property="articleLinkDes" jdbcType="VARCHAR"/>
+	  <result column="article_pic_url" property="articlePicUrl" jdbcType="VARCHAR"/>
+	  <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="selectBdScholarshipStory" resultMap="scholarshipStoryMap">
+		SELECT 
+		  bd.`scholarship_id`,
+		  bd.`article_title`,
+		  bd.`article_pic_url`,
+		  bd.`article_link_title`,
+		  bd.`article_link_des`,
+		  bd.`create_time`
+		FROM
+		  bms.bd_scholarship_story bd 
+		  where bd.`is_allow` = '1'
+		ORDER BY  bd.`create_time` desc
+	</select>
+	
+	<select id="selectBdScholarshipStoryInfoById" resultMap="scholarshipStoryMap">
+		SELECT 
+		  bd.`scholarship_id`,
+		  bd.`article_title`,
+		  bd.`text_pre`,
+		  bd.`text_last`,
+		  bd.`entrance_text`,
+		  bd.`entrance_link`,
+		  bd.`article_pic_url`,
+		  bd.`article_link_title`,
+		  bd.`article_link_des`
+		FROM
+		  bms.bd_scholarship_story bd
+		  where  bd.`scholarship_id` = #{scholarshipId, jdbcType=VARCHAR} 
+	</select>
+	
+</mapper>

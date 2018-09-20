@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.BdsPaymentItemMapper">
+	<insert id="insertOrder">
+		INSERT INTO bms.bd_student_pay_order
+		(order_no,
+		pay_item,
+		amount,
+		payment_type,
+		learn_id,
+		order_status,
+		create_time)
+		VALUES
+		(
+		#{orderNo},
+		#{payItem},
+		#{amount},
+		#{paymentType},
+		#{learnId},
+		'0',
+		NOW()
+		)
+
+	</insert>
+	<update id="updateQRCode">
+		UPDATE bms.bd_student_pay_order SET qr_code = #{codeUrl} WHERE order_no = #{orderNo}
+	</update>
+	<update id="updateOrderStatusByOrderNo">
+		UPDATE bms.bd_student_pay_order SET order_status = '1',check_status = '0',out_serial_no = #{outSerialNo},payable = #{wechatAmount},pay_time = NOW() WHERE order_no = #{orderNo}
+	</update>
+	<update id="updateSPCByPicCollectId">
+		UPDATE bms.bd_student_picture_collect SET order_no = #{orderNo} WHERE pic_collect_id = #{picCollectId}
+	</update>
+	<select id="selectPayByOrderNo" resultType="java.lang.Integer">
+		SELECT count(1) FROM bms.bd_student_pay_order a WHERE a.order_no = #{orderNo} limit 1
+	</select>
+	<select id="selectIsPayByOrderNo" resultType="java.lang.Integer">
+		SELECT count(1) FROM bms.bd_student_pay_order a WHERE a.order_no = #{orderNo} AND a.order_status = 1
+	</select>
+	<select id="selectPayAmountByOrderNo" resultType="java.lang.String">
+		SELECT amount FROM bms.bd_student_pay_order a WHERE a.order_no = #{orderNo}
+	</select>
+
+
+</mapper>

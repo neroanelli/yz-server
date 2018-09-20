@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.BdStudentOutMapper">
+	<resultMap id="BaseResultMap" type="com.yz.model.BdStudentOut">
+		<id column="out_id" property="outId" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="check_order" property="checkOrder" jdbcType="VARCHAR" />
+		<result column="check_type" property="checkType" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
+		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="is_complete" property="isComplete" jdbcType="CHAR" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_user_id" property="updateUserId"
+			jdbcType="VARCHAR" />
+		<result column="create_user_id" property="createUserId"
+			jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="ext_1" property="ext1" jdbcType="VARCHAR" />
+		<result column="ext_2" property="ext2" jdbcType="VARCHAR" />
+		<result column="ext_3" property="ext3" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.yz.model.BdStudentOutMap" id="PageResultMap">
+		<result column="out_id" property="outTd" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="inclusion_status" property="inclusionStatus"
+			jdbcType="VARCHAR" />
+		<result column="sg" property="sg" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<association property="check" column="out_id"
+			select="selectCheckRecordByOutId" />
+	</resultMap>
+
+	<resultMap id="studentOutListMap" type="com.yz.model.StudentOutListMap">
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="out_id" property="outId" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="fileName" property="fileName" jdbcType="VARCHAR" />
+		<result column="fileUrl" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="isComplete" property="isComplete" jdbcType="VARCHAR" />
+		<result column="createTime" property="createTime" jdbcType="VARCHAR" />
+		<association property="check" column="out_id"
+			select="selectCheckRecordByOutId" />
+	</resultMap>
+
+	<resultMap type="com.yz.model.student.BdCheckRecord" id="CheckRecordMap">
+		<result column="cr_id" property="crId" jdbcType="VARCHAR" />
+		<result column="mapping_id" property="mappingId" jdbcType="VARCHAR" />
+		<result column="emp_id" property="empId" jdbcType="VARCHAR" />
+		<result column="check_status" property="checkStatus" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="check_order" property="checkOrder" jdbcType="VARCHAR" />
+		<result column="check_type" property="checkType" jdbcType="VARCHAR" />
+		<result column="cr_status" property="crStatus" jdbcType="VARCHAR" />
+		<result column="jt_id" property="jtId" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_user_id" property="updateUserId"
+			jdbcType="VARCHAR" />
+		<result column="ext_1" property="ext1" jdbcType="VARCHAR" />
+		<result column="ext_2" property="ext2" jdbcType="VARCHAR" />
+		<result column="ext_3" property="ext3" jdbcType="VARCHAR" />
+		<result column="title_name" property="titleName" jdbcType="VARCHAR" />
+		<result column="emp_name" property="empName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="ResultMap" type="com.yz.model.BdStudentOutMap">
+		<result column="out_id" property="outTd" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<collection property="check" ofType="com.yz.model.student.BdCheckRecord">
+			<result column="cr_id" property="crId" jdbcType="VARCHAR" />
+			<result column="mapping_id" property="mappingId" jdbcType="VARCHAR" />
+			<result column="emp_id" property="empId" jdbcType="VARCHAR" />
+			<result column="check_status" property="checkStatus" jdbcType="VARCHAR" />
+			<result column="reason" property="reason" jdbcType="VARCHAR" />
+			<result column="check_order" property="checkOrder" jdbcType="VARCHAR" />
+			<result column="check_type" property="checkType" jdbcType="VARCHAR" />
+			<result column="cr_status" property="crStatus" jdbcType="VARCHAR" />
+			<result column="jt_id" property="jtId" jdbcType="VARCHAR" />
+			<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+			<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+			<result column="update_user_id" property="updateUserId"
+				jdbcType="VARCHAR" />
+			<result column="ext_1" property="ext1" jdbcType="VARCHAR" />
+			<result column="ext_2" property="ext2" jdbcType="VARCHAR" />
+			<result column="ext_3" property="ext3" jdbcType="VARCHAR" />
+			<result column="title_name" property="titleName" jdbcType="VARCHAR" />
+			<result column="emp_name" property="empName" jdbcType="VARCHAR" />
+		</collection>
+	</resultMap>
+	<resultMap id="FinancialResultMap" type="java.util.Map">
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="out_id" property="outTd" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="check_status" property="checkStatus" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="StudentMap" type="java.util.Map">
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="RecordMap" type="java.util.Map">
+		<result column="emp_name" property="empName" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="CheckWeightMap" type="java.util.Map">
+		<result column="check_order" property="checkOrder" jdbcType="VARCHAR" />
+		<result column="check_type" property="checkType" jdbcType="VARCHAR" />
+		<result column="jt_id" property="jtId" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="StudentInfoMap" type="java.util.Map">
+	    <result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="std_stage" property="stdStage" jdbcType="VARCHAR" />
+		<result column="recruit_type" property="recruitType" jdbcType="VARCHAR" />
+		<result column="unvs_name" property="unvsName" jdbcType="VARCHAR" />
+		<result column="pfsn_name" property="pfsnName" jdbcType="VARCHAR" />
+		<result column="pfsn_level" property="pfsnLevel" jdbcType="VARCHAR" />
+		<result column="bsarecruit_type" property="bsarecruitType"
+			jdbcType="VARCHAR" />
+		<result column="bsaunvs_name" property="bsaunvsName" jdbcType="VARCHAR" />
+		<result column="bsapfsn_name" property="bsapfsnName" jdbcType="VARCHAR" />
+		<result column="bsapfsn_level" property="bsapfsnLevel"
+			jdbcType="VARCHAR" />
+		<result column="oer_bind_id" property="oerBindId" jdbcType="VARCHAR" />
+		<result column="oet_bind_id" property="oetBindId" jdbcType="VARCHAR" />
+		<result column="learn_id" property="learnId" jdbcType="VARCHAR" />
+		<result column="oet_status" property="oetStatus" jdbcType="VARCHAR" />
+		<result column="oer_name" property="oerName" jdbcType="VARCHAR" />
+		<result column="oet_name" property="oetName" jdbcType="VARCHAR" />
+		<result column="std_no" property="stdNo" jdbcType="VARCHAR" />
+		<result column="std_id" property="stdId" jdbcType="VARCHAR" />
+		<result column="oet_emp_id" property="oetEmpId" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="scholarship" property="scholarship" jdbcType="VARCHAR" />
+		<result column="inclusion_status" property="inclusionStatus"
+			jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+		<result column="oer_status" property="oerStatus" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<resultMap type="com.yz.model.BdStudentOutExport" id="OutExportMap">
+		<result column="out_id" property="outId" jdbcType="VARCHAR" />
+		<result column="std_name" property="stdName" jdbcType="VARCHAR" />
+		<result column="is_complete" property="isComplete" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="VARCHAR" />
+		<result column="id_card" property="idCard" jdbcType="VARCHAR" />
+		<result column="recruit_name" property="recruitName" jdbcType="VARCHAR" />
+		<result column="refund_amount" property="refundAmount"
+			jdbcType="VARCHAR" />
+		<result column="check_status" property="checkStatus" jdbcType="VARCHAR" />
+		<result column="amount" property="amount" jdbcType="VARCHAR" />
+		<association property="checkUsers" column="out_id"
+			select="selectCheckUsersByOutId" />
+	</resultMap>
+
+	<select id="getDict" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT * FROM bms.`sys_dict` WHERE dict_id=#{dictId}
+	</select>
+
+
+	<select id="studentOutList" parameterType="java.lang.String"
+		resultMap="studentOutListMap">
+		SELECT so.`reason`,so.`remark`,so.`file_name`
+		fileName,so.`file_url`
+		fileUrl,so.`out_id` , so.is_complete
+		isComplete,so.`create_time`
+		createTime
+		FROM
+		bms.`bd_student_out` so WHERE
+		learn_id=#{learnId}
+	</select>
+
+	<insert id="insertSelectiveBdStudentModify" parameterType="com.yz.model.student.BdStudentModify">
+		insert into bms.bd_student_modify
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			modify_id,
+			<if test="learnId != null and learnId != ''">
+				learn_id,
+			</if>
+			<if test="stdId != null and stdId != ''">
+				std_id,
+			</if>
+			<if test="modifyType != null and modifyType != ''">
+				modify_type,
+			</if>
+			<if test="checkType != null and checkType != ''">
+				check_type,
+			</if>
+			<if test="stdName != null and stdName != ''">
+				std_name,
+			</if>
+			<if test="sex != null and sex != ''">
+				sex,
+			</if>
+			<if test="idType != null and idType != ''">
+				id_type,
+			</if>
+			<if test="nation != null and nation != ''">
+				nation,
+			</if>
+			<if test="idCard != null and idCard != ''">
+				id_card,
+			</if>
+			<if test="unvsId != null and unvsId != ''">
+				unvs_id,
+			</if>
+			<if test="taId != null and taId != ''">
+				ta_id,
+			</if>
+			<if test="pfsnId != null and pfsnId != ''">
+				pfsn_id,
+			</if>
+			<if test="sg != null and sg != ''">
+				sg,
+			</if>
+			<if test="scholarship != null and scholarship != ''">
+				scholarship,
+			</if>
+			<if test="oldStdStage != null and oldStdStage != ''">
+				old_std_stage,
+			</if>
+			<if test="newStdStage != null and newStdStage != ''">
+				new_std_stage,
+			</if>
+			<if test="newStdName != null and newStdName != ''">
+				new_std_name,
+			</if>
+			<if test="newSex != null and newSex != ''">
+				new_sex,
+			</if>
+			<if test="newIdType != null and newIdType != ''">
+				new_id_type,
+			</if>
+			<if test="newNation != null and newNation != ''">
+				new_nation,
+			</if>
+			<if test="newIdCard != null and newIdCard != ''">
+				new_id_card,
+			</if>
+			<if test="newUnvsId != null and newUnvsId != ''">
+				new_unvs_id,
+			</if>
+			<if test="newTaId != null and newTaId != ''">
+				new_ta_id,
+			</if>
+			<if test="newPfsnId != null and newPfsnId != ''">
+				new_pfsn_id,
+			</if>
+			<if test="newSg != null and newSg != ''">
+				new_sg,
+			</if>
+			<if test="newScholarship != null and newScholarship != ''">
+				new_scholarship,
+			</if>
+			<if test="isDel != null and isDel != ''">
+				is_del,
+			</if>
+			<if test="updateUser != null and updateUser != ''">
+				update_user,
+			</if>
+			<if test="updateUserId != null and updateUserId != ''">
+				update_user_id,
+			</if>
+			<if test="createUserId != null and createUserId != ''">
+				create_user_id,
+			</if>
+			<if test="createUser != null and createUser != ''">
+				create_user,
+			</if>
+			<if test="checkOrder != null and checkOrder != ''">
+				check_order,
+			</if>
+			<if test="ext1 != null and ext1 != ''">
+				ext_1,
+			</if>
+			<if test="ext3 != null and ext3 != ''">
+				ext_3,
+			</if>
+			<if test="isComplete != null and isComplete != ''">
+				is_complete,
+			</if>
+			<if test="remark != null and remark != ''">
+				remark,
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				file_url,
+			</if>
+			update_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{modifyId,jdbcType=VARCHAR},
+			<if test="learnId != null  and learnId != ''">
+				#{learnId,jdbcType=VARCHAR},
+			</if>
+			<if test="stdId != null  and stdId != ''">
+				#{stdId,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyType != null  and modifyType != ''">
+				#{modifyType,jdbcType=VARCHAR},
+			</if>
+			<if test="checkType != null  and checkType != ''">
+				#{checkType,jdbcType=VARCHAR},
+			</if>
+			<if test="stdName != null  and stdName != ''">
+				#{stdName,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null  and sex != ''">
+				#{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="idType != null and idType != ''">
+				#{idType,jdbcType=VARCHAR},
+			</if>
+			<if test="nation != null and nation != ''">
+				#{nation,jdbcType=VARCHAR},
+			</if>
+			<if test="idCard != null and idCard != ''">
+				#{idCard,jdbcType=VARCHAR},
+			</if>
+			<if test="unvsId != null and unvsId != ''">
+				#{unvsId,jdbcType=VARCHAR},
+			</if>
+			<if test="taId != null and taId != ''">
+				#{taId,jdbcType=VARCHAR},
+			</if>
+			<if test="pfsnId != null and pfsnId != ''">
+				#{pfsnId,jdbcType=VARCHAR},
+			</if>
+			<if test="sg != null and sg != ''">
+				#{sg,jdbcType=VARCHAR},
+			</if>
+			<if test="oldStdStage != null and oldStdStage != ''">
+				#{oldStdStage,jdbcType=VARCHAR},
+			</if>
+			<if test="newStdStage != null and newStdStage != ''">
+				#{newStdStage,jdbcType=VARCHAR},
+			</if>
+			<if test="scholarship != null and scholarship != ''">
+				#{scholarship,jdbcType=VARCHAR},
+			</if>
+			<if test="newStdName != null and newStdName != ''">
+				#{newStdName,jdbcType=VARCHAR},
+			</if>
+			<if test="newSex != null and newSex != ''">
+				#{newSex,jdbcType=VARCHAR},
+			</if>
+			<if test="newIdType != null and newIdType != ''">
+				#{newIdType,jdbcType=VARCHAR},
+			</if>
+			<if test="newNation != null and newNation != ''">
+				#{newNation,jdbcType=VARCHAR},
+			</if>
+			<if test="newIdCard != null and newIdCard != ''">
+				#{newIdCard,jdbcType=VARCHAR},
+			</if>
+			<if test="newUnvsId != null and newUnvsId != ''">
+				#{newUnvsId,jdbcType=VARCHAR},
+			</if>
+			<if test="newTaId != null and newTaId != ''">
+				#{newTaId,jdbcType=VARCHAR},
+			</if>
+			<if test="newPfsnId != null and newPfsnId != ''">
+				#{newPfsnId,jdbcType=VARCHAR},
+			</if>
+			<if test="newSg != null and newSg != ''">
+				#{newSg,jdbcType=VARCHAR},
+			</if>
+			<if test="newScholarship != null and newScholarship != ''">
+				#{newScholarship,jdbcType=VARCHAR},
+			</if>
+			<if test="isDel != null and isDel != ''">
+				#{isDel,jdbcType=CHAR},
+			</if>
+			<if test="updateUser != null and updateUser != ''">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUserId != null and updateUserId != ''">
+				#{updateUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="createUserId != null and createUserId != ''">
+				#{createUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null and createUser != ''">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="checkOrder != null and checkOrder != ''">
+				#{checkOrder,jdbcType=VARCHAR},
+			</if>
+			<if test="ext1 != null and ext1 != ''">
+				#{ext1,jdbcType=VARCHAR},
+			</if>
+			<if test="ext3 != null and ext3 != ''">
+				#{ext3,jdbcType=VARCHAR},
+			</if>
+			<if test="isComplete != null and isComplete != ''">
+				#{isComplete,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null and remark != ''">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				#{fileUrl,jdbcType=VARCHAR},
+			</if>
+			now()
+		</trim>
+	</insert>
+
+	<select id="selectOutCount" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(*) from bms.bd_student_out where learn_id =
+		#{learnId} and is_complete = '0'
+	</select>
+
+	<sql id="Base_Column_List">
+		out_id, learn_id, std_id, reason, check_order, check_type,
+		std_stage,
+		is_complete,
+		file_url,remark,file_name,
+		update_time,
+		update_user, update_user_id,
+		create_user_id, create_time,
+		create_user,
+		ext_1, ext_2, ext_3,financial_remark
+	</sql>
+
+	<update id="updateFileUrl" parameterType="java.lang.String">
+		update
+		bms.bd_student_out
+		set file_url = #{url},file_name = #{fileName} where
+		out_id = #{outId}
+	</update>
+
+
+	<insert id="insertSelectiveRecord" parameterType="com.yz.model.student.BdCheckRecord">
+		insert into bms.bd_check_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			cr_id,
+			<if test="mappingId != null">
+				mapping_id,
+			</if>
+			<if test="empId != null">
+				emp_id,
+			</if>
+			<if test="checkStatus != null">
+				check_status,
+			</if>
+			<if test="reason != null">
+				reason,
+			</if>
+			<if test="checkOrder != null">
+				check_order,
+			</if>
+			<if test="checkType != null">
+				check_type,
+			</if>
+			<if test="crStatus != null">
+				cr_status,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+			<if test="updateUserId != null">
+				update_user_id,
+			</if>
+			<if test="ext1 != null">
+				ext_1,
+			</if>
+			<if test="ext2 != null">
+				ext_2,
+			</if>
+			<if test="ext3 != null">
+				ext_3,
+			</if>
+			<if test="jtId != null">
+				jt_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{crId,jdbcType=VARCHAR},
+			<if test="mappingId != null">
+				#{mappingId,jdbcType=VARCHAR},
+			</if>
+			<if test="empId != null">
+				#{empId,jdbcType=VARCHAR},
+			</if>
+			<if test="checkStatus != null">
+				#{checkStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="reason != null">
+				#{reason,jdbcType=VARCHAR},
+			</if>
+			<if test="checkOrder != null">
+				#{checkOrder,jdbcType=VARCHAR},
+			</if>
+			<if test="checkType != null">
+				#{checkType,jdbcType=VARCHAR},
+			</if>
+			<if test="crStatus != null">
+				#{crStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUserId != null">
+				#{updateUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="ext1 != null">
+				#{ext1,jdbcType=VARCHAR},
+			</if>
+			<if test="ext2 != null">
+				#{ext2,jdbcType=VARCHAR},
+			</if>
+			<if test="ext3 != null">
+				#{ext3,jdbcType=VARCHAR},
+			</if>
+			<if test="jtId != null">
+				#{jtId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<select id="selectStdInfoByLearnId" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		select
+		l.scholarship,
+		l.inclusion_status inclusionStatus,
+		i.id_card idCard,
+		i.std_id stdId
+		from bms.bd_learn_info l
+		LEFT JOIN
+		bms.bd_student_info i
+		ON i.std_id = l.std_id
+		where l.learn_id =
+		#{learnId}
+	</select>
+
+	<delete id="deleteStudentOut" parameterType="java.lang.String">
+		DELETE
+		bsr,
+		bcr
+		FROM
+		bms.bd_student_out bsr,
+		bms.bd_check_record bcr
+		WHERE bsr.out_id =
+		bcr.mapping_id
+		and bsr.`out_id` = #{outId}
+	</delete>
+
+	<select id="getCheckOrder" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		SELECT check_order FROM bms.bd_check_weight
+		WHERE
+		check_type =
+		#{checkType,jdbcType=VARCHAR} and jt_id =
+		#{jtId,jdbcType=VARCHAR}
+	</select>
+	<select id="getCheckWeight" resultMap="CheckWeightMap"
+		parameterType="java.lang.String">
+		SELECT check_order,check_type,jt_id FROM
+		bms.bd_check_weight
+		WHERE
+		check_type = #{stdStage,jdbcType=VARCHAR}
+	</select>
+	<select id="selectOpareRecord" resultMap="RecordMap"
+		parameterType="java.lang.String">
+		SELECT oe.`emp_name`,bcr.`update_time` FROM
+		bms.bd_check_record bcr LEFT JOIN bms.oa_employee oe ON bcr.`emp_id` =
+		oe.`emp_id` WHERE mapping_id = #{0} AND check_order &lt; #{1} ORDER BY
+		check_order ASC
+	</select>
+	<select id="findDirectorApproval" resultMap="FinancialResultMap">
+		SELECT
+		bso.`out_id`,
+		bsi.`std_name`,
+		bso.`create_user`,
+		bse.`grade`,bli.`learn_id`,bu.`recruit_type`,bu.`unvs_name`,bup.`pfsn_name`,bup.`pfsn_level`,bse.`scholarship`,bli.`std_stage`,bso.`reason`,bso.`create_time`,bcr.`check_status`
+		FROM
+		bms.bd_student_out bso
+		LEFT JOIN bms.bd_student_info bsi
+		ON
+		bso.`std_id` =
+		bsi.`std_id`
+		LEFT JOIN bms.bd_learn_info bli
+		ON
+		bso.`learn_id` =
+		bli.`learn_id`
+		LEFT JOIN bms.bd_student_enroll bse
+		ON
+		bso.`learn_id` =
+		bse.`learn_id`
+		LEFT JOIN bms.bd_university bu
+		ON
+		bse.`unvs_id` =
+		bu.`unvs_id`
+		LEFT JOIN bms.bd_unvs_profession bup
+		ON
+		bup.`pfsn_id` =
+		bse.`pfsn_id`
+		LEFT JOIN bms.bd_check_record bcr
+		ON
+		bcr.`mapping_id` =
+		bso.`out_id`
+		LEFT JOIN bms.bd_learn_rules r
+		ON
+		r.`learn_id` = bli.`learn_id`
+		WHERE (bso.`check_order` = '2' OR
+		bso.`check_order` =
+		'1')AND
+		(bso.`check_type` = '2' OR bso.`check_type`
+		= '4') AND
+		bso.`is_complete` = '0' AND (bcr.`check_type` = '2' OR
+		bcr.`check_type` = '4') AND bcr.`check_order` = '1' AND
+		bcr.`check_status` != '3'
+		<if test="outMap.stdName != null and outMap.stdName != ''">
+			and bsi.`std_name` like CONCAT('%',#{outMap.stdName},'%')
+		</if>
+		<if test="outMap.phone != null and outMap.phone != ''">
+			and bsi.`mobile` like CONCAT('%',#{outMap.phone},'%')
+		</if>
+		<if test="outMap.idCard != null and outMap.idCard != ''">
+			and bsi.`id_card` like CONCAT('%',#{outMap.idCard},'%')
+		</if>
+		<if test="outMap.checkState != null and outMap.checkState != ''">
+			and bcr.`check_status` = #{outMap.checkState}
+		</if>
+		<if test="outMap.reason != null and outMap.reason != ''">
+			and bso.`reason` = #{outMap.reason}
+		</if>
+		<if test="outMap.startTime != null and outMap.startTime != ''">
+			and (SELECT
+			COUNT(*)
+			FROM
+			bms.bd_student_out t
+			LEFT JOIN
+			bms.bd_check_record cr
+			ON t.`out_id` = cr.`mapping_id`
+			WHERE
+			cr.`check_order` = '2'
+			AND t.`out_id` = bso.`out_id`
+			AND
+			DATE_FORMAT(cr.`update_time`,'%Y-%m-%d') &gt;= #{outMap.startTime})
+			&gt; 0
+		</if>
+		<if test="outMap.endTime != null and outMap.endTime != ''">
+			and (SELECT
+			COUNT(*)
+			FROM
+			bms.bd_student_out t
+			LEFT JOIN
+			bms.bd_check_record cre
+			ON t.`out_id` = cre.`mapping_id`
+			WHERE
+			cre.`check_order` = '2'
+			AND t.`out_id` = bso.`out_id`
+			and
+			DATE_FORMAT(cre.`update_time`,'%Y-%m-%d') &lt;= #{outMap.endTime})
+			&gt; 0
+		</if>
+		<if test="user.userLevel == 2">
+			and (r.recruit = #{user.empId, jdbcType=VARCHAR} or
+			r.recruit_campus_id in (
+			<foreach collection="user.myCampusList" item="info"
+				separator=",">
+				#{info.campusId, jdbcType=VARCHAR}
+			</foreach>
+			))
+		</if>
+		<if test="user.userLevel == 3">
+			and (r.recruit = #{user.empId, jdbcType=VARCHAR} or r.recruit_dp_id
+			in (
+			<foreach collection="user.myDpList" item="info" separator=",">
+				#{info.dpId, jdbcType=VARCHAR}
+			</foreach>
+			))
+		</if>
+
+		order by bso.`create_time` desc
+	</select>
+
+	<select id="selectCheckRecordByOutId" parameterType="java.lang.String"
+		resultMap="CheckRecordMap">
+		select
+		bcr.*,
+		oe.emp_name
+		from
+		bms.bd_check_record bcr
+		LEFT JOIN
+		bms.oa_employee oe
+		ON bcr.`emp_id` = oe.`emp_id`
+		WHERE bcr.`mapping_id`
+		=
+		#{outId}
+		order by bcr.`check_order` asc
+	</select>
+
+	<insert id="insertSelective" parameterType="com.yz.model.BdStudentOut">
+		insert into bms.bd_student_out
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			out_id,
+			<if test="empId != null and empId != ''">
+				emp_id,
+			</if>
+			<if test="learnId != null">
+				learn_id,
+			</if>
+			<if test="stdId != null">
+				std_id,
+			</if>
+			<if test="reason != null">
+				reason,
+			</if>
+			<if test="checkOrder != null">
+				check_order,
+			</if>
+			<if test="checkType != null">
+				check_type,
+			</if>
+			<if test="stdStage != null">
+				std_stage,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="isComplete != null">
+				is_complete,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+			<if test="updateUserId != null">
+				update_user_id,
+			</if>
+			<if test="createUserId != null">
+				create_user_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+			<if test="ext1 != null">
+				ext_1,
+			</if>
+			<if test="ext2 != null">
+				ext_2,
+			</if>
+			<if test="ext3 != null">
+				ext_3,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{outId,jdbcType=VARCHAR},
+			<if test="empId != null and empId != ''">
+				#{empId,jdbcType=VARCHAR},
+			</if>
+			<if test="learnId != null">
+				#{learnId,jdbcType=VARCHAR},
+			</if>
+			<if test="stdId != null">
+				#{stdId,jdbcType=VARCHAR},
+			</if>
+			<if test="reason != null">
+				#{reason,jdbcType=VARCHAR},
+			</if>
+			<if test="checkOrder != null">
+				#{checkOrder,jdbcType=VARCHAR},
+			</if>
+			<if test="checkType != null">
+				#{checkType,jdbcType=VARCHAR},
+			</if>
+			<if test="stdStage != null">
+				#{stdStage,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=CHAR},
+			</if>
+			<if test="isComplete != null">
+				#{isComplete,jdbcType=CHAR},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUserId != null">
+				#{updateUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="createUserId != null">
+				#{createUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="ext1 != null">
+				#{ext1,jdbcType=VARCHAR},
+			</if>
+			<if test="ext2 != null">
+				#{ext2,jdbcType=VARCHAR},
+			</if>
+			<if test="ext3 != null">
+				#{ext3,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="selectUserInfoForLearnId" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT bi.`real_name`,bi.`bind_id` FROM us.`us_base_info` bi WHERE bi.`std_id`=#{stdId}
+	</select>
+
+
+
+	<select id="findStudentInfoByLearnId" resultMap="StudentInfoMap">
+			SELECT
+				bsi.std_name std_name,
+				bup.`grade`,
+				bu.`unvs_name` bsaunvs_name,
+				bup.`pfsn_name` bsapfsn_name,
+				oet.`emp_name` oet_name,
+				ubir.`bind_id` oet_bind_id,
+				oet.`emp_status` oet_status,
+				oet.`emp_id` oet_emp_id,
+				sd.`dict_name` std_stage,
+				sdf.`dict_name` pfsn_level,
+				oer.`emp_name` oer_name,
+				oer.`emp_status` oer_status,
+				ubit.`bind_id` oer_bind_id
+			FROM
+				bms.bd_learn_info bli
+				LEFT JOIN bms.bd_student_info bsi ON bsi.`std_id` = bli.`std_id`
+				LEFT JOIN bms.bd_unvs_profession bup ON bup.`pfsn_id` = bli.`pfsn_id`
+				LEFT JOIN bms.bd_university bu ON bu.`unvs_id` = bup.`unvs_id`
+				LEFT JOIN bms.bd_learn_rules blr ON blr.learn_id = bli.learn_id
+				LEFT JOIN bms.oa_employee oet ON oet.emp_id = blr.recruit
+				LEFT JOIN us.`us_base_info` ubir ON ubir.`user_id` = oet.user_id
+				LEFT JOIN bms.oa_employee oer ON oer.emp_id = blr.tutor
+				LEFT JOIN us.`us_base_info` ubit ON ubit.`user_id` = oer.user_id
+				LEFT JOIN bms.`sys_dict` sd ON sd.`dict_value` = bli.`std_stage` AND sd.`p_id`='stdStage'
+				LEFT JOIN bms.`sys_dict` sdf ON sdf.`dict_value` = bup.`pfsn_level` AND sdf.`p_id`='pfsnLevel'
+			WHERE
+			bli.`learn_id` = #{learnId}
+	</select>
+
+
+
+		<select id="findXjBandId" resultType="String">
+				SELECT 
+				  ubi.`bind_id` 
+				FROM
+				  bms.`oa_employee` oe 
+				  LEFT JOIN us.`us_base_info` ubi 
+				    ON oe.`user_id` = ubi.`user_id` 
+				  LEFT JOIN bms.`oa_department` od 
+				    ON od.`emp_id` = oe.`emp_id` 
+				  LEFT JOIN bms.`oa_employee_job` oej 
+				    ON oej.`dp_id` = od.`dp_id` 
+				WHERE oej.`emp_id` = #{empId,jdbcType=VARCHAR} limit 1
+		</select>
+</mapper>

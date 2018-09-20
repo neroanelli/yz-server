@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.dao.BdsFullScholarshipMapper">
+
+	<select id="selectEnrolmentCount" resultType="java.util.Map">
+		select count(1) as learnCount
+		from bms.bd_learn_info bli
+		left join bms.bd_student_info bsi on bsi.std_id=bli.std_id
+		left join bms.bd_student_order bso on bso.learn_id=bli.learn_id
+		left join bms.bd_sub_order bsubo on bsubo.order_no=bso.order_no
+		left join bms.bd_university bu on bu.unvs_id=bli.unvs_id
+		where bli.scholarship=#{scholarship} and bsubo.item_code='Y0' and bsubo.sub_order_status='2'
+	</select>
+
+	<select id="selectNewEnrolmentList" resultType="java.util.Map">
+		select bli.std_id as stdId, bli.learn_id as learnId, bli.create_time as createTime, bsi.std_name as stdName, bsi.mobile, bu.unvs_name as unvsName
+		from bms.bd_learn_info bli
+		left join bms.bd_student_info bsi on bsi.std_id=bli.std_id
+		left join bms.bd_student_order bso on bso.learn_id=bli.learn_id
+		left join bms.bd_sub_order bsubo on bsubo.order_no=bso.order_no
+		left join bms.bd_university bu on bu.unvs_id=bli.unvs_id
+		where bli.scholarship=#{scholarship} and bsubo.item_code='Y0' and bsubo.sub_order_status='2' order by bli.create_time desc limit 0,10
+	</select>
+	
+	<select id="selectNewMsgList" resultType="java.util.Map">
+		SELECT 
+		  scholarship,
+		  head_img AS headImg,
+		  nickname,
+		  real_name AS realName,
+		  mobile,
+		  msg_content AS msgContent,
+		  DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%S') AS createTime 
+		FROM
+		  bms.`bd_enroll_activity_msg` 
+		WHERE scholarship = #{scholarship,jdbcType=VARCHAR}
+		  AND is_show = '1' 
+		ORDER BY create_time DESC 
+		LIMIT 10 
+	</select>
+	
+	<select id="getMsgCount" resultType="java.lang.Integer">
+        SELECT 
+		 COUNT(0)
+		FROM
+		  bms.`bd_enroll_activity_msg` 
+		WHERE scholarship = #{scholarship,jdbcType=VARCHAR}
+		  AND user_id = #{userId,jdbcType=VARCHAR}
+		  AND is_show = '1' 
+	</select>
+	
+	<insert id="enrollMsg" parameterType="java.util.Map">
+		INSERT INTO bms.`bd_enroll_activity_msg` (
+		  id,
+		  user_id,
+		  head_img,
+		  nickname,
+		  real_name,
+		  mobile,
+		  scholarship,
+		  msg_content,
+		  create_time
+		) 
+		VALUES
+		  (#{id,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR},#{headImg,jdbcType=VARCHAR},
+		  #{nickname,jdbcType=VARCHAR},#{realName,jdbcType=VARCHAR},#{mobile,jdbcType=VARCHAR},
+		  #{scholarship,jdbcType=VARCHAR},#{msgContent,jdbcType=VARCHAR},NOW())
+	</insert>
+</mapper>
