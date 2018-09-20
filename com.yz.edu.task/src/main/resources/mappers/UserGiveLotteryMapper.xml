@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.job.dao.UserGiveLotteryMapper">
+
+   <select id="selectLotteryInfoByScholarship" resultType="java.util.HashMap">
+   	SELECT 
+   	  gl.`lottery_id` AS lotteryId,
+   	  gl.`lottery_name_name` AS lotteryName,
+   	  gl.`lottery_url` AS lotteryUrl,
+   	  gl.`if_limit_reg_time` AS limitRegTime,
+   	  DATE_FORMAT(gl.`start_time`,'%Y-%m-%d %H:%i:%S') AS startTime,
+   	  DATE_FORMAT(gl.`end_time`,'%Y-%m-%d %H:%i:%S') AS endTime
+	FROM goods.`gs_lottery` gl
+		LEFT JOIN common.`ats_customize_attr` aca
+		ON aca.`ref_handler` = gl.`lottery_id`
+	WHERE aca.`ref_type`='lotteryRule' 
+		AND aca.attr_name=#{scholarship,jdbcType=VARCHAR} 
+		AND gl.`status`='1'
+		AND gl.`start_time` &lt;= now() 
+		AND gl.`end_time` &gt;= now()
+	LIMIT 1
+   </select>	
+   
+   	<select id="getUsBaseInfoByUserId" resultType="java.util.HashMap">
+		SELECT 
+		  ubi.`user_id` userId,
+		  ubi.`real_name` AS realName,
+		  ubi.`mobile`,
+		  ubi.`yz_code` yzCode,
+		  ubi.`bind_id` AS openId,
+		  ubi.`p_id` AS pId,
+		  pubi.`bind_id` AS pOpenId,
+		  pubi.`real_name` pRealName,
+		  pubi.`mobile` pMobile,
+		  pubi.`yz_code` pYzCode
+		FROM
+		  us.`us_base_info` ubi 
+		  LEFT JOIN us.`us_base_info` pubi 
+		    ON pubi.`user_id` = ubi.`p_id`
+	    where ubi.`user_id` = #{userId,jdbcType=VARCHAR} limit 1
+	</select>
+	
+	<insert id="insertLotteryTicket" parameterType="com.yz.job.model.UserLotteryTicketInfo">
+		INSERT INTO goods.`gs_lottery_ticket`
+	      <trim prefix="(" suffix=")" suffixOverrides="," >
+	        ticket_id,
+	      <if test="lotteryId != null and '' != lotteryId" >
+	        lottery_id,
+	      </if>
+	      <if test="userId != null and '' != userId" >
+	        user_id,
+	      </if>
+	      <if test="userName != null and '' != userName" >
+	        `user_name`,
+	      </if>
+	      <if test="mobile !=null and '' != mobile">
+	      	mobile,
+	      </if>
+	      <if test="yzCode !=null and '' != yzCode">
+	      	yz_code,
+	      </if>
+	      <if test="triggerUserId !=null and '' != triggerUserId">
+	      	trigger_user_id,
+	      </if>
+	      <if test="triggerUserName !=null and '' != triggerUserName">
+	      	trigger_user_name,
+	      </if>
+	      <if test="triggerUserMobile != null and '' != triggerUserMobile" >
+	        trigger_user_mobile,
+	      </if>
+	      <if test="triggerYzCode != null and '' != triggerYzCode" >
+	        trigger_yz_code,
+	      </if>
+	      <if test="giveWayType !=null and '' != giveWayType">
+	      	 give_way_type,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	        #{ticketId,jdbcType=VARCHAR},
+	      <if test="lotteryId != null and '' != lotteryId" >
+	        #{lotteryId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="userId != null and '' != userId" >
+	        #{userId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="userName != null and '' != userName" >
+	        #{userName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="mobile !=null and '' != mobile">
+	      	#{mobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="yzCode !=null and '' != yzCode">
+	      	#{yzCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="triggerUserId !=null and '' != triggerUserId">
+	      	#{triggerUserId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="triggerUserName !=null and '' != triggerUserName">
+	      	#{triggerUserName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="triggerUserMobile != null and '' != triggerUserMobile" >
+	        #{triggerUserMobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="triggerYzCode != null and '' != triggerYzCode" >
+	        #{triggerYzCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="giveWayType !=null and '' != giveWayType">
+	      	 #{giveWayType,jdbcType=VARCHAR},
+	      </if>
+	    </trim>
+	</insert>
+	
+	<select id="selectLearnIdsByMobile" parameterType="java.lang.String" resultType="java.util.HashMap">
+		SELECT 
+		  l.`learn_id` learnId,
+		  l.`recruit_type` recruitType,
+		  l.`scholarship`
+		FROM
+		  `bms`.bd_learn_info l 
+		  LEFT JOIN `bms`.bd_student_info i 
+		    ON i.`std_id` = l.`std_id` 
+		WHERE i.`mobile` = #{mobile} 
+		  AND l.`is_completed` = '0' 
+		  <if test="startTime !=null and '' != startTime">
+		  	<![CDATA[ and DATE_FORMAT(l.`create_time`, '%Y-%m-%d %H:%i:%S') >=  DATE_FORMAT(#{startTime}, '%Y-%m-%d %H:%i:%S')   ]]>
+		  </if>
+		  <if test="endTime !=null and '' != endTime">
+			<![CDATA[ and DATE_FORMAT(l.`create_time`, '%Y-%m-%d %H:%i:%S') <=  DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%S')   ]]>  	
+		  </if>
+	</select>
+	
+	<select id="selectTutionPaidCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT 
+		  COUNT(0) 
+		FROM
+		  `bms`.bd_sub_order so 
+		  LEFT JOIN `bms`.bd_student_order o 
+		    ON so.`order_no` = o.`order_no` 
+		  LEFT JOIN `bms`.bd_serial_suborder ss 
+		    ON ss.`sub_order_no` = so.`sub_order_no` 
+		  LEFT JOIN `bms`.bd_student_serial s 
+		    ON s.`serial_no` = ss.`serial_no` 
+		WHERE o.`learn_id` = #{learnId}
+		  AND so.`item_code` = #{itemCode}
+		  AND so.`sub_order_status` = '2' 
+		  AND s.`serial_status` IN ('2', '3') 
+		  <![CDATA[ and DATE_FORMAT(s.`pay_time`, '%Y-%m-%d %H:%i:%S') >=  DATE_FORMAT(#{startTime}, '%Y-%m-%d %H:%i:%S')   ]]>
+		  <![CDATA[ and DATE_FORMAT(s.`pay_time`, '%Y-%m-%d %H:%i:%S') <=  DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%S')   ]]>
+	</select>
+	
+	<select id="ifSendTicket" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM goods.`gs_lottery_ticket` 
+			WHERE lottery_id=#{lotteryId,jdbcType=VARCHAR} 
+			   AND user_id=#{userId,jdbcType=VARCHAR} 
+			   AND (give_way_type='1' OR give_way_type='3')
+	</select>
+</mapper>

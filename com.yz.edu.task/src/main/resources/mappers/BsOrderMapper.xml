@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.job.dao.BsOrderMapper">
+	<resultMap id="BsOrderInfoMap" type="com.yz.job.model.BsOrderInfo">
+		<id column="orderNo" property="orderNo" jdbcType="VARCHAR" />
+		<result column="orderType" property="orderType" jdbcType="VARCHAR" />
+		<result column="jd_order_id" property="jdOrderId" jdbcType="VARCHAR" />
+		<result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="sales_type" property="salesType" jdbcType="VARCHAR" />
+		<result column="sku_id" property="skuId" jdbcType="VARCHAR" />
+		<result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 京东需要同步的订单 -->
+	<select id="querySynchronousJdOrderList" resultMap="BsOrderInfoMap">
+		SELECT
+		bo.`order_no`,
+		bo.`jd_order_id`,
+		bso.`sku_id`,
+		bso.`sales_type`,
+		bso.`goods_name`,
+		bo.`order_status`
+		FROM
+		goods.bs_order bo
+		LEFT JOIN
+		goods.bs_sales_order bso
+		ON bo.`order_no` = bso.`order_no`
+		LEFT JOIN
+		goods.bs_logistics bl
+		ON bo.`order_no` = bl.`order_no`
+		where
+		bo.`jd_order_id` is not null and bso.`sales_type`=1 and
+		bo.order_status!='3'
+		and bo.order_status!='5'
+		ORDER BY bo.`order_time` limit 50
+	</select>
+
+	<!-- 批量同步订单信息 -->
+	<update id="updateOrderStatus">
+		<foreach collection="orderlist" item="order" index="index"
+			separator=" ">
+			update goods.bs_order set
+			freight=#{order.freight,jdbcType=VARCHAR},order_price=#{order.orderPrice,jdbcType=VARCHAR},order_status=#{order.orderStatus,jdbcType=VARCHAR}
+			where order_no=#{order.orderNo,jdbcType=VARCHAR};
+			update
+			goods.bs_sales_order set
+			price=#{order.jdPrice,jdbcType=VARCHAR},num=#{order.goodsCount,jdbcType=VARCHAR},name=#{order.goodsName,jdbcType=VARCHAR},sub_order_status=#{order.orderStatus,jdbcType=VARCHAR}
+			where order_no=#{order.orderNo,jdbcType=VARCHAR};
+			update
+			goods.bs_logistics set
+			transport_no=#{order.jdOrderId,jdbcType=VARCHAR},logistics_status=#{order.orderStatus,jdbcType=VARCHAR}
+			where order_no=#{order.orderNo,jdbcType=VARCHAR};
+		</foreach>
+	</update>
+
+	<update id="updateOrderCompletTime">
+		update goods.`bs_order` set
+		jd_ordercomplete_time=#{orderTime,jdbcType=VARCHAR} where
+		jd_order_id=#{jdOrderId,jdbcType=VARCHAR};
+	</update>
+
+	<!-- 保存主订单数据 -->
+	<insert id="addNewBsOrder" parameterType="com.yz.job.model.BsOrderInfo">
+		insert into
+		goods.`bs_order` (
+		`order_no`,
+		`acc_type`,
+		`order_type`,
+		`trans_amount`,
+		`user_name`,
+		`mobile`,
+		`user_id`,
+		`order_time`,
+		`order_status`,
+		`order_desc`,
+		`jd_order_id`,
+		`freight`,
+		`order_price`,
+		`order_naked_price`,
+		`order_tax_price`
+		)
+		values
+		(#{orderNo,jdbcType=VARCHAR},
+		#{accType,jdbcType=VARCHAR},
+		#{orderType,jdbcType=VARCHAR},
+		#{transAmount,jdbcType=VARCHAR},
+		#{userName,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR},
+		now(),
+		#{orderStatus,jdbcType=VARCHAR},
+		#{orderDesc,jdbcType=VARCHAR},
+		#{jdOrderId,jdbcType=VARCHAR},
+		#{freight,jdbcType=VARCHAR},
+		#{orderPrice,jdbcType=VARCHAR},
+		#{orderNakedPrice,jdbcType=VARCHAR},
+		#{orderTaxPrice,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 保存子订单信息 -->
+	<insert id="addNewBsSalesOrder" parameterType="com.yz.job.model.BsSalesOrderInfo">
+		insert into
+		goods.`bs_sales_order` ( 
+		`order_no`,
+		`cost_price`,
+		`original_price`,
+		`unit_price`,
+		`sales_id`,
+		`sales_type`,
+		`sales_name`,
+		`goods_id`,
+		`goods_count`,
+		`goods_name`,
+		`acc_type`,
+		`trans_amount`,
+		`sub_order_time`,
+		`user_id`,
+		`sub_order_status`,
+		`sub_order_desc`,
+		`unit`,
+		`goods_type`,
+		`goods_img`,
+		`sku_id`,
+		`num`,
+		`category`,
+		`name`,
+		`tax`,
+		`price`,
+		`tax_price`,
+		`naked_price`,
+		`type`,
+		`oid`
+		)
+		values
+		( 
+		#{orderNo,jdbcType=VARCHAR},
+		#{costPrice,jdbcType=VARCHAR},
+		#{originalPrice,jdbcType=VARCHAR},
+		#{unitPrice,jdbcType=VARCHAR},
+		#{salesId,jdbcType=VARCHAR},
+		#{salesType,jdbcType=VARCHAR},
+		#{salesName,jdbcType=VARCHAR},
+		#{goodsId,jdbcType=VARCHAR},
+		#{goodsCount,jdbcType=VARCHAR},
+		#{goodsName,jdbcType=VARCHAR},
+		#{accType,jdbcType=VARCHAR},
+		#{transAmount,jdbcType=VARCHAR},
+		now(),
+		#{userId,jdbcType=VARCHAR},
+		#{subOrderStatus,jdbcType=VARCHAR},
+		#{subOrderDesc,jdbcType=VARCHAR},
+		#{unit,jdbcType=VARCHAR},
+		#{goodsType,jdbcType=VARCHAR},
+		#{goodsImg,jdbcType=VARCHAR},
+		#{skuId,jdbcType=VARCHAR},
+		#{num,jdbcType=VARCHAR},
+		#{category,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{tax,jdbcType=VARCHAR},
+		#{price,jdbcType=VARCHAR},
+		#{taxPrice,jdbcType=VARCHAR},
+		#{nakedPrice,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{oid,jdbcType=VARCHAR}
+		)
+	</insert>
+	<!-- 保存订单物流信息 -->
+	<insert id="saveOrderLogistics" parameterType="com.yz.job.model.BsLogistics">
+		INSERT INTO
+		goods.`bs_logistics` ( 
+		`order_no`,
+		`transport_no`,
+		`user_name`,
+		`mobile`,
+		`province`,
+		`city`,
+		`district`,
+		`street`,
+		`address`,
+		`logistics_status`,
+		`logistics_name`,
+		`province_name`,
+		`city_name`,
+		`district_name`,
+		`street_name`
+		)
+		VALUES
+		( 
+		#{orderNo,jdbcType=VARCHAR},
+		#{transportNo,jdbcType=VARCHAR},
+		#{userName,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{province,jdbcType=VARCHAR},
+		#{city,jdbcType=VARCHAR},
+		#{district,jdbcType=VARCHAR},
+		#{street,jdbcType=VARCHAR},
+		#{address,jdbcType = VARCHAR},
+		#{logisticsStatus,jdbcType=VARCHAR},
+		#{logisticsName,jdbcType=VARCHAR},
+		#{provinceName,jdbcType=VARCHAR},
+		#{cityName,jdbcType=VARCHAR},
+		#{districtName,jdbcType=VARCHAR},
+		#{streetName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 修改兑换活动可兑换数量 -->
+	<update id="updateSalesCount">
+	     <![CDATA[
+		UPDATE goods.gs_goods_sales SET 
+		           sales_count = sales_count-#{count},
+		           end_time=if(show_after_over=0 and sales_count<= #{count},now(),end_time),
+		           sales_status=if(show_after_over=0 and sales_count<= #{count},1,2)
+		 WHERE
+		sales_count>= #{count} and sales_id=#{salesId,jdbcType=VARCHAR}
+		  ]]>
+	</update>
+
+    <!-- 修改兑换活动可兑换数量 -->
+	<insert id="addGsExchange" parameterType="com.yz.job.model.GsExChangePart">
+		insert into goods.`gs_exchange_part` ( 
+		`sales_id`,
+		`user_id`,
+		`head_img_url`,
+		`user_name`,
+		`mobile`,
+		`exchange_count`,
+		`exchange_time`,
+		`order_no`,
+		`status`
+		)
+		values
+		( 
+		#{salesId,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR},
+		#{headImgUrl,jdbcType=VARCHAR},
+		#{userName,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{exchangeCount,jdbcType=VARCHAR},
+		now(),
+		#{orderNo,jdbcType=VARCHAR},
+		#{status}
+		)
+	</insert>
+</mapper>

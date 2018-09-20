@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yz.job.dao.StudentSceneConfirmMapper">
+
+	
+	<update id="reSetSceneConfirm">
+		UPDATE bms.oa_confirmation_management  oc
+		INNER JOIN bms.bd_student_scene_confirm a
+		ON  oc.confirmation_id=a.confirmation_id
+		set oc.available_numbers = oc.available_numbers+1
+		WHERE a.confirmation_id is not null and a.confirm_id = #{confirmId,jdbcType=VARCHAR};
+		
+		UPDATE bms.oa_student_task ost
+		INNER JOIN bms.oa_task_info oti ON ost.task_id=oti.task_id
+		set ost.task_status = 0
+		WHERE oti.task_type='17' and ost.learn_id = #{learnId,jdbcType=VARCHAR};
+		
+		UPDATE bms.bd_student_scene_confirm SET place_confirm_status = '2',
+		place_confirm_resetcount=IFNULL(place_confirm_resetcount, 0)+1,
+		place_confirm_time = NULL,confirmation_id=NULL
+		WHERE confirm_id = #{confirmId,jdbcType=VARCHAR};		
+	</update>
+	
+	<select id="getCurrentDateStudentSceneConfirm" resultType="java.util.Map">
+		select a.learn_id as learnId,
+		a.confirm_id as confirmId
+		from bms.bd_student_scene_confirm  a
+		left join bms.oa_confirmation_management  oc 
+		ON  oc.confirmation_id=a.confirmation_id
+		where 1=1  
+		and <![CDATA[ IFNULL(a.place_confirm_resetcount,0) <  3   ]]>
+		and (  
+			(  <![CDATA[  DATE_FORMAT(oc.start_time, '%Y-%m-%d') <= DATE_FORMAT(now(), '%Y-%m-%d')]]>
+			   and  <![CDATA[ DATE_FORMAT(oc.start_time,'%Y-%m-%d %H:%i:%s') <=  DATE_ADD(CURDATE(),INTERVAL 21 HOUR)   ]]>
+			   and  a.place_confirm_status='1'  and a.scene_confirm_status='0' and a.sign_status='0')
+		or (a.place_confirm_status='2' and a.scene_confirm_status='0' and a.sign_status='0'))
+		
+	</select>
+	
+</mapper>
