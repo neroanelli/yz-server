@@ -37,13 +37,13 @@
 		<dependency>
 			<groupId>com.yz.edu</groupId>
 			<artifactId>sdk</artifactId>
-			<version>1.9${yz.sdk.version}</version>
+			<version>2.3.2${yz.sdk.version}</version>
 		</dependency>
 
        <dependency>
 			<groupId>com.yz.edu</groupId>
 			<artifactId>pay</artifactId>
-			<version>1.9${yz.pay.version}</version>
+			<version>2.3.2${yz.pay.version}</version>
 		</dependency>
 		
 		<dependency>
